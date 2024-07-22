@@ -3,6 +3,7 @@ import { mergeClassNames } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { Header } from "@/components/ux/Header";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,14 +25,19 @@ export default function RootLayout({
           inter.className,
         )}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <div className="flex flex-col w-full px-5 py-2">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {/* <div className="flex flex-col h-full mx-auto px-5 py-2"> */}
+            <Header />
+            <div className="flex-1">{children}</div>
+            {/* </div> */}
+          </ThemeProvider>
+        </div>
       </body>
     </html>
   );
