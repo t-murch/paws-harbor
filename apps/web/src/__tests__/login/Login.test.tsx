@@ -21,7 +21,7 @@ describe("Login Page", () => {
 
   test("validates email format", async () => {
     setFormValues("test", "Pawsw0rdw00f");
-    fireEvent.submit(screen.getByRole("button"));
+    fireEvent.submit(screen.getByTestId("submitBtn"));
 
     expect(mockLoginAction).not.toHaveBeenCalled();
   });
@@ -29,7 +29,7 @@ describe("Login Page", () => {
   test("validates password length", async () => {
     setFormValues("myemail@mydomain.com", "short");
 
-    fireEvent.submit(screen.getByRole("button"));
+    fireEvent.submit(screen.getByTestId("submitBtn"));
 
     expect(mockLoginAction).not.toHaveBeenCalled();
   });
@@ -39,7 +39,7 @@ describe("Login Page", () => {
       testPassword = "Password123!";
     setFormValues(testEmail, testPassword);
 
-    fireEvent.submit(screen.getByRole("button"));
+    fireEvent.submit(screen.getByTestId("submitBtn"));
 
     await waitFor(() => {
       expect(mockLoginAction).toHaveBeenCalled();

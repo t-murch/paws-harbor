@@ -7,11 +7,13 @@ import { signupFormSchema } from "@/components/ux/formSchema";
 import { createClient } from "@/lib/supabase/server";
 
 export async function loginAction(
-  prevState,
+  prevState: FormState,
   formData: FormData,
 ): Promise<FormState> {
   const dirtyData = Object.fromEntries(formData);
   const parsed = signupFormSchema.safeParse(dirtyData);
+
+  console.log("loginAction invoked.");
 
   if (!parsed.success) {
     const fields: Record<string, string> = {};
@@ -48,6 +50,8 @@ export type FormState = {
   message: string;
   fields?: Record<string, string>;
 };
+
+export type LoginAction = typeof loginAction;
 
 export async function signupAction(
   prevState: FormState,

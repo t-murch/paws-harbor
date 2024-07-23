@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { signupFormSchema } from "./formSchema";
+import { MaskInputSignup } from "./MaskSignupInput";
 
 export function Signup({ signupAction }: { signupAction: SignupAction }) {
   const [state, formAction] = useFormState(signupAction, { message: "" });
@@ -68,12 +69,7 @@ export function Signup({ signupAction }: { signupAction: SignupAction }) {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      data-testid="Password"
-                      placeholder="********"
-                      type="password"
-                      {...field}
-                    />
+                    <MaskInputSignup dataTestid="Password" field={field} />
                   </FormControl>
                 </FormItem>
               )}
@@ -87,18 +83,13 @@ export function Signup({ signupAction }: { signupAction: SignupAction }) {
                 <FormItem>
                   <FormLabel>Confirm Password</FormLabel>
                   <FormControl>
-                    <Input
-                      data-testid="Confirm"
-                      placeholder="********"
-                      type="password"
-                      {...field}
-                    />
+                    <MaskInputSignup dataTestid="Confirm" field={field} />
                   </FormControl>
                 </FormItem>
               )}
             />
             <div className="flex justify-end p-1 pt-2">
-              <Button type="submit" className="w-20">
+              <Button type="submit" data-testid="submitBtn" className="w-20">
                 Signup
               </Button>
             </div>

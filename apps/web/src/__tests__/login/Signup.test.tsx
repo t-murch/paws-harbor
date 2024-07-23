@@ -24,7 +24,7 @@ describe("Signup Page", () => {
 
   test("validates email format", async () => {
     setFormValues("test", "Pawsw0rdw00f", "Pawsw0rdw00f");
-    fireEvent.submit(screen.getByRole("button"));
+    fireEvent.submit(screen.getByTestId("submitBtn"));
 
     expect(mockSignupAction).not.toHaveBeenCalled();
   });
@@ -32,7 +32,7 @@ describe("Signup Page", () => {
   test("validates password length", async () => {
     setFormValues("myemail@mydomain.com", "short", "short");
 
-    fireEvent.submit(screen.getByRole("button"));
+    fireEvent.submit(screen.getByTestId("submitBtn"));
 
     expect(mockSignupAction).not.toHaveBeenCalled();
   });
@@ -40,7 +40,7 @@ describe("Signup Page", () => {
   test("validates passwords match", async () => {
     setFormValues("someemail@address.com", "Password123!", "differentSh0rt");
 
-    fireEvent.submit(screen.getByRole("button"));
+    fireEvent.submit(screen.getByTestId("submitBtn"));
 
     expect(mockSignupAction).not.toHaveBeenCalled();
   });
@@ -50,7 +50,7 @@ describe("Signup Page", () => {
       testPassword = "Password123!";
     setFormValues(testEmail, testPassword, testPassword);
 
-    fireEvent.submit(screen.getByRole("button"));
+    fireEvent.submit(screen.getByTestId("submitBtn"));
 
     await waitFor(() => {
       expect(mockSignupAction).toHaveBeenCalled();

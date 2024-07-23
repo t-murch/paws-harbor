@@ -1,6 +1,6 @@
 "use client";
 
-import { loginAction } from "@/app/login/actions";
+import { LoginAction } from "@/app/login/actions";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
@@ -12,13 +12,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginFormSchema } from "@/components/ux/formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { HTMLInputTypeAttribute, HTMLProps, useRef } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "../ui/button";
+import { MaskInputLogin } from "./MaskInput";
 
-export function Login() {
+interface LoginProps extends HTMLProps<HTMLInputTypeAttribute> {
+  loginAction: LoginAction;
+}
+
+export function Login({ loginAction, className }: LoginProps) {
   const [state, formAction] = useFormState(loginAction, { message: "" });
   const form = useForm<z.infer<typeof loginFormSchema>>({
     resolver: zodResolver(loginFormSchema),
@@ -71,21 +76,18 @@ export function Login() {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem>
+                <FormItem
+                // className="pb-20"
+                >
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input
-                      data-testid="Password"
-                      placeholder="********"
-                      type="password"
-                      {...field}
-                    />
+                    <MaskInputLogin dataTestid="Password" field={field} />
                   </FormControl>
                 </FormItem>
               )}
             />
-            <div className="flex justify-end p-1 pt-2">
-              <Button type="submit" className="w-20">
+            <div className="flex justify-end p-1 pt-20">
+              <Button type="submit" data-testid="submitBtn" className="w-20">
                 Login
               </Button>
             </div>
