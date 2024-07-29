@@ -12,12 +12,15 @@ import {
 import { Input } from "@/components/ui/input";
 import { loginFormSchema } from "@/components/ux/formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { HTMLInputTypeAttribute, HTMLProps, useRef } from "react";
+import { HTMLInputTypeAttribute, HTMLProps, ReactNode, useRef } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 import { MaskInputLogin } from "./MaskInput";
+import { log } from "@repo/logger";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { mergeClassNames } from "@/lib/utils";
 
 interface LoginProps extends HTMLProps<HTMLInputTypeAttribute> {
   loginAction: LoginAction;
@@ -33,11 +36,14 @@ export function Login({ loginAction, className }: LoginProps) {
       ...(state?.fields ?? {}),
     },
   });
+  const {
+    formState: { isSubmitted, isSubmitting },
+  } = form;
 
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <Card data-testid="Login">
+    <Card data-testid="Login" className="h-[23rem]">
       <CardHeader>
         <CardTitle className="flex w-full justify-center">
           Enter Credentials
@@ -51,7 +57,9 @@ export function Login({ loginAction, className }: LoginProps) {
             onSubmit={(evt) => {
               evt.preventDefault();
               form.handleSubmit(() => {
-                formAction(new FormData(formRef.current!));
+                return new Promise((resolve) => {
+                  formAction(new FormData(formRef.current!));
+                });
               })(evt);
             }}
             className="space-y-1"
@@ -76,9 +84,7 @@ export function Login({ loginAction, className }: LoginProps) {
               control={form.control}
               name="password"
               render={({ field }) => (
-                <FormItem
-                // className="pb-20"
-                >
+                <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
                     <MaskInputLogin dataTestid="Password" field={field} />
@@ -87,7 +93,15 @@ export function Login({ loginAction, className }: LoginProps) {
               )}
             />
             <div className="flex justify-end p-1 pt-20">
-              <Button type="submit" data-testid="submitBtn" className="w-20">
+              <Button
+                type="submit"
+                data-testid="submitBtn"
+                disabled={isSubmitting}
+                className={mergeClassNames("flex w-20", {
+                  "pr-3 justify-between": isSubmitting,
+                })}
+              >
+                {isSubmitting && <ReloadIcon className="mr-1 animate-spin" />}
                 Login
               </Button>
             </div>

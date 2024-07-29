@@ -46,6 +46,11 @@ export function Header() {
                 <h4>My Account</h4>
               </Link>
             </SheetClose>
+            <SheetClose asChild>
+              <Link href="/services">
+                <h4>Our Services</h4>
+              </Link>
+            </SheetClose>
           </div>
         </SheetContent>
       </Sheet>

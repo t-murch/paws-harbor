@@ -1,19 +1,25 @@
 "use server";
 
+import { log } from "@repo/logger";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { signupFormSchema } from "@/components/ux/formSchema";
+import { loginFormSchema, signupFormSchema } from "@/components/ux/formSchema";
 import { createClient } from "@/lib/supabase/server";
 
-export async function loginAction(
-  prevState: FormState,
-  formData: FormData,
-): Promise<FormState> {
-  const dirtyData = Object.fromEntries(formData);
-  const parsed = signupFormSchema.safeParse(dirtyData);
+export type FormStateUno = {
+  message: string;
+  fields?: Record<string, string>;
+};
 
-  console.log("loginAction invoked.");
+export async function loginAction(
+  prevState: FormStateUno,
+  formData: FormData,
+): Promise<FormStateUno> {
+  const dirtyData = Object.fromEntries(formData);
+  const parsed = loginFormSchema.safeParse(dirtyData);
+
+  log("loginAction invoked.");
 
   if (!parsed.success) {
     const fields: Record<string, string> = {};
@@ -39,6 +45,7 @@ export async function loginAction(
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
+    log(`Login error: ${error.message}`);
     redirect("/error");
   }
 
@@ -46,17 +53,12 @@ export async function loginAction(
   redirect("/");
 }
 
-export type FormState = {
-  message: string;
-  fields?: Record<string, string>;
-};
-
 export type LoginAction = typeof loginAction;
 
 export async function signupAction(
-  prevState: FormState,
+  prevState: FormStateUno,
   formData: FormData,
-): Promise<FormState> {
+): Promise<FormStateUno> {
   // export async function signup(formData: z.infer<typeof formSchema>) {
   const dirtyData = Object.fromEntries(formData);
   const parsed = signupFormSchema.safeParse(dirtyData);

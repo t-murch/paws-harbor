@@ -5,15 +5,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRef } from "react";
+import { HTMLInputTypeAttribute, HTMLProps, useRef } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { signupFormSchema } from "./formSchema";
 import { MaskInputSignup } from "./MaskSignupInput";
+import { log } from "@repo/logger";
 
-export function Signup({ signupAction }: { signupAction: SignupAction }) {
+interface SignupProps extends HTMLProps<HTMLInputTypeAttribute> {
+  signupAction: SignupAction;
+}
+
+export function Signup({ signupAction }: SignupProps) {
   const [state, formAction] = useFormState(signupAction, { message: "" });
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
@@ -28,7 +33,7 @@ export function Signup({ signupAction }: { signupAction: SignupAction }) {
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <Card>
+    <Card className="h-[23rem]">
       <CardHeader>
         <CardTitle className="flex w-full justify-center">Sign Up</CardTitle>
       </CardHeader>
@@ -39,8 +44,10 @@ export function Signup({ signupAction }: { signupAction: SignupAction }) {
             action={formAction}
             onSubmit={(evt) => {
               evt.preventDefault();
+              log(`form data: ${formRef.current!}`);
               form.handleSubmit(() => {
-                formAction(new FormData(formRef.current!));
+                log(`form data: ${formRef.current!}`);
+                // formAction(new FormData(formRef.current!));
               })(evt);
             }}
             // onSubmit={form.handleSubmit(() => formRef.current?.submit())}
