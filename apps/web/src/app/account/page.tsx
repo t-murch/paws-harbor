@@ -1,3 +1,13 @@
-export default async function AccountPage() {
-  return <div className="h-full w-full">Something else</div>;
-}
+import ProfileForm from "@/components/ux/Profile/ProfileForm";
+import React from "react";
+
+const AccountPage: React.FC = () => {
+  return (
+    <div>
+      <h1>User Profile</h1>
+      <ProfileForm />
+    </div>
+  );
+};
+
+export default AccountPage;
