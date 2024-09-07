@@ -1,9 +1,11 @@
-import { createServer } from "./server";
-import { log } from "@repo/logger";
+import { serve } from "@hono/node-server";
+import app from "./server";
+import { allUsers } from "./db";
 
+// const app = createServer();
 const port = process.env.PORT || 3001;
-const server = createServer();
 
-server.listen(port, () => {
-  log(`api running on ${port}`);
-});
+// serve({ fetch: app.fetch, port: +port || 3001 });
+serve({ fetch: app.fetch, port: +port || 3001 });
+
+console.log(`allUsers: ${JSON.stringify(allUsers)}`);
