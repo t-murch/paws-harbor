@@ -31,8 +31,8 @@ export const profilesTable = pgTable("profiles", {
 export type InsertProfile = typeof profilesTable.$inferInsert;
 export type SelectProfile = typeof profilesTable.$inferSelect;
 
-const pgServices = pgEnum("services", ServiceTypesEnum.options);
-const pgFrequencies = pgEnum("frequency", ServiceFrequencyEnum.options);
+export const pgServices = pgEnum("services", ServiceTypesEnum.options);
+export const pgFrequencies = pgEnum("frequency", ServiceFrequencyEnum.options);
 
 export const petServicesTable = pgTable("services", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -52,7 +52,7 @@ export const petServicesTable = pgTable("services", {
 export type InsertPet = typeof petsTable.$inferInsert;
 export type SelectPet = typeof petsTable.$inferSelect;
 
-const pgSpecies = pgEnum("species", PetSpeciesEnum.options);
+export const pgSpecies = pgEnum("species", PetSpeciesEnum.options);
 
 export const petsTable = pgTable("pets", {
   id: uuid("id").defaultRandom().primaryKey(),
