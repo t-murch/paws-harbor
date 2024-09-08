@@ -1,5 +1,5 @@
 {
-  "id": "04652b47-4e91-4d9e-9153-c832488cb698",
+  "id": "bef0408f-3112-479c-b4f7-86a1e0502b71",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -308,16 +308,16 @@
           "primaryKey": false,
           "notNull": false
         },
-        "services": {
-          "name": "services",
-          "type": "services",
+        "service_type": {
+          "name": "service_type",
+          "type": "service_type",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
         },
-        "frequency": {
-          "name": "frequency",
-          "type": "frequency",
+        "service_frequency": {
+          "name": "service_frequency",
+          "type": "service_frequency",
           "typeSchema": "public",
           "primaryKey": false,
           "notNull": true
@@ -594,7 +594,33 @@
       "uniqueConstraints": {}
     }
   },
-  "enums": {},
+  "enums": {
+    "public.service_frequency": {
+      "name": "service_frequency",
+      "schema": "public",
+      "values": [
+        "a-la-carte",
+        "recurring-monthly"
+      ]
+    },
+    "public.service_type": {
+      "name": "service_type",
+      "schema": "public",
+      "values": [
+        "pet-walking",
+        "pet-sitting",
+        "pet-bathing"
+      ]
+    },
+    "public.species": {
+      "name": "species",
+      "schema": "public",
+      "values": [
+        "dog",
+        "cat"
+      ]
+    }
+  },
   "schemas": {},
   "sequences": {},
   "_meta": {

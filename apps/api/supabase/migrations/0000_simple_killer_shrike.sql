@@ -1,3 +1,21 @@
+DO $$ BEGIN
+ CREATE TYPE "public"."service_frequency" AS ENUM('a-la-carte', 'recurring-monthly');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."service_type" AS ENUM('pet-walking', 'pet-sitting', 'pet-bathing');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ CREATE TYPE "public"."species" AS ENUM('dog', 'cat');
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "bookings" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid,
@@ -34,8 +52,8 @@ CREATE TABLE IF NOT EXISTS "services" (
 	"user_id" uuid,
 	"duration" integer,
 	"price" integer,
-	"services" "services" NOT NULL,
-	"frequency" "frequency" NOT NULL,
+	"service_type" "service_type" NOT NULL,
+	"service_frequency" "service_frequency" NOT NULL,
 	"notes" text,
 	"created_at" timestamp DEFAULT now(),
 	"updated_at" timestamp DEFAULT now()

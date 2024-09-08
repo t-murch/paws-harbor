@@ -31,8 +31,11 @@ export const profilesTable = pgTable("profiles", {
 export type InsertProfile = typeof profilesTable.$inferInsert;
 export type SelectProfile = typeof profilesTable.$inferSelect;
 
-export const pgServices = pgEnum("services", ServiceTypesEnum.options);
-export const pgFrequencies = pgEnum("frequency", ServiceFrequencyEnum.options);
+export const pgServiceTypes = pgEnum("service_type", ServiceTypesEnum.options);
+export const pgServiceFrequency = pgEnum(
+  "service_frequency",
+  ServiceFrequencyEnum.options,
+);
 
 export const petServicesTable = pgTable("services", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -42,8 +45,8 @@ export const petServicesTable = pgTable("services", {
   walkerId: uuid("user_id").references(() => profilesTable.id),
   duration: integer("duration"),
   price: integer("price"),
-  type: pgServices("services").notNull(),
-  frequency: pgFrequencies("frequency").notNull(),
+  type: pgServiceTypes("service_type").notNull(),
+  frequency: pgServiceFrequency("service_frequency").notNull(),
   notes: text("notes"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
