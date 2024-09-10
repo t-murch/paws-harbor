@@ -15,6 +15,13 @@
       "when": 1725988957173,
       "tag": "20240910172237_silly_the_hood",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725991884195,
+      "tag": "20240910181124_new_profile_from_auth_signup",
+      "breakpoints": true
     }
   ]
 }
