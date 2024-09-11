@@ -4,6 +4,7 @@ import { InsertProfile, profilesTable, SelectProfile } from "../users";
 import { authClient } from "../auth";
 import z from "zod";
 import { AuthError } from "@supabase/supabase-js";
+import { log } from "@repo/logger";
 
 export const loginFormSchema = z.object({
   email: z.string().trim().email(),
@@ -21,6 +22,22 @@ async function createUser(data: LoginFormSchema) {
 
 async function loginUser(data: LoginFormSchema) {
   return await authClient.auth.signInWithPassword(data);
+}
+
+export const emailSchema = z.object({
+  email: z.string().trim().email().min(1, "email is required"),
+});
+const myEmail = z.string().email();
+type MyEmail = z.infer<typeof emailSchema>;
+
+async function logoutUser({ email }: MyEmail) {
+  const user = await getUserByEmail(email);
+  if (!user) {
+    // handle no user
+    log(`No user found for email: ${email}. Unable to logoutUser`);
+    return { data: null, error: `No user found for email: ${email}` };
+  }
+  return await authClient.auth.admin.signOut(user.id);
 }
 
 const MyEmailOtp = [
@@ -72,7 +89,19 @@ async function createProfile(data: InsertProfile) {
     .returning({ userId: profilesTable.id });
 }
 
-// export async function getUserBySingleProp(prop: SelectProfile['email'])
+export async function getUserByEmail(email: SelectProfile["email"]) {
+  const result = await db
+    .select()
+    .from(profilesTable)
+    .where(eq(profilesTable.email, email))
+    .catch((error) => {
+      console.error("Error fetching user by email:", error);
+      return null;
+    });
+
+  return result?.[0] ?? null;
+}
+
 export async function getUserById(id: SelectProfile["id"]): Promise<
   {
     id: string;
@@ -94,7 +123,9 @@ const UserService = {
   createUser,
   createProfile,
   getUserById,
+  getUserByEmail,
   loginUser,
+  logoutUser,
   verifyEmail,
 };
 
