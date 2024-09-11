@@ -3,10 +3,10 @@ import postgres from "postgres";
 import { profilesTable } from "./schema";
 import { config } from "dotenv";
 
-config({ path: ".env" }); // or .env.local
+config({ path: ".env" });
 // Disable prefetch as it is not supported for "Transaction" pool mode
 const client = postgres(process.env.DATABASE_URL!, { prepare: false });
-const db = drizzle(client);
+export const db = drizzle(client);
 
 const allUsers = async () => await db.select().from(profilesTable);
 
