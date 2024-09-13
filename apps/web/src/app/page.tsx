@@ -1,8 +1,7 @@
 import placeholderImage from "@/../public/paws-placeholder.jpg";
 import Icon from "@/components/ux/Icon";
+import { API_HOST } from "@/lib/utils";
 import Image from "next/image";
-
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
 
 export default function Web() {
   function handleLogin() {

@@ -33,6 +33,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {/* <div className="flex flex-col h-full mx-auto px-5 py-2"> */}
+            {/* Consider adding a prop for the client component button for singing out. */}
             <Header />
             <div className="flex-1 flex justify-center">{children}</div>
             {/* </div> */}

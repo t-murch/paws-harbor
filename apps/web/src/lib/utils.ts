@@ -1,7 +1,9 @@
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-export function mergeClassNames(...inputs: ClassValue[]) {
+const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
+
+function mergeClassNames(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
@@ -34,6 +36,8 @@ function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
   }
 }
 
-export function getErrorMessage(error: unknown) {
+function getErrorMessage(error: unknown) {
   return toErrorWithMessage(error).message;
 }
+
+export { API_HOST, mergeClassNames, getErrorMessage };

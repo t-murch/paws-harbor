@@ -44,9 +44,11 @@ export function Signup({ signupAction }: SignupProps) {
             action={formAction}
             onSubmit={(evt) => {
               evt.preventDefault();
-              log(`form data: ${formRef.current!}`);
               form.handleSubmit(() => {
-                log(`form data: ${formRef.current!}`);
+                return new Promise((resolve) => {
+                  formAction(new FormData(formRef.current!));
+                });
+                // log(`form data: ${formRef.current!}`);
                 // formAction(new FormData(formRef.current!));
               })(evt);
             }}

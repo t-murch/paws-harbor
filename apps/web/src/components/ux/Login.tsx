@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { loginFormSchema } from "@/components/ux/formSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HTMLInputTypeAttribute, HTMLProps, ReactNode, useRef } from "react";
-import { useFormState } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -39,6 +39,7 @@ export function Login({ loginAction, className }: LoginProps) {
   const {
     formState: { isSubmitted, isSubmitting },
   } = form;
+  const { pending } = useFormStatus();
 
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -96,12 +97,13 @@ export function Login({ loginAction, className }: LoginProps) {
               <Button
                 type="submit"
                 data-testid="submitBtn"
-                disabled={isSubmitting}
+                disabled={pending}
                 className={mergeClassNames("flex w-20", {
-                  "pr-3 justify-between": isSubmitting,
+                  "pr-3 justify-between": pending,
                 })}
               >
-                {isSubmitting && <ReloadIcon className="mr-1 animate-spin" />}
+                {/* {isSubmitting && <ReloadIcon className="mr-1 animate-spin" />} */}
+                {pending && <ReloadIcon className="mr-1 animate-spin" />}
                 Login
               </Button>
             </div>
