@@ -7,6 +7,7 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import z from "zod";
 
 export const profilesTable = pgTable("profiles", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -23,6 +24,20 @@ export const profilesTable = pgTable("profiles", {
 
 export type InsertProfile = typeof profilesTable.$inferInsert;
 export type SelectProfile = typeof profilesTable.$inferSelect;
+export const profileSchema = z.object({
+  id: z.string(),
+  email: z.string().email(),
+  address: z.union([z.string(), z.null()]),
+  name: z.union([z.string(), z.null()]),
+  phoneNumber: z.union([z.string(), z.null()]),
+  role: z.enum(["walker", "owner"]),
+  profilePictureUrl: z.union([z.string(), z.null()]),
+  bio: z.union([z.string(), z.null()]),
+  createdAt: z.string().datetime(),
+  updatedAt: z.string().datetime(),
+});
+
+// export const PostProfileSchema = z.object();
 
 export const pgServiceTypes = pgEnum("service_type", ServiceTypesEnum.options);
 export const pgServiceFrequency = pgEnum(

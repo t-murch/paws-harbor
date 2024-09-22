@@ -40,8 +40,9 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith("/") &&
+    request.nextUrl.pathname !== "/" &&
     !request.nextUrl.pathname.startsWith("/login") &&
+    !request.nextUrl.pathname.startsWith("/services") &&
     !request.nextUrl.pathname.startsWith("/about")
   ) {
     // no user, potentially respond by redirecting the user to the login page
@@ -49,7 +50,7 @@ export async function updateSession(request: NextRequest) {
     url.pathname = "/login";
     return NextResponse.redirect(url);
   } else {
-    log(`we have a user: ${JSON.stringify(user)}`);
+    log(`we have a user: ${JSON.stringify(user?.email)}`);
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is. If you're

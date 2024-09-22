@@ -1,4 +1,5 @@
 import pawsIcon from "@/../public/paws-round.svg";
+import { logoutAction } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -12,7 +13,6 @@ import Icon from "@/components/ux/Icon";
 import Image from "next/image";
 import Link from "next/link";
 import ClientBtn from "./ClientBtn";
-import { supabaseServerClient } from "@/lib/supabase/server";
 
 export function Header() {
   return (
@@ -55,17 +55,7 @@ export function Header() {
             </SheetClose>
             {/* Should ALWAYS remain at the bottom of the list */}
             <SheetClose asChild>
-              <ClientBtn
-                action={async () => {
-                  "use server";
-
-                  const { error } = await supabaseServerClient.auth.signOut();
-                  if (error) {
-                    console.error(`Sign-out eror: ${error.message}`);
-                  }
-                }}
-                label={"Log Out"}
-              ></ClientBtn>
+              <ClientBtn action={logoutAction} label={"Log Out"}></ClientBtn>
             </SheetClose>
           </div>
         </SheetContent>

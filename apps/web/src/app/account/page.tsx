@@ -1,13 +1,13 @@
 import ProfileForm from "@/components/ux/Profile/ProfileForm";
 import React from "react";
+import { getUserProfile } from "./actions";
 
-const AccountPage: React.FC = () => {
+export default async function AccountPage() {
+  let profile = await getUserProfile();
   return (
-    <div>
-      <h1>User Profile</h1>
-      <ProfileForm />
+    <div className="flex-1">
+      {/* <h1>User Profile</h1> */}
+      {profile && profile.user && <ProfileForm profile={profile.user} />}
     </div>
   );
-};
-
-export default AccountPage;
+}

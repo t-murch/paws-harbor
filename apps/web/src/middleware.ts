@@ -1,8 +1,11 @@
 import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
+import { cookies } from "next/headers";
 
 export async function middleware(request: NextRequest) {
-  // return await updateSession(request);
+  const cookieStore = cookies().getAll();
+  // console.log(`cookies=${JSON.stringify(cookieStore)}`);
+  return await updateSession(request);
 }
 
 export const config = {

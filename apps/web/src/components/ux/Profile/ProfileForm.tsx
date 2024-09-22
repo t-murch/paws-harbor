@@ -1,40 +1,62 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { supabaseClient } from "@/lib/supabase/client";
-import { UserProfile } from "@/lib/types";
-import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { AvatarIcon } from "@radix-ui/react-icons";
+import { Dog } from "lucide-react";
+import React from "react";
 import PetList from "./Petlist";
-import ServiceList from "./ServiceList";
-import { Button } from "@/components/ui/button";
+import { testPet } from "../providers/store";
+import Bio from "./Bio";
+import { UserProfile } from "../atoms";
 
-const ProfileForm: React.FC = () => {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+export const testUser: UserProfile = {
+  id: "123",
+  name: "Tobias Ruffin",
+  address: "123 BrownTree Trail Leander, TX 78641",
+  email: "toberuffin@domain.com",
+  // pets: [testPet],
+  phoneNumber: "253-111-1234",
+  role: "",
+  profilePictureUrl: null,
+  bio: null,
+  createdAt: null,
+  updatedAt: null,
+  // services: [],
+};
 
-  // useEffect(() => {
-  //   const fetchUserProfile = async () => {
-  //     const { data, error } = await supabaseClient
-  //       .from<UserProfile>("profiles")
-  //       .select("*")
-  //       .single();
+const MyAvatar = () => <AvatarIcon className="w-16 h-16" />;
+const editButtonState = (isEditMode: boolean) => (isEditMode ? "Save" : "Edit");
+
+export type UserJSONResponse = {
+  data: { user: UserProfile | null };
+  error: any;
+};
+
+export type SectionEditMode = {
+  user: boolean;
+  pet: boolean;
+  service: boolean;
+};
+
+type ProfileFormProps = {
+  profile: UserProfile;
+};
+const ProfileForm: React.FC<ProfileFormProps> = ({
+  profile,
+}: ProfileFormProps) => {
+  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setProfile((prevProfile) =>
+  //     prevProfile ? { ...prevProfile, [name]: value } : null,
+  //   );
+  // };
   //
-  //     if (error) {
-  //       console.error("Error fetching profile:", error);
-  //     } else {
-  //       setProfile(data);
-  //     }
-  //   };
-  //
-  //   fetchUserProfile();
-  // }, []);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setProfile((prevProfile) =>
-      prevProfile ? { ...prevProfile, [name]: value } : null,
-    );
-  };
+  // const toggleEditMode = (section: keyof SectionEditMode) => {
+  //   setEditMode((prevState) => ({
+  //     ...prevState,
+  //     [section]: !prevState[section],
+  //   }));
+  // };
 
   // const handleSave = async () => {
   //   if (profile) {
@@ -51,38 +73,23 @@ const ProfileForm: React.FC = () => {
   //   }
   // };
 
-  if (!profile) return <div>Loading...</div>;
+  // if (!profile) return <div>Loading...</div>;
 
   return (
-    <div>
-      <Label>Name</Label>
-      <Input name="name" value={profile.name} onChange={handleInputChange} />
+    <div className="flex flex-col gap-4">
+      <div className="flex justify-center gap-6 h-20">
+        <Dog className="w-16 h-16" />
+        <MyAvatar />
+      </div>
+      <Bio userProfile={profile} />
 
-      <Label>Email</Label>
-      <Input name="email" value={profile.email} disabled />
-
-      <Label>Address</Label>
-      <Input
-        name="address"
-        value={profile.address || ""}
-        onChange={handleInputChange}
-      />
-
-      <Label>Phone Number</Label>
-      <Input
-        name="phoneNumber"
-        value={profile.phoneNumber || ""}
-        onChange={handleInputChange}
-      />
-
-      <PetList pets={profile.pets} />
-      <ServiceList services={profile.services} />
-
-      <Button
-      // onClick={handleSave}
-      >
-        Save
-      </Button>
+      <Card>
+        <CardHeader className="items-end font-bold">Pets</CardHeader>
+        <CardContent>
+          <PetList pets={[testPet]} />
+        </CardContent>
+      </Card>
+      {/* <ServiceList services={profile.services} /> */}
     </div>
   );
 };

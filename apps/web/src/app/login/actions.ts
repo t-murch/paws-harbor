@@ -5,14 +5,55 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { loginFormSchema, signupFormSchema } from "@/components/ux/formSchema";
+import { supabaseServerClient } from "@/lib/supabase/server";
 import { API_HOST } from "@/lib/utils";
+import { cookies } from "next/headers";
 
 export type FormStateUno = {
   message: string;
   fields?: Record<string, string>;
 };
 
-export async function loginAction(
+interface PawsEndpoints {
+  "/users/login": {};
+  "/users/logout": {};
+  "/users/signup": {};
+}
+
+export const loginUser = async (data: { email: string; password: string }) => {
+  const res = await fetch(`${API_HOST}/users/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!res.ok) {
+    throw new Error("Login failed");
+  }
+
+  const responseJSON = await res.json();
+  log(`responseJSON-loginUser=${JSON.stringify(responseJSON)}`);
+  return responseJSON; // Assuming it contains user and token info
+};
+
+export const login = async (data: { email: string; password: string }) => {
+  const res = await fetch(`${API_HOST}/users/login`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+  const responseJSON = await res.json();
+  if (responseJSON.error) {
+    throw new Error(responseJSON.error);
+  }
+  return responseJSON;
+};
+
+export async function loginActionOld(
   _prevState: FormStateUno,
   formData: FormData,
 ): Promise<FormStateUno> {
@@ -35,35 +76,25 @@ export async function loginAction(
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
-  const data = {
+  const loginCreds = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
 
-  const res = await fetch(`${API_HOST}/users/login`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  }).catch((error) => {
+  const { error } =
+    await supabaseServerClient.auth.signInWithPassword(loginCreds);
+  if (error) {
     log(`Login error: ${error.message}`);
-    redirect("/login");
-    // redirect("/error");
-  });
-
-  const responseJSON = await res.json();
-  if (responseJSON?.error) {
-    log(`Login error: ${JSON.stringify(responseJSON.error)}`);
     redirect("/login");
   }
 
-  console.log(`responseJSON = ${JSON.stringify(responseJSON)}`);
+  log(`nextjs-cookies=${JSON.stringify(cookies())}`);
+
   revalidatePath("/", "layout");
   redirect("/");
 }
 
-export type LoginAction = typeof loginAction;
+export type LoginAction = typeof loginActionOld;
 
 export async function signupAction(
   _prevState: FormStateUno,
@@ -86,24 +117,16 @@ export async function signupAction(
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
-  const data = {
+  const signupCreds = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
 
-  const res = await fetch(`${API_HOST}/users/signup`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  }).catch((error) => {
+  const { error } = await supabaseServerClient.auth.signUp(signupCreds);
+  if (error) {
     log(`Signup error: ${error.message}`);
     redirect("/error");
-  });
-
-  const responseJSON = await res.json();
-  console.log(`responseJSON = ${JSON.stringify(responseJSON)}`);
+  }
 
   revalidatePath("/", "layout");
   redirect("/");
@@ -111,4 +134,12 @@ export async function signupAction(
 
 export type SignupAction = typeof signupAction;
 
-export async function logoutAction();
+export async function logoutAction() {
+  const { error } = await supabaseServerClient.auth.signOut();
+  if (error) {
+    log(`Logout error: ${error.message}`);
+  }
+
+  revalidatePath("/", "layout");
+  redirect("/");
+}

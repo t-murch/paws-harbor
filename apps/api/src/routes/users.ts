@@ -1,99 +1,142 @@
-import UserService, {
-  emailSchema,
-  loginFormSchema,
-  VerifyResponse,
-} from "@/db/queries/users";
+import UserService, { emailSchema, loginFormSchema } from "@/db/queries/users";
+import { profileSchema, SelectProfile, selectProfileSchema } from "@/db/users";
 import { zValidator } from "@hono/zod-validator";
 import { log } from "@repo/logger";
-import { EmailOtpType } from "@supabase/supabase-js";
+import {
+  AuthResponse,
+  AuthResponsePassword,
+  EmailOtpType,
+  User,
+  UserResponse,
+} from "@supabase/supabase-js";
 import { Hono } from "hono";
+import { validator } from "hono/validator";
 
-const userRoute = new Hono();
+type Variables = {
+  user: User;
+};
 
-userRoute.post(
-  "/users/signup",
-  zValidator("json", loginFormSchema, (result, context) => {
-    if (!result.success) {
-      return context.json({ message: "Invalid credentials" }, 400);
+const userRoute = new Hono<{ Variables: Variables }>()
+  .post(
+    "/users/signup",
+    zValidator("json", loginFormSchema, (result, context) => {
+      if (!result.success) {
+        return context.json({ message: "Invalid credentials" }, 400);
+      }
+    }),
+    async (c) => {
+      const user = c.req.valid("json");
+      if (!user) return c.json({ error: "invalid data" });
+
+      const authResponse = await UserService.createUser(c, user);
+      if (authResponse.error) {
+        log(`Signup Error: ${authResponse.error}`);
+        return c.json({ error: authResponse.error }, 400);
+      }
+
+      return c.json(authResponse.data);
+    },
+  )
+  .get("/auth/confirm", async (c) => {
+    const token_hash = c.req.query("token_hash"),
+      type = c.req.query("type") as EmailOtpType,
+      next = c.req.query("next") ?? "/";
+
+    if (!token_hash || !type) {
+      log(`Missing required token_hash || type params`);
+      return c.json(
+        { error: `Missing required token_hash || type params` },
+        400,
+      );
     }
-  }),
-  async (c) => {
-    const user = c.req.valid("json");
-    if (!user) return c.json({ error: "invalid data" });
+    let response: AuthResponse;
+    response = await UserService.verifyEmail(c, { token_hash, type });
 
-    const authResponse = await UserService.createUser(user);
-    if (authResponse.error) {
-      log(`Signup Error: ${authResponse.error}`);
-      return c.json({ error: authResponse.error }, 400);
-    }
-
-    return c.json(authResponse.data);
-  },
-);
-
-userRoute.get("/auth/confirm", async (c) => {
-  const { next, token_hash } = c.req.query();
-  const type = c.req.query("type") as EmailOtpType;
-
-  if (!token_hash || !type) {
-    log(`Missing required token_hash || type params`);
-    return c.json({ error: `Missing required token_hash || type params` }, 400);
-  }
-  let response: VerifyResponse;
-  response = await UserService.verifyEmail({ token_hash, type });
-
-  if (response.error) {
-    log(`Verification of email error: ${response.error}`);
-    return c.json(response, 400);
-  }
-
-  c.redirect(next);
-});
-
-userRoute.post(
-  "/users/login",
-  zValidator("json", loginFormSchema, (result, context) => {
-    if (!result.success) {
-      return context.json({ message: "Invalid credentials" }, 400);
-    }
-  }),
-  async (c) => {
-    const user = c.req.valid("json");
-    if (!user) {
-      return c.json({ error: "Invalid login credentials" }, 400);
+    if (response.error) {
+      log(`Verification of email error: ${response.error}`);
+      return c.redirect(`/`, 303);
     }
 
-    const authResponse = await UserService.loginUser(user);
-    if (authResponse.error) {
-      log(`Login Error: ${authResponse.error}`);
-      return c.json({ error: authResponse.error }, 400);
+    log(`next urls=${next}`);
+    c.redirect(`${next.slice(1)}`, 303);
+  })
+  .post(
+    "/users/login",
+    zValidator("json", loginFormSchema, (result, context) => {
+      if (!result.success) {
+        return context.json({ error: "Invalid credentials" }, 400);
+      }
+    }),
+    async (c) => {
+      const user = c.req.valid("json");
+      if (!user) {
+        return c.json({ error: "Invalid login credentials" }, 400);
+      }
+
+      const authResponse: AuthResponsePassword = await UserService.loginUser(
+        c,
+        user,
+      );
+      if (authResponse.error) {
+        log(`Login Error: ${authResponse.error}`);
+        return c.json({ error: authResponse.error }, 400);
+      }
+
+      // If successful, set the HTTP-only cookie with the access token
+      return c.json({
+        user: authResponse.data.user,
+        session: authResponse.data.session,
+      });
+    },
+  )
+  .get("/users/profile", async (c) => {
+    const authUser = c.get("user");
+    if (!authUser.email) {
+      const message = `GetProfile error. Email required.`;
+      log(message);
+      return c.json({ error: message }, 400);
     }
 
-    return c.json(authResponse.data);
-  },
-);
+    const myUser = await UserService.getUserByEmail(authUser.email);
+    if (!myUser) return c.json({ error: "User not found" }, 404);
 
-userRoute.post(
-  "/users/logout",
-  zValidator("json", emailSchema, (result, context) => {
-    if (!result.success) {
-      return context.json({ message: "Invalid email" }, 400);
-    }
-  }),
-  async (c) => {
-    const { email } = c.req.valid("json");
-    if (!email) {
-      return c.json({ error: "Missing email for signout" }, 400);
-    }
+    return c.json({ data: { user: myUser }, error: null });
+  })
+  .post(
+    "/users/profile",
+    validator("json", (value, context) => {
+      const parsed = profileSchema.safeParse(value);
+      if (!parsed.success) {
+        log(`Validation failed`);
+        log(`Errors: ${JSON.stringify({ ...parsed.error.issues })}`);
+        return context.json({ message: "UpdateProfile failure.. " });
+      }
+      return parsed.data;
+    }),
+    async (c) => {
+      const userInput = c.req.valid("json");
+      const userProfile: SelectProfile = {
+        ...userInput,
+        createdAt: new Date(userInput.createdAt),
+        updatedAt: new Date(Date.now()),
+      };
+      const authUser = c.get("user");
+      let authResponse: UserResponse | null = null;
 
-    const authResponse = await UserService.logoutUser({ email });
-    if (authResponse.error) {
-      log(`Login Error: ${authResponse.error}`);
-      return c.json({ error: authResponse.error }, 400);
-    }
+      if (authUser.email !== userProfile.email) {
+        authResponse = { ...(await UserService.updateUser(c, userProfile)) };
+      }
 
-    return c.json(authResponse.data);
-  },
-);
+      if (authResponse && authResponse?.error) {
+        const authErrorMessage = `Error updating auth user. User: ${userInput.id}, Error: ${authResponse.error.message}`;
+        log(authErrorMessage);
+        return c.json({ data: null, error: authErrorMessage });
+      }
+
+      const profileResponse = await UserService.updateProfile(userProfile);
+
+      return c.json({ data: profileResponse, error: null });
+    },
+  );
 
 export default userRoute;

@@ -1,9 +1,15 @@
+import {
+  AuthError,
+  AuthResponse,
+  AuthTokenResponsePassword,
+  UserResponse,
+} from "@supabase/supabase-js";
 import { eq } from "drizzle-orm";
-import { db } from "..";
-import { InsertProfile, profilesTable, SelectProfile } from "../users";
-import { authClient } from "../auth";
+import { Context } from "hono";
 import z from "zod";
-import { AuthError } from "@supabase/supabase-js";
+import { db } from "..";
+import { authClient } from "../auth";
+import { InsertProfile, profilesTable, SelectProfile } from "../users";
 import { log } from "@repo/logger";
 
 export const loginFormSchema = z.object({
@@ -16,12 +22,37 @@ export type LoginFormSchema = z.infer<typeof loginFormSchema>;
 /**
  * AUTH
  */
-async function createUser(data: LoginFormSchema) {
-  return await authClient.auth.signUp(data);
+async function createUser(
+  context: Context,
+  data: LoginFormSchema,
+): Promise<AuthResponse> {
+  const auth = authClient(context);
+  return await auth.auth.signUp(data);
 }
 
-async function loginUser(data: LoginFormSchema) {
-  return await authClient.auth.signInWithPassword(data);
+/**
+ * I believe this is only needed if the user is updating specific values:
+ * email
+ * phone
+ * password
+ * auth-provider <- NOT AN OPTION
+ */
+async function updateUser(
+  context: Context,
+  data: SelectProfile,
+): Promise<UserResponse> {
+  const auth = authClient(context);
+  return auth.auth.admin.updateUserById(data.id, {
+    email: data.email,
+  });
+}
+
+async function loginUser(
+  context: Context,
+  data: LoginFormSchema,
+): Promise<AuthTokenResponsePassword> {
+  const auth = authClient(context);
+  return await auth.auth.signInWithPassword(data);
 }
 
 export const emailSchema = z.object({
@@ -30,15 +61,26 @@ export const emailSchema = z.object({
 const myEmail = z.string().email();
 type MyEmail = z.infer<typeof emailSchema>;
 
-async function logoutUser({ email }: MyEmail) {
-  const user = await getUserByEmail(email);
-  if (!user) {
-    // handle no user
-    log(`No user found for email: ${email}. Unable to logoutUser`);
-    return { data: null, error: `No user found for email: ${email}` };
-  }
-  return await authClient.auth.admin.signOut(user.id);
-}
+// async function logoutUser(
+//   context: Context,
+//   { email }: MyEmail,
+// ): Promise<
+//   { data: null; error: AuthError | null } | { data: null; error: string }
+// > {
+//   const auth = authClient(context);
+//   const user = await getUserByEmail(email);
+//   if (!user) {
+//     // handle no user
+//     log(`No user found for email: ${email}. Unable to logoutUser`);
+//     return { data: null, error: `No user found for email: ${email}` };
+//   }
+//   log(`log out user=${JSON.stringify(user)}`);
+//
+//   const { data, error } = auth.auth.getSession();
+//   log(`session data?? - ${JSON.stringify(data)}`);
+//   log(`session error?? - ${JSON.stringify(error)}`);
+//   return await auth.auth.admin.signOut(user.id);
+// }
 
 const MyEmailOtp = [
   "email",
@@ -58,7 +100,7 @@ const verifyEmailSchema = z.object({
 
 export type VerifyEmailSchema = z.infer<typeof verifyEmailSchema>;
 
-export type VerifyResponse =
+export type _VerifyResponse =
   | {
       error: AuthError;
       success: null;
@@ -68,28 +110,46 @@ export type VerifyResponse =
       success: boolean;
     };
 
-async function verifyEmail(data: VerifyEmailSchema): Promise<VerifyResponse> {
+async function verifyEmail(
+  context: Context,
+  data: VerifyEmailSchema,
+): Promise<AuthResponse> {
   const { token_hash, type } = data;
 
-  const { error } = await authClient.auth.verifyOtp({
+  return await authClient(context).auth.verifyOtp({
     type,
     token_hash,
   });
-  if (error) return { error, success: null };
-  return { error: null, success: true };
 }
 /**
  * END AUTH
  */
 
-async function createProfile(data: InsertProfile) {
+async function createProfile(
+  data: InsertProfile,
+): Promise<{ userId: string }[]> {
   return await db
     .insert(profilesTable)
     .values(data)
     .returning({ userId: profilesTable.id });
 }
 
-export async function getUserByEmail(email: SelectProfile["email"]) {
+async function updateProfile(
+  data: SelectProfile,
+): Promise<SelectProfile | null> {
+  log(`query-level-profile=${JSON.stringify(data)}`);
+  const profiles = await db
+    .update(profilesTable)
+    .set({ ...data, updatedAt: new Date(Date.now()) })
+    .where(eq(profilesTable.id, data.id))
+    .returning();
+
+  return profiles.length ? profiles[0] : null;
+}
+
+export async function getUserByEmail(
+  email: SelectProfile["email"],
+): Promise<SelectProfile | null> {
   const result = await db
     .select()
     .from(profilesTable)
@@ -102,30 +162,21 @@ export async function getUserByEmail(email: SelectProfile["email"]) {
   return result?.[0] ?? null;
 }
 
-export async function getUserById(id: SelectProfile["id"]): Promise<
-  {
-    id: string;
-    name: string | null;
-    email: string;
-    address: string | null;
-    role: string;
-    phoneNumber: string | null;
-    profilePictureUrl: string | null;
-    bio: string | null;
-    createdAt: Date | null;
-    updatedAt: Date | null;
-  }[]
-> {
+export async function getUserById(
+  id: SelectProfile["id"],
+): Promise<SelectProfile[]> {
   return await db.select().from(profilesTable).where(eq(profilesTable.id, id));
 }
 
 const UserService = {
   createUser,
   createProfile,
+  updateProfile,
   getUserById,
   getUserByEmail,
   loginUser,
-  logoutUser,
+  // logoutUser,
+  updateUser,
   verifyEmail,
 };
 

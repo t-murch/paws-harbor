@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Login } from "@/components/ux/Login";
 import { Signup } from "@/components/ux/Signup";
-import { loginAction, signupAction } from "./actions";
+import { loginActionOld, signupAction } from "./actions";
 
 export default async function LoginPage() {
   return (
@@ -12,7 +12,7 @@ export default async function LoginPage() {
           <TabsTrigger value="signup">Sign Up</TabsTrigger>
         </TabsList>
         <TabsContent value="login">
-          <Login loginAction={loginAction} />
+          <Login loginAction={loginActionOld} />
         </TabsContent>
         <TabsContent value="signup">
           <Signup signupAction={signupAction} />
