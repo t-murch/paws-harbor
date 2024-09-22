@@ -2,12 +2,13 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { AvatarIcon } from "@radix-ui/react-icons";
+import { useAtom } from "jotai";
 import { Dog } from "lucide-react";
-import React from "react";
-import PetList from "./Petlist";
+import React, { useEffect } from "react";
+import { userAtom, UserProfile } from "../atoms";
 import { testPet } from "../providers/store";
 import Bio from "./Bio";
-import { UserProfile } from "../atoms";
+import PetList from "./Petlist";
 
 export const testUser: UserProfile = {
   id: "123",
@@ -39,41 +40,16 @@ export type SectionEditMode = {
 };
 
 type ProfileFormProps = {
-  profile: UserProfile;
+  profile?: UserProfile;
 };
 const ProfileForm: React.FC<ProfileFormProps> = ({
   profile,
 }: ProfileFormProps) => {
-  // const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const { name, value } = e.target;
-  //   setProfile((prevProfile) =>
-  //     prevProfile ? { ...prevProfile, [name]: value } : null,
-  //   );
-  // };
-  //
-  // const toggleEditMode = (section: keyof SectionEditMode) => {
-  //   setEditMode((prevState) => ({
-  //     ...prevState,
-  //     [section]: !prevState[section],
-  //   }));
-  // };
+  const [globalUser, setGlobalUser] = useAtom(userAtom);
 
-  // const handleSave = async () => {
-  //   if (profile) {
-  //     const { data, error } = await supabaseClient
-  //       .from("profiles")
-  //       .update(profile)
-  //       .eq("id", profile.id);
-  //
-  //     if (error) {
-  //       console.error("Error updating profile:", error);
-  //     } else {
-  //       alert("Profile updated successfully");
-  //     }
-  //   }
-  // };
-
-  // if (!profile) return <div>Loading...</div>;
+  useEffect(() => {
+    if (profile && profile) setGlobalUser(profile);
+  }, [profile, setGlobalUser]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -81,7 +57,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
         <Dog className="w-16 h-16" />
         <MyAvatar />
       </div>
-      <Bio userProfile={profile} />
+      {globalUser && <Bio userProfile={globalUser} />}
 
       <Card>
         <CardHeader className="items-end font-bold">Pets</CardHeader>

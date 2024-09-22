@@ -4,6 +4,7 @@ import { getUserProfile } from "./actions";
 
 export default async function AccountPage() {
   let profile = await getUserProfile();
+
   return (
     <div className="flex-1">
       {/* <h1>User Profile</h1> */}
