@@ -27,12 +27,12 @@ export type SelectProfile = typeof profilesTable.$inferSelect;
 export const profileSchema = z.object({
   id: z.string(),
   email: z.string().email(),
-  address: z.union([z.string(), z.null()]),
-  name: z.union([z.string(), z.null()]),
-  phoneNumber: z.union([z.string(), z.null()]),
+  address: z.string().nullable(),
+  name: z.string().nullable(),
+  phoneNumber: z.string().nullable(),
   role: z.enum(["walker", "owner"]),
-  profilePictureUrl: z.union([z.string(), z.null()]),
-  bio: z.union([z.string(), z.null()]),
+  profilePictureUrl: z.string().nullable(),
+  bio: z.string().nullable(),
   createdAt: z.string().datetime(),
   updatedAt: z.string().datetime(),
 });

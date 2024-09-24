@@ -6,9 +6,10 @@ import { useAtom } from "jotai";
 import { Dog } from "lucide-react";
 import React, { useEffect } from "react";
 import { userAtom, UserProfile } from "../atoms";
-import { testPet } from "../providers/store";
+import { petsAtom, testPet } from "../providers/store";
 import Bio from "./Bio";
 import PetList from "./Petlist";
+import { Pet } from "@/lib/types";
 
 export const testUser: UserProfile = {
   id: "123",
@@ -40,16 +41,23 @@ export type SectionEditMode = {
 };
 
 type ProfileFormProps = {
-  profile?: UserProfile;
+  profile: UserProfile;
+  pets: Pet[];
 };
 const ProfileForm: React.FC<ProfileFormProps> = ({
   profile,
+  pets,
 }: ProfileFormProps) => {
   const [globalUser, setGlobalUser] = useAtom(userAtom);
+  const [allPets, setAllPets] = useAtom(petsAtom);
 
   useEffect(() => {
-    if (profile && profile) setGlobalUser(profile);
+    if (profile) setGlobalUser(profile);
   }, [profile, setGlobalUser]);
+
+  useEffect(() => {
+    if (pets.length) setAllPets(pets);
+  });
 
   return (
     <div className="flex flex-col gap-4">
@@ -61,9 +69,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
       <Card>
         <CardHeader className="items-end font-bold">Pets</CardHeader>
-        <CardContent>
-          <PetList pets={[testPet]} />
-        </CardContent>
+        <CardContent>{allPets && <PetList pets={allPets} />}</CardContent>
       </Card>
       {/* <ServiceList services={profile.services} /> */}
     </div>

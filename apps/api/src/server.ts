@@ -7,6 +7,7 @@ import { authMiddleware } from "./middleware/authMiddleware";
 import { User } from "@supabase/supabase-js";
 import { showRoutes } from "hono/dev";
 import { prettyJSON } from "hono/pretty-json";
+import petsRoute from "./routes/pets";
 
 type Variables = {
   user: User;
@@ -27,9 +28,11 @@ app
     }),
   )
   .use("/users/*", authMiddleware)
+  .use("/pets/user", authMiddleware)
   .use(prettyJSON());
 
 app.route("/", userRoute);
+app.route("/", petsRoute);
 
 app.get("/message/:name", (c) => {
   return c.json({ message: `hello ${c.req.param("name")}` });

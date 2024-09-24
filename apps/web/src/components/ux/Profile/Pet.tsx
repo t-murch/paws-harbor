@@ -53,7 +53,7 @@ const PetBio: React.FC<PetProps> = ({ pet }) => {
               id="petAge"
               name="petAge"
               value={thisPet.age || ""}
-              onChange={() => handleEdit("age", pet.age)}
+              onChange={() => handleEdit("age", thisPet.age)}
               className="mb-2"
             />
 
@@ -62,22 +62,24 @@ const PetBio: React.FC<PetProps> = ({ pet }) => {
               id="petSize"
               name="petSize"
               value={thisPet.size || ""}
-              onChange={() => handleEdit("size", pet.size)}
+              onChange={() => handleEdit("size", thisPet.size)}
               className="mb-2"
             />
           </>
         ) : (
           <div>
             <p className="grid grid-cols-2 grid-rows-3">
-              <strong> Name:</strong> {thisPet?.name}
-              <strong> Age:</strong> {thisPet?.age}
-              <strong> Breed:</strong> {thisPet?.breed}
-              <strong> Gender:</strong> {thisPet?.gender}
-              <strong> Size:</strong> {thisPet?.size}
+              <strong> Name:</strong> {thisPet.name}
+              <strong> Age:</strong> {thisPet.age}
+              <strong> Breed:</strong> {thisPet.breed}
+              <strong> Gender:</strong> {thisPet.gender}
+              <strong> Size:</strong> {thisPet.size}
             </p>
           </div>
         )}
-        <Button onClick={toggleEditMode}>{editMode ? "Save" : "Edit"}</Button>
+        <div className="flex justify-end">
+          <Button onClick={toggleEditMode}>{editMode ? "Save" : "Edit"}</Button>
+        </div>
       </div>
     )
   );

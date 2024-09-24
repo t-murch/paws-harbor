@@ -2,6 +2,7 @@ import { decimal, integer, pgTable, text, uuid } from "drizzle-orm/pg-core";
 import { profilesTable } from "./users";
 import { pgEnum } from "drizzle-orm/pg-core";
 import { PetSpeciesEnum } from "@/types";
+import z from "zod";
 
 export const pgSpecies = pgEnum("species", PetSpeciesEnum.options);
 
@@ -20,3 +21,24 @@ export const petsTable = pgTable("pets", {
 
 export type InsertPet = typeof petsTable.$inferInsert;
 export type SelectPet = typeof petsTable.$inferSelect;
+
+export const newPetSchema = z.object({
+  species: z.union([z.literal("dog"), z.literal("cat")]),
+  id: z.string().optional(),
+  name: z.string(),
+  userId: z.string().nullable(),
+  breed: z.string().nullable(),
+  age: z.number().nullable(),
+  weight: z.string().nullable(),
+  specialNeeds: z.string().nullable(),
+});
+export const existingPetSchema = z.object({
+  species: z.union([z.literal("dog"), z.literal("cat")]),
+  id: z.string(),
+  name: z.string(),
+  userId: z.string().nullable(),
+  breed: z.string().nullable(),
+  age: z.number().nullable(),
+  weight: z.string().nullable(),
+  specialNeeds: z.string().nullable(),
+});

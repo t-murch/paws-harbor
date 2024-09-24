@@ -91,15 +91,15 @@ const Bio: React.FC<BioProps> = ({ userProfile }: BioProps) => {
               </>
             ) : (
               <div>
-                <p className="flex flex-col h-14">
+                <p className="flex flex-col">
                   <span className="text-sm font-bold">Email:</span>
                   <span className="pl-1">{profile.email}</span>
                 </p>
-                <p className="flex flex-col h-14">
+                <p className="flex flex-col">
                   <span className="text-sm font-bold">Address:</span>
                   <span className="pl-1">{profile?.address}</span>
                 </p>
-                <p className="flex flex-col h-14">
+                <p className="flex flex-col">
                   <span className="text-sm font-bold">Phone:</span>
                   <span className="pl-1">{profile?.phoneNumber}</span>
                 </p>

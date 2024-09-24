@@ -32,7 +32,7 @@ export const testPet: Pet = {
 export const petsAtom = atom<Pet[]>([testPet]);
 
 // A helper function to create dynamic atoms for individual pet edits
-export const petEditAtom = (petId: string) =>
+const petEditAtom = (petId: string) =>
   atom(
     (get) => get(petsAtom).find((pet) => pet.id === petId),
     (_get, set, updatedPet: Pet) => set(petsAtom, [updatedPet]),
