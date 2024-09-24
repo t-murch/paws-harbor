@@ -26,11 +26,10 @@ export const newPetSchema = z.object({
   species: z.union([z.literal("dog"), z.literal("cat")]),
   id: z.string().optional(),
   name: z.string(),
-  userId: z.string().nullable(),
+  userId: z.string().optional(),
   breed: z.string().nullable(),
   age: z.number().nullable(),
-  weight: z.string().nullable(),
-  specialNeeds: z.string().nullable(),
+  specialNeeds: z.string().optional(),
 });
 export const existingPetSchema = z.object({
   species: z.union([z.literal("dog"), z.literal("cat")]),

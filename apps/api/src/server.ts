@@ -28,7 +28,7 @@ app
     }),
   )
   .use("/users/*", authMiddleware)
-  .use("/pets/user", authMiddleware)
+  .use("/pets/*", authMiddleware)
   .use(prettyJSON());
 
 app.route("/", userRoute);
