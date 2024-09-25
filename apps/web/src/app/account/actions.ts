@@ -2,7 +2,12 @@
 
 import { UserProfile } from "@/components/ux/atoms";
 import { UserJSONResponse } from "@/components/ux/Profile/ProfileForm";
-import { CreateReadyPet, newPetSchema, Pet } from "@/lib/types";
+import {
+  CreateReadyPet,
+  existingPetSchema,
+  newPetSchema,
+  Pet,
+} from "@/lib/types";
 import { API_HOST } from "@/lib/utils";
 import { log } from "@repo/logger";
 import { revalidatePath } from "next/cache";
@@ -87,6 +92,7 @@ type CreatePetResponse =
       data: null;
       error: string;
     };
+
 export const createPet = async (
   newPet: CreateReadyPet,
 ): Promise<CreatePetResponse> => {
@@ -141,7 +147,7 @@ export const createPetFormAction = async (
     species: parsedPet.data.species,
     breed: parsedPet.data.breed,
     age: parsedPet.data.age,
-    gender: parsedPet.data.sex,
+    sex: parsedPet.data.sex,
   };
 
   log(`newPet Create Pet=${JSON.stringify(newPet)}`);
@@ -169,4 +175,86 @@ export const createPetFormAction = async (
     message: "success",
     fields: { id: res.data?.insertId },
   };
+};
+
+export const updatePetInfoAction = async (
+  _prevState: FormStateUno,
+  formData: FormData,
+) => {
+  const dirtyData = Object.fromEntries(formData);
+  const parsedPet = existingPetSchema.safeParse(dirtyData);
+  let pet: Pet;
+
+  log("**NEW** petEdit invoked.");
+  log(`input pet=${JSON.stringify(dirtyData, null, 2)}`);
+
+  if (!parsedPet.success) {
+    // log(`parsed error=${JSON.stringify(parsedPet.error, null, 2)}`);
+    const fields: Record<string, string> = {};
+    for (const key of Object.keys(dirtyData)) {
+      fields[key] = dirtyData[key].toString();
+    }
+
+    return {
+      message: "Invalid form data",
+      fields,
+    };
+  }
+
+  pet = parsedPet.data;
+
+  const res = await updatePet(pet);
+  if (!res.data) {
+    log(`Update Pet failure. Error=${res.error}`);
+    const fields: Record<string, string> = {};
+    for (const key of Object.keys(dirtyData)) {
+      fields[key] = dirtyData[key].toString();
+    }
+
+    return {
+      message: res.error,
+      fields,
+    };
+  }
+
+  revalidatePath("/", "layout");
+  // redirect("/");
+
+  return {
+    message: "success",
+    fields: { id: res.data?.updateId },
+  };
+};
+
+type UpdatePetResponse =
+  | {
+      data: { updateId: string };
+      error: null;
+    }
+  | {
+      data: null;
+      error: string;
+    };
+
+const updatePet = async (pet: Pet): Promise<UpdatePetResponse> => {
+  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  const res = await fetch(`${API_HOST}/pets/new`, {
+    method: "POST",
+    headers: myHeaders,
+    body: JSON.stringify(pet),
+  });
+
+  if (!res.ok) {
+    log(`Failed to create Pet.name=${pet.name}. Status=${res.statusText}`);
+  }
+
+  const respnseJSON: UpdatePetResponse = await res.json();
+  // if (respnseJSON.error) {
+  //   log(`Create Pet failure. Error=${respnseJSON.error}`);
+  // }
+  return respnseJSON;
 };

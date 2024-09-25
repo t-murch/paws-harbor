@@ -63,7 +63,7 @@ const NewPetBio: React.FC<NewPetProps> = () => {
   const form = useForm<z.infer<typeof newPetSchema>>({
     resolver: zodResolver(newPetSchema),
     defaultValues: {
-      age: `${1}`,
+      age: 1,
       name: "",
       breed: "",
       species: "dog",
@@ -79,13 +79,6 @@ const NewPetBio: React.FC<NewPetProps> = () => {
     setEditMode((state) => !state);
   };
 
-  log(`form errors=${JSON.stringify(form.formState.errors, null, 2)}`);
-  if (formRef.current) {
-    log(
-      `formRef on submit=${JSON.stringify(new FormData(formRef.current), null, 2)}`,
-    );
-  }
-  log(`message prop=${JSON.stringify(formState, null, 2)}`);
   return editMode ? (
     <div className="mb-4">
       <h3 className="text-lg font-bold">Pet Info</h3>

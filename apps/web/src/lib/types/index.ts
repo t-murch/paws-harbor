@@ -8,7 +8,7 @@ export type Pet = {
   age: number;
   weight?: number;
   specialNeeds?: string;
-  gender: "male" | "female";
+  sex: "male" | "female";
   size: PetSizeNames;
 };
 
@@ -28,8 +28,8 @@ export const isValidNewPet = (newPet: NewPet): newPet is CreateReadyPet => {
     typeof newPet.species === "string" &&
     (newPet.species === "dog" || newPet.species === "cat") &&
     typeof newPet.breed === "string" &&
-    typeof newPet.gender === "string" &&
-    (newPet.gender === "male" || newPet.gender === "female") &&
+    typeof newPet.sex === "string" &&
+    (newPet.sex === "male" || newPet.sex === "female") &&
     typeof newPet.size === "string" &&
     newPet.size in PetSizes
   );
@@ -46,30 +46,32 @@ export const getEmptyPet = (species: Pet["species"]): CreateReadyPet => ({
   breed: "",
   age: 1,
   specialNeeds: "",
-  gender: "female",
+  sex: "female",
   size: "medium",
 });
 
 export const newPetSchema = z.object({
-  id: z.string().optional(),
   age: z.coerce.number(),
   breed: z.string().min(4),
+  id: z.string().optional(),
   name: z.string().min(2),
   sex: z.union([z.literal("male"), z.literal("female")]),
-  species: z.union([z.literal("dog"), z.literal("cat")]),
-  specialNeeds: z.string(),
   size: z.enum(zodPetSizeKeys),
+  specialNeeds: z.string(),
+  species: z.union([z.literal("dog"), z.literal("cat")]),
 });
-// export const existingPetSchema = z.object({
-//   species: z.union([z.literal("dog"), z.literal("cat")]),
-//   id: z.string(),
-//   name: z.string(),
-//   userId: z.string().nullable(),
-//   breed: z.string().nullable(),
-//   age: z.number().nullable(),
-//   weight: z.string().nullable(),
-//   specialNeeds: z.string().nullable(),
-// });
+export const existingPetSchema = z.object({
+  age: z.coerce.number(),
+  breed: z.string().min(4),
+  id: z.string(),
+  name: z.string().min(2),
+  sex: z.union([z.literal("male"), z.literal("female")]),
+  size: z.enum(zodPetSizeKeys),
+  specialNeeds: z.string().optional(),
+  species: z.union([z.literal("dog"), z.literal("cat")]),
+  // userId: z.string().nullable(),
+  // weight: z.string().nullable(),
+});
 
 export type Service = {
   id: string;
