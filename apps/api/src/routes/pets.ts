@@ -1,5 +1,5 @@
 import { existingPetSchema, newPetSchema } from "@/db/pets";
-import PetService, { updatePet } from "@/db/queries/pets";
+import PetService from "@/db/queries/pets";
 import { log } from "@repo/logger";
 import { User } from "@supabase/supabase-js";
 import { Hono } from "hono";

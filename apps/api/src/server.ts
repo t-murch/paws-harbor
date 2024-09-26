@@ -21,10 +21,10 @@ app
   .use(
     "*",
     cors({
-      origin: "https://localhost:3000", // Replace with your client origin
-      allowMethods: ["GET", "POST", "PUT", "DELETE"],
       allowHeaders: ["Content-Type", "Authorization", "Set-Cookie"],
+      allowMethods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true, // Allow cookies and credentials
+      origin: "https://localhost:3000", // Replace with your client origin
     }),
   )
   .use("/users/*", authMiddleware)

@@ -16,5 +16,11 @@ module.exports = {
         jest: true,
       },
     },
+    {
+      files: ["*.ts"],
+      rules: {
+        "sort-keys": "error",
+      },
+    },
   ],
 };

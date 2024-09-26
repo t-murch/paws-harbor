@@ -1,3 +1,4 @@
+import { log } from "@repo/logger";
 import {
   AuthError,
   AuthResponse,
@@ -10,7 +11,6 @@ import z from "zod";
 import { db } from "..";
 import { authClient } from "../auth";
 import { InsertProfile, profilesTable, SelectProfile } from "../users";
-import { log } from "@repo/logger";
 
 export const loginFormSchema = z.object({
   email: z.string().trim().email(),
@@ -58,29 +58,6 @@ async function loginUser(
 export const emailSchema = z.object({
   email: z.string().trim().email().min(1, "email is required"),
 });
-const myEmail = z.string().email();
-type MyEmail = z.infer<typeof emailSchema>;
-
-// async function logoutUser(
-//   context: Context,
-//   { email }: MyEmail,
-// ): Promise<
-//   { data: null; error: AuthError | null } | { data: null; error: string }
-// > {
-//   const auth = authClient(context);
-//   const user = await getUserByEmail(email);
-//   if (!user) {
-//     // handle no user
-//     log(`No user found for email: ${email}. Unable to logoutUser`);
-//     return { data: null, error: `No user found for email: ${email}` };
-//   }
-//   log(`log out user=${JSON.stringify(user)}`);
-//
-//   const { data, error } = auth.auth.getSession();
-//   log(`session data?? - ${JSON.stringify(data)}`);
-//   log(`session error?? - ${JSON.stringify(error)}`);
-//   return await auth.auth.admin.signOut(user.id);
-// }
 
 const MyEmailOtp = [
   "email",
@@ -91,8 +68,6 @@ const MyEmailOtp = [
   "email_change",
 ] as const;
 const MyEmailOtpTypeEnum = z.enum([...MyEmailOtp]);
-type MyEmailOtpType = (typeof MyEmailOtp)[number];
-type MyEmailOtpTypeZod = z.infer<typeof MyEmailOtpTypeEnum>;
 const verifyEmailSchema = z.object({
   token_hash: z.string().trim(),
   type: MyEmailOtpTypeEnum,
@@ -117,8 +92,8 @@ async function verifyEmail(
   const { token_hash, type } = data;
 
   return await authClient(context).auth.verifyOtp({
-    type,
     token_hash,
+    type,
   });
 }
 /**
@@ -169,13 +144,12 @@ export async function getUserById(
 }
 
 const UserService = {
-  createUser,
   createProfile,
-  updateProfile,
-  getUserById,
+  createUser,
   getUserByEmail,
+  getUserById,
   loginUser,
-  // logoutUser,
+  updateProfile,
   updateUser,
   verifyEmail,
 };

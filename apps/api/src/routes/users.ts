@@ -1,6 +1,5 @@
-import UserService, { emailSchema, loginFormSchema } from "@/db/queries/users";
-import { profileSchema, SelectProfile, selectProfileSchema } from "@/db/users";
-import { zValidator } from "@hono/zod-validator";
+import UserService, { loginFormSchema } from "@/db/queries/users";
+import { profileSchema, SelectProfile } from "@/db/users";
 import { log } from "@repo/logger";
 import {
   AuthResponse,
@@ -19,10 +18,16 @@ type Variables = {
 const userRoute = new Hono<{ Variables: Variables }>()
   .post(
     "/users/signup",
-    zValidator("json", loginFormSchema, (result, context) => {
-      if (!result.success) {
-        return context.json({ message: "Invalid credentials" }, 400);
+    validator("json", (value, context) => {
+      const parsed = loginFormSchema.safeParse(value);
+      if (!parsed.success) {
+        log(
+          `Validation failed. Errors: ${JSON.stringify({ ...parsed.error.issues })}`,
+        );
+        return context.json({ message: "Signup validation failure.. " });
       }
+
+      return parsed.data;
     }),
     async (c) => {
       const user = c.req.valid("json");
@@ -62,10 +67,16 @@ const userRoute = new Hono<{ Variables: Variables }>()
   })
   .post(
     "/users/login",
-    zValidator("json", loginFormSchema, (result, context) => {
-      if (!result.success) {
-        return context.json({ error: "Invalid credentials" }, 400);
+    validator("json", (value, context) => {
+      const parsed = loginFormSchema.safeParse(value);
+      if (!parsed.success) {
+        log(
+          `Validation failed. Errors: ${JSON.stringify({ ...parsed.error.issues })}`,
+        );
+        return context.json({ message: "Login validation failure.. " });
       }
+
+      return parsed.data;
     }),
     async (c) => {
       const user = c.req.valid("json");
@@ -84,8 +95,8 @@ const userRoute = new Hono<{ Variables: Variables }>()
 
       // If successful, set the HTTP-only cookie with the access token
       return c.json({
-        user: authResponse.data.user,
         session: authResponse.data.session,
+        user: authResponse.data.user,
       });
     },
   )
