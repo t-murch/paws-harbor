@@ -1,6 +1,6 @@
-import { db } from "..";
-import { eq } from "drizzle-orm";
-import { InsertPet, petsTable, SelectPet } from "../pets";
+import { db } from '..';
+import { eq } from 'drizzle-orm';
+import { InsertPet, petsTable, SelectPet } from '../pets';
 
 export async function createPet(pet: InsertPet) {
   const newRows = await db
@@ -12,7 +12,7 @@ export async function createPet(pet: InsertPet) {
 }
 
 export async function getUserPets(
-  id: SelectPet["userId"],
+  id: SelectPet['userId']
 ): Promise<SelectPet[]> {
   if (!id) return [];
   return await db.select().from(petsTable).where(eq(petsTable.userId, id));

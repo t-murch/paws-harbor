@@ -1,11 +1,11 @@
-import z from "zod";
+import z from 'zod';
 
 export type User = {
   id: string; // Unique identifier
   name: string;
   email: string;
   passwordHash: string; // For security, store password hash instead of plain text
-  role: "owner" | "walker"; // User can be a dog owner or walker
+  role: 'owner' | 'walker'; // User can be a dog owner or walker
   profilePictureUrl?: string; // Optional profile picture
   phoneNumber?: string; // Optional phone number
   address?: string; // Optional address
@@ -14,7 +14,7 @@ export type User = {
   updatedAt: Date;
 };
 
-const petSpecies = ["dog", "cat"] as const;
+const petSpecies = ['dog', 'cat'] as const;
 export type PetSpecies = (typeof petSpecies)[number];
 export const PetSpeciesEnum = z.enum(petSpecies);
 
@@ -30,11 +30,11 @@ export const PetSpeciesEnum = z.enum(petSpecies);
 //   createdAt: Date;
 //   updatedAt: Date;
 // };
-const serviceTypes = ["pet-walking", "pet-sitting", "pet-bathing"] as const;
+const serviceTypes = ['pet-walking', 'pet-sitting', 'pet-bathing'] as const;
 export type ServiceType = (typeof serviceTypes)[number];
 export const ServiceTypesEnum = z.enum(serviceTypes);
 
-const serviceFrequencies = ["a-la-carte", "recurring-monthly"] as const;
+const serviceFrequencies = ['a-la-carte', 'recurring-monthly'] as const;
 export type ServiceFrequency = (typeof serviceFrequencies)[number];
 export const ServiceFrequencyEnum = z.enum(serviceFrequencies);
 
@@ -51,10 +51,10 @@ export type Service = {
 };
 
 const bookingStatus = [
-  "pending",
-  "confirmed",
-  "completed",
-  "cancelled",
+  'pending',
+  'confirmed',
+  'completed',
+  'cancelled',
 ] as const;
 export type BookingStatus = (typeof bookingStatus)[number];
 export const BookingStatusEnum = z.enum(bookingStatus);
@@ -91,7 +91,7 @@ export type Message = {
   readAt?: Date; // Optional timestamp of when the message was read
 };
 
-const notificationType = ["booking", "review", "general"] as const;
+const notificationType = ['booking', 'review', 'general'] as const;
 export type NotificationType = (typeof notificationType)[number];
 export const NotificationTypeEnum = z.enum(notificationType);
 

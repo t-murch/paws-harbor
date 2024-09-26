@@ -1,6 +1,6 @@
-import { createServerClient, parseCookieHeader } from "@supabase/ssr";
-import { Context } from "hono";
-import { getCookie, setCookie } from "hono/cookie";
+import { createServerClient, parseCookieHeader } from '@supabase/ssr';
+import { Context } from 'hono';
+import { getCookie, setCookie } from 'hono/cookie';
 
 export const authClient = (context: Context) => {
   const DATABASE_URL = process.env.AUTH_URL!;
@@ -8,7 +8,7 @@ export const authClient = (context: Context) => {
     cookies: {
       getAll() {
         const cookieStore = getCookie(context);
-        return parseCookieHeader(JSON.stringify(cookieStore) ?? "");
+        return parseCookieHeader(JSON.stringify(cookieStore) ?? '');
       },
       setAll(cookiesToSet) {
         cookiesToSet.forEach(({ name, value, options }) => {
