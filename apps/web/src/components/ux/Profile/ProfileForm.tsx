@@ -1,16 +1,15 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Pet } from "@/lib/types";
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { useAtom } from "jotai";
 import { Dog } from "lucide-react";
 import React, { useEffect } from "react";
 import { userAtom, UserProfile } from "../atoms";
-import { petsAtom, testPet } from "../providers/store";
+import { petsAtom } from "../providers/store";
 import Bio from "./Bio";
-import { Pet } from "@/lib/types";
-import PetBio from "./Pet";
-import NewPetBio from "./NewPet";
+import PetComponent from "./Pet";
 
 export const testUser: UserProfile = {
   address: "123 BrownTree Trail Leander, TX 78641",
@@ -74,9 +73,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           {allPets &&
             globalUser &&
             allPets.map((pet) => {
-              return <PetBio key={pet.id} pet={pet} userId={globalUser.id} />;
+              return (
+                <PetComponent key={pet.id} pet={pet} userId={globalUser.id} />
+              );
             })}
-          <NewPetBio />
+          {globalUser && <PetComponent userId={globalUser.id} />}
         </CardContent>
       </Card>
       {/* <ServiceList services={profile.services} /> */}
