@@ -16,10 +16,10 @@ export type NewPet = Partial<Pet>;
 export type CreateReadyPet = Omit<Pet, "id">;
 
 export const PetSizes = {
-  small: [0, 15],
-  medium: [16, 40],
-  large: [41, 100],
   giant: [101, Infinity],
+  large: [41, 100],
+  medium: [16, 40],
+  small: [0, 15],
 } as const;
 
 export const isValidNewPet = (newPet: NewPet): newPet is CreateReadyPet => {
@@ -41,13 +41,13 @@ export const PetSizeKeys = [...Object.keys(PetSizes)];
 const zodPetSizeKeys = ["small", "medium", "large", "giant"] as const;
 
 export const getEmptyPet = (species: Pet["species"]): CreateReadyPet => ({
-  name: "",
-  species: species,
-  breed: "",
   age: 1,
-  specialNeeds: "",
+  breed: "",
+  name: "",
   sex: "female",
   size: "medium",
+  specialNeeds: "",
+  species: species,
 });
 
 export const newPetSchema = z.object({
@@ -69,8 +69,7 @@ export const existingPetSchema = z.object({
   size: z.enum(zodPetSizeKeys),
   specialNeeds: z.string().optional(),
   species: z.union([z.literal("dog"), z.literal("cat")]),
-  // userId: z.string().nullable(),
-  // weight: z.string().nullable(),
+  userId: z.string().nullable(),
 });
 
 export type Service = {
