@@ -22,6 +22,27 @@
       "when": 1725991884195,
       "tag": "20240910181124_new_profile_from_auth_signup",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729267032884,
+      "tag": "20241018155712_pets_add_sex_column_with_default",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1729268316451,
+      "tag": "20241018161836_pets_deletecol_weight_addcol_size",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1729268397606,
+      "tag": "20241018161957_pets_dropdefault_size_only_neededformigration",
+      "breakpoints": true
     }
   ]
 }

@@ -18,18 +18,10 @@ const petSpecies = ['dog', 'cat'] as const;
 export type PetSpecies = (typeof petSpecies)[number];
 export const PetSpeciesEnum = z.enum(petSpecies);
 
-// export type Pet = {
-//   id: string; // Unique identifier
-//   ownerId: string; // Reference to the owner's User ID
-//   name: string;
-//   species: PetSpecies; // Assuming service is for dogs and possibly other pets
-//   breed?: string; // Optional breed
-//   age: number;
-//   weight: number; // In kilograms or pounds
-//   specialNeeds?: string; // Any special needs or requirements
-//   createdAt: Date;
-//   updatedAt: Date;
-// };
+export const petSizes = ['giant', 'large', 'medium', 'small'] as const;
+export type PetSizes = (typeof petSizes)[number];
+export const PetSizesEnum = z.enum(petSizes);
+
 const serviceTypes = ['pet-walking', 'pet-sitting', 'pet-bathing'] as const;
 export type ServiceType = (typeof serviceTypes)[number];
 export const ServiceTypesEnum = z.enum(serviceTypes);
