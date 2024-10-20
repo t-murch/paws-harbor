@@ -18,7 +18,7 @@ export function Header() {
   return (
     <header className="header h-24 mb-4 flex flex-row items-center justify-between">
       <div className="title flex flex-row gap-2">
-        <Image alt="paws-logo" src={pawsIcon} />
+        <Image alt="paws-logo" priority src={pawsIcon} />
         <h1 className="flex w-full items-center justify-center text-2xl font-extrabold">
           Paws on the Harbor
         </h1>

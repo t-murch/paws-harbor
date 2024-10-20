@@ -18,6 +18,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import dogs from "@/lib/dogs.json";
+import cats from "@/lib/cats.json";
 import {
   newPetSchema,
   Pet,
@@ -26,19 +29,18 @@ import {
   PetSizeScales,
 } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { log } from "@repo/logger";
-import { useRef, useState } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import data from "@/lib/dogs.json";
-import { Textarea } from "@/components/ui/textarea";
 
 interface NewPetProps {
   pet?: Pet;
 }
 
-const dogBreeds = data.map((val) => val.Breed);
+const dogBreeds = dogs.map((val) => val.Breed);
+const catBreeds = cats.map((val) => val.breed);
 
 const formatPetScale = ([k, val]: [k: PetSizeNames, thing: PetSizeScales]) => {
   if (val[1] === Infinity) return `${k} - ${val[0]}+ lbs.`;
@@ -48,8 +50,8 @@ const formatPetScale = ([k, val]: [k: PetSizeNames, thing: PetSizeScales]) => {
 const petSizeDropDownRecords = Object.entries(PetSizes).map(([k, v]) => {
   const key = k as PetSizeNames;
   return {
-    value: key,
     label: formatPetScale([key, v]),
+    value: key,
   };
 });
 
@@ -57,27 +59,41 @@ const ageRange = new Array(30).fill(null).map((_val, idx) => idx + 1);
 
 const NewPetBio: React.FC<NewPetProps> = () => {
   const [formState, formAction] = useFormState(createPetFormAction, {
-    message: "",
     fields: {},
+    message: "",
   });
   const form = useForm<z.infer<typeof newPetSchema>>({
-    resolver: zodResolver(newPetSchema),
     defaultValues: {
       age: 1,
-      name: "",
       breed: "",
-      species: "dog",
+      name: "",
       specialNeeds: "",
+      species: "dog",
       ...(formState?.fields ?? {}),
     },
+    resolver: zodResolver(newPetSchema),
   });
   const [editMode, setEditMode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  // const [globalPets, setGlobalPets] = useAtom(petsAtom);
+  const [breeds, setBreeds] = useState<string[]>(dogBreeds);
 
-  const toggleEditMode = () => {
+  useEffect(() => {
+    if (formState.message === "success") {
+      form.reset();
+      setEditMode(false);
+    }
+  }, [form, formState]);
+
+  function toggleEditMode() {
     setEditMode((state) => !state);
-  };
+  }
+
+  const handleSubmit = form.handleSubmit(() => {
+    return new Promise<void>((resolve) => {
+      formAction(new FormData(formRef.current!));
+      resolve();
+    });
+  });
 
   return editMode ? (
     <div className="mb-4">
@@ -87,14 +103,7 @@ const NewPetBio: React.FC<NewPetProps> = () => {
           className="grid grid-cols-2 gap-2"
           ref={formRef}
           action={formAction}
-          onSubmit={(evt) => {
-            evt.preventDefault();
-            form.handleSubmit(() => {
-              return new Promise((resolve) => {
-                formAction(new FormData(formRef.current!));
-              });
-            })(evt);
-          }}
+          onSubmit={handleSubmit}
         >
           <FormField
             control={form.control}
@@ -116,7 +125,11 @@ const NewPetBio: React.FC<NewPetProps> = () => {
               <FormItem className="col-span-1">
                 <FormLabel>Species</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    const b = field.value != "dog" ? dogBreeds : catBreeds;
+                    setBreeds(b);
+                  }}
                   defaultValue={field.value}
                   {...field}
                 >
@@ -155,7 +168,7 @@ const NewPetBio: React.FC<NewPetProps> = () => {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {dogBreeds.map((breed, idx) => {
+                    {breeds.map((breed, idx) => {
                       return (
                         <SelectItem key={idx} value={breed}>
                           {breed}
@@ -279,16 +292,20 @@ const NewPetBio: React.FC<NewPetProps> = () => {
             >
               {"Cancel"}
             </Button>
-            <Button type="submit">Save</Button>
+            <Button disabled={form.formState.isSubmitting} type="submit">
+              {form.formState.isSubmitting ? (
+                <ReloadIcon className="animate-spin" />
+              ) : (
+                "Save"
+              )}
+            </Button>
           </div>
         </form>
       </Form>
     </div>
   ) : (
     <div>
-      <Button onClick={() => setEditMode((currentState) => !currentState)}>
-        Add New Pet
-      </Button>
+      <Button onClick={toggleEditMode}>Add New Pet</Button>
     </div>
   );
 };

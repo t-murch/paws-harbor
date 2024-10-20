@@ -43,7 +43,7 @@ const petsRoute = new Hono<{ Variables: Variables }>()
 
     return context.json({ data: userPets, error: null });
   })
-  .post(
+  .put(
     'pets/:id',
     validator('json', (val, context) => {
       const parsed = existingPetSchema.safeParse(val);
@@ -71,6 +71,29 @@ const petsRoute = new Hono<{ Variables: Variables }>()
 
       return context.json({ data: updatedPet, error: null });
     }
-  );
+  )
+  .delete('pets/:id', async (context) => {
+    const authUser = context.get('user');
+    const petId = context.req.param('id');
+
+    const existingPetIdx = (
+      await PetService.getUserPets(authUser.id)
+    ).findIndex((pet) => pet.userId === authUser.id);
+    if (existingPetIdx === -1) {
+      const errorMsg = `User does not own the pet to delete.`;
+      console.error(errorMsg);
+      return context.json({ error: { message: errorMsg }, success: false });
+    }
+
+    const response = await PetService.deletePet(petId);
+    if (!response || response?.length < 1) {
+      const errorMsg = `Failed to delete Pet.`;
+      console.error(errorMsg);
+      return context.json({ error: { message: errorMsg }, success: false });
+    }
+    console.debug(`response = ${JSON.stringify(response)}`);
+
+    return context.json({ data: response.at(0), success: true });
+  });
 
 export default petsRoute;

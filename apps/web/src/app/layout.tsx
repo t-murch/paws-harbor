@@ -9,8 +9,8 @@ import { ContextStore } from "@/components/ux/providers/store";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Paws on the Harbor",
   description: "Dog walking service in Gig Harbor, WA",
+  title: "Paws on the Harbor",
 };
 
 export default function RootLayout({

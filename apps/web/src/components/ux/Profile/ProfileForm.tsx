@@ -8,20 +8,21 @@ import React, { useEffect } from "react";
 import { userAtom, UserProfile } from "../atoms";
 import { petsAtom, testPet } from "../providers/store";
 import Bio from "./Bio";
-import PetList from "./Petlist";
 import { Pet } from "@/lib/types";
+import PetBio from "./Pet";
+import NewPetBio from "./NewPet";
 
 export const testUser: UserProfile = {
-  id: "123",
-  name: "Tobias Ruffin",
   address: "123 BrownTree Trail Leander, TX 78641",
-  email: "toberuffin@domain.com",
-  // pets: [testPet],
-  phoneNumber: "253-111-1234",
-  role: "",
-  profilePictureUrl: null,
   bio: null,
   createdAt: null,
+  email: "toberuffin@domain.com",
+  id: "123",
+  name: "Tobias Ruffin",
+  // pets: [testPet],
+  phoneNumber: "253-111-1234",
+  profilePictureUrl: null,
+  role: "",
   updatedAt: null,
   // services: [],
 };
@@ -69,7 +70,14 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
 
       <Card>
         <CardHeader className="items-end font-bold">Pets</CardHeader>
-        <CardContent>{allPets && <PetList pets={allPets} />}</CardContent>
+        <CardContent>
+          {allPets &&
+            globalUser &&
+            allPets.map((pet) => {
+              return <PetBio key={pet.id} pet={pet} userId={globalUser.id} />;
+            })}
+          <NewPetBio />
+        </CardContent>
       </Card>
       {/* <ServiceList services={profile.services} /> */}
     </div>

@@ -1,20 +1,5 @@
+import { deletePet, updatePetInfoAction } from "@/app/account/actions";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  existingPetSchema,
-  Pet,
-  PetSizeNames,
-  PetSizes,
-  PetSizeScales,
-} from "@/lib/types";
-import { useAtom } from "jotai";
-import { petEditAtomFamily } from "@/components/ux/providers/store";
-import { useRef, useState } from "react";
-import { useFormState } from "react-dom";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { updatePetInfoAction } from "@/app/account/actions";
 import {
   Form,
   FormControl,
@@ -23,6 +8,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -30,12 +16,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import data from "@/lib/dogs.json";
-import { z } from "zod";
 import { Textarea } from "@/components/ui/textarea";
+import { petEditAtomFamily } from "@/components/ux/providers/store";
+import data from "@/lib/dogs.json";
+import {
+  existingPetSchema,
+  Pet,
+  PetSizeNames,
+  PetSizes,
+  PetSizeScales,
+} from "@/lib/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useAtom } from "jotai";
+import { useEffect, useRef, useState } from "react";
+import { useFormState } from "react-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 interface PetProps {
   pet: Pet;
+  userId: string;
 }
 
 const dogBreeds = data.map((val) => val.Breed);
@@ -47,34 +48,65 @@ const ageRange = new Array(30).fill(null).map((_val, idx) => idx + 1);
 const petSizeDropDownRecords = Object.entries(PetSizes).map(([k, v]) => {
   const key = k as PetSizeNames;
   return {
-    value: key,
     label: formatPetScale([key, v]),
+    value: key,
   };
 });
 
-const PetBio: React.FC<PetProps> = ({ pet }) => {
-  const [formState, formAction] = useFormState(updatePetInfoAction, {
-    message: "",
-    fields: {},
-  });
-  const form = useForm<z.infer<typeof existingPetSchema>>({
-    resolver: zodResolver(existingPetSchema),
-    defaultValues: {
-      age: 1,
-      name: "",
-      breed: "",
-      species: "dog",
-      specialNeeds: "",
-      ...(formState?.fields ?? {}),
-    },
-  });
+const PetBio: React.FC<PetProps> = ({ pet, userId }) => {
   const [editMode, setEditMode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
   const [thisPet, setPet] = useAtom(petEditAtomFamily(pet.id)); // Use the dynamic atom for each pet
+  const [state, formAction] = useFormState(updatePetInfoAction, {
+    fields: {},
+    message: "",
+  });
+  const form = useForm<z.infer<typeof existingPetSchema>>({
+    defaultValues: {
+      age: thisPet?.age ?? 1,
+      breed: thisPet?.breed ?? "",
+      id: thisPet?.id,
+      name: thisPet?.name ?? "",
+      sex: thisPet?.sex,
+      size: thisPet?.size,
+      specialNeeds: thisPet?.specialNeeds ?? "",
+      species: thisPet?.species ?? "dog",
+      userId,
+      ...(state?.fields ?? {}),
+    },
+    resolver: zodResolver(existingPetSchema),
+  });
+  const {
+    formState: { errors, isSubmitting },
+  } = form;
+
+  useEffect(() => {
+    if (state.message === "success") {
+      form.reset();
+      setEditMode(false);
+    }
+  }, [form, state]);
 
   const toggleEditMode = () => {
     setEditMode((state) => !state);
   };
+
+  const handleSubmit = form.handleSubmit(() => {
+    //TODO: better error handling. add a location for ui.
+    console.debug(`form errors = ${JSON.stringify(errors)}`);
+    return new Promise<void>((resolve, reject) => {
+      // TS making me sad
+      if (!thisPet || !thisPet.id || !userId) {
+        reject(`missing id or userId for pet update.`);
+      } else {
+        const f = new FormData(formRef.current!);
+        f.append("id", thisPet.id!);
+        f.append("userId", userId);
+        formAction(f);
+        resolve();
+      }
+    });
+  });
 
   return (
     !!thisPet && (
@@ -83,7 +115,7 @@ const PetBio: React.FC<PetProps> = ({ pet }) => {
         {editMode ? (
           <>
             <Form {...form}>
-              <form ref={formRef} action={formAction}>
+              <form ref={formRef} action={formAction} onSubmit={handleSubmit}>
                 <FormField
                   control={form.control}
                   name="name"
@@ -267,7 +299,13 @@ const PetBio: React.FC<PetProps> = ({ pet }) => {
                   >
                     {"Cancel"}
                   </Button>
-                  <Button type="submit">Save</Button>
+                  <Button disabled={isSubmitting} type="submit">
+                    {isSubmitting ? (
+                      <ReloadIcon className="animate-spin" />
+                    ) : (
+                      "Save"
+                    )}
+                  </Button>
                 </div>
               </form>
             </Form>
@@ -299,12 +337,19 @@ const PetBio: React.FC<PetProps> = ({ pet }) => {
             )}
           </section>
         )}
-        <div className="flex justify-end">
+        <div className="flex gap-2 justify-end">
           {!editMode && (
-            <Button onClick={toggleEditMode}>
-              Edit
-              {/* {editMode ? "Save" : "Edit"} */}
-            </Button>
+            <>
+              <Button
+                onClick={async () => {
+                  const response = await deletePet(thisPet.id);
+                  console.debug(`delete response: ${JSON.stringify(response)}`);
+                }}
+              >
+                Delete
+              </Button>
+              <Button onClick={toggleEditMode}>Edit</Button>
+            </>
           )}
         </div>
       </div>

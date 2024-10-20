@@ -28,8 +28,17 @@ export async function updatePet(pet: SelectPet) {
   return updatedPets.length ? updatedPets[0] : null;
 }
 
+export async function deletePet(petId: string) {
+  if (!petId) return null;
+  return await db
+    .delete(petsTable)
+    .where(eq(petsTable.id, petId))
+    .returning({ id: petsTable.id });
+}
+
 const PetService = {
   createPet,
+  deletePet,
   getUserPets,
   updatePet,
 };

@@ -12,8 +12,8 @@ import { API_HOST } from "@/lib/utils";
 import { log } from "@repo/logger";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import { FormStateUno } from "../login/actions";
+import { error } from "console";
 
 const projectUrl = process.env.SB_AUTH_URL!;
 
@@ -24,8 +24,8 @@ export const getUserProfile = async (): Promise<{
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   const res = await fetch(`${API_HOST}/users/profile`, {
-    method: "GET",
     headers: myHeaders,
+    method: "GET",
   });
 
   if (!res.ok) {
@@ -45,9 +45,9 @@ export const updateUserProfile = async (profile: UserProfile) => {
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   myHeaders.append("Content-Type", "application/json");
   const res = await fetch(`${API_HOST}/users/profile`, {
-    method: "POST",
-    headers: myHeaders,
     body: JSON.stringify(profile),
+    headers: myHeaders,
+    method: "POST",
   });
 
   if (!res.ok) {
@@ -69,8 +69,8 @@ export const getUserPets = async () => {
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
 
   const res = await fetch(`${API_HOST}/pets/user`, {
-    method: "GET",
     headers: myHeaders,
+    method: "GET",
   });
 
   if (!res.ok) {
@@ -102,9 +102,9 @@ export const createPet = async (
   myHeaders.append("Content-Type", "application/json");
 
   const res = await fetch(`${API_HOST}/pets/new`, {
-    method: "POST",
-    headers: myHeaders,
     body: JSON.stringify(newPet),
+    headers: myHeaders,
+    method: "POST",
   });
 
   if (!res.ok) {
@@ -136,18 +136,18 @@ export const createPetFormAction = async (
     }
 
     return {
-      message: "Invalid form data",
       fields,
+      message: "Invalid form data",
     };
   }
 
   const newPet: CreateReadyPet = {
-    size: parsedPet.data.size,
-    name: parsedPet.data.name,
-    species: parsedPet.data.species,
-    breed: parsedPet.data.breed,
     age: parsedPet.data.age,
+    breed: parsedPet.data.breed,
+    name: parsedPet.data.name,
     sex: parsedPet.data.sex,
+    size: parsedPet.data.size,
+    species: parsedPet.data.species,
   };
 
   log(`newPet Create Pet=${JSON.stringify(newPet)}`);
@@ -163,8 +163,8 @@ export const createPetFormAction = async (
     }
 
     return {
-      message: res.error,
       fields,
+      message: res.error,
     };
   }
 
@@ -172,8 +172,8 @@ export const createPetFormAction = async (
   // redirect("/");
 
   return {
-    message: "success",
     fields: { id: res.data?.insertId },
+    message: "success",
   };
 };
 
@@ -183,37 +183,47 @@ export const updatePetInfoAction = async (
 ) => {
   const dirtyData = Object.fromEntries(formData);
   const parsedPet = existingPetSchema.safeParse(dirtyData);
+  const fields: Record<string, string> = {};
+  for (const key of Object.keys(dirtyData)) {
+    fields[key] = dirtyData[key].toString();
+  }
   let pet: Pet;
 
   log("**NEW** petEdit invoked.");
-  log(`input pet=${JSON.stringify(dirtyData, null, 2)}`);
+  // log(`input pet=${JSON.stringify(dirtyData, null, 2)}`);
 
   if (!parsedPet.success) {
-    // log(`parsed error=${JSON.stringify(parsedPet.error, null, 2)}`);
-    const fields: Record<string, string> = {};
-    for (const key of Object.keys(dirtyData)) {
-      fields[key] = dirtyData[key].toString();
-    }
+    log(`parsed error=${JSON.stringify(parsedPet.error, null, 2)}`);
 
     return {
-      message: "Invalid form data",
       fields,
+      message: "Invalid form data",
     };
   }
 
   pet = parsedPet.data;
 
-  const res = await updatePet(pet);
-  if (!res.data) {
-    log(`Update Pet failure. Error=${res.error}`);
-    const fields: Record<string, string> = {};
-    for (const key of Object.keys(dirtyData)) {
-      fields[key] = dirtyData[key].toString();
+  const res = await updatePet(pet).catch((e) => {
+    log(`error catch`);
+    let errorMsg = "";
+    if (e instanceof Error) {
+      errorMsg += e.message;
+    } else {
+      errorMsg += JSON.stringify(e);
     }
+    log(errorMsg);
+    throw new Error(errorMsg);
+    // return { fields, message: errorMsg };
+  });
+
+  // log(`res response=${JSON.stringify(res)}`);
+
+  if (!res || !res.data) {
+    log(`Update Pet failure. Error=${res.error}`);
 
     return {
-      message: res.error,
       fields,
+      message: res.error,
     };
   }
 
@@ -221,8 +231,8 @@ export const updatePetInfoAction = async (
   // redirect("/");
 
   return {
-    message: "success",
     fields: { id: res.data?.updateId },
+    message: "success",
   };
 };
 
@@ -242,19 +252,66 @@ const updatePet = async (pet: Pet): Promise<UpdatePetResponse> => {
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   myHeaders.append("Content-Type", "application/json");
 
-  const res = await fetch(`${API_HOST}/pets/new`, {
-    method: "POST",
-    headers: myHeaders,
+  log(`${API_HOST}/pets/${pet.id}`);
+  const res = await fetch(`${API_HOST}/pets/${pet.id}`, {
     body: JSON.stringify(pet),
+    headers: myHeaders,
+    method: "PUT",
   });
 
   if (!res.ok) {
-    log(`Failed to create Pet.name=${pet.name}. Status=${res.statusText}`);
+    log(`Failed to update Pet.name=${pet.name}. Status=${res.statusText}`);
   }
 
-  const respnseJSON: UpdatePetResponse = await res.json();
-  // if (respnseJSON.error) {
-  //   log(`Create Pet failure. Error=${respnseJSON.error}`);
+  const responseJSON: UpdatePetResponse = await res.json().catch((e) => {
+    let errorMsg = "";
+    if (e instanceof Error) {
+      errorMsg += e.message;
+    } else {
+      errorMsg += JSON.stringify(e);
+    }
+    log(`error parsing JSON. errror: ${errorMsg}`);
+    throw new Error(errorMsg);
+  });
+  // if (responseJSON.error) {
+  //   log(`Create Pet failure. Error=${responseJSON.error}`);
   // }
-  return respnseJSON;
+  return responseJSON;
+};
+
+//TODO: migrate these return types
+//to user generics
+type DefaultReturn<T, E> =
+  | { data: T; success: true }
+  | { error: E; success: false };
+type GeneralError = {
+  message: string;
+};
+
+export const deletePet = async (
+  petId: string,
+): Promise<DefaultReturn<{ deletedId: string }, GeneralError>> => {
+  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const myHeaders = new Headers();
+  myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
+  myHeaders.append("Content-Type", "application/json");
+
+  const res = await fetch(`${API_HOST}/pets/${petId}`, {
+    headers: myHeaders,
+    method: "DELETE",
+  });
+
+  if (!res.ok) {
+    const data = await res.json();
+    let errorMsg = `Failed to delete Pet.id=${petId}.`;
+    if (data?.error) {
+      errorMsg = errorMsg.concat(`error= ${data.error}`);
+    }
+    console.error(errorMsg);
+  }
+
+  const response = await res.json();
+
+  revalidatePath("/", "layout");
+  return response;
 };

@@ -37,6 +37,7 @@ module.exports = {
       files: ["*.ts", "*.tsx"],
       rules: {
         "no-undef": "off",
+        "sort-keys": "error",
       },
     },
   ],
