@@ -8,19 +8,16 @@ import {
   newPetSchema,
   Pet,
 } from "@/lib/types";
-import { API_HOST } from "@/lib/utils";
+import { API_HOST, PROJECT_URL } from "@/lib/utils";
 import { log } from "@repo/logger";
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { FormStateUno } from "../login/actions";
-import { error } from "console";
-
-const projectUrl = process.env.SB_AUTH_URL!;
 
 export const getUserProfile = async (): Promise<{
   user: UserProfile | null;
 } | null> => {
-  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   const res = await fetch(`${API_HOST}/users/profile`, {
@@ -40,7 +37,7 @@ export const getUserProfile = async (): Promise<{
 };
 
 export const updateUserProfile = async (profile: UserProfile) => {
-  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   myHeaders.append("Content-Type", "application/json");
@@ -64,7 +61,7 @@ export const updateUserProfile = async (profile: UserProfile) => {
 };
 
 export const getUserPets = async () => {
-  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
 
@@ -96,7 +93,7 @@ type CreatePetResponse =
 export const createPet = async (
   newPet: CreateReadyPet,
 ): Promise<CreatePetResponse> => {
-  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   myHeaders.append("Content-Type", "application/json");
@@ -247,7 +244,7 @@ type UpdatePetResponse =
     };
 
 const updatePet = async (pet: Pet): Promise<UpdatePetResponse> => {
-  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   myHeaders.append("Content-Type", "application/json");
@@ -291,7 +288,7 @@ type GeneralError = {
 export const deletePet = async (
   petId: string,
 ): Promise<DefaultReturn<{ deletedId: string }, GeneralError>> => {
-  const mycookies = cookies().get(`sb-${projectUrl}-auth-token`);
+  const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
   myHeaders.append("Content-Type", "application/json");

@@ -1,7 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Pet } from "@/lib/types";
+import ServiceList from "@/components/ux/Services/ServiceList";
+import { Pet, Service2, ServiceFormData } from "@/lib/types";
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { useAtom } from "jotai";
 import { Dog } from "lucide-react";
@@ -27,7 +28,6 @@ export const testUser: UserProfile = {
 };
 
 const MyAvatar = () => <AvatarIcon className="w-16 h-16" />;
-const editButtonState = (isEditMode: boolean) => (isEditMode ? "Save" : "Edit");
 
 export type UserJSONResponse = {
   data: { user: UserProfile | null };
@@ -43,10 +43,12 @@ export type SectionEditMode = {
 type ProfileFormProps = {
   profile: UserProfile;
   pets: Pet[];
+  services: Service2[];
 };
 const ProfileForm: React.FC<ProfileFormProps> = ({
   profile,
   pets,
+  services,
 }: ProfileFormProps) => {
   const [globalUser, setGlobalUser] = useAtom(userAtom);
   const [allPets, setAllPets] = useAtom(petsAtom);
@@ -58,6 +60,11 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
   useEffect(() => {
     if (pets.length) setAllPets(pets);
   });
+
+  const handleSaveServices = (updatedServices: ServiceFormData["services"]) => {
+    // Handle saving the updated services, e.g., sending to an API
+    console.log("Saving services:", updatedServices);
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -80,7 +87,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           {globalUser && <PetComponent userId={globalUser.id} />}
         </CardContent>
       </Card>
-      {/* <ServiceList services={profile.services} /> */}
+      <ServiceList initialServices={services} onSave={handleSaveServices} />
     </div>
   );
 };

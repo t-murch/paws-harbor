@@ -79,6 +79,29 @@ export type Service = {
   notes?: string;
 };
 
+const frequencies = ["2xdaily", "daily", "weekly", "monthly"] as const;
+const services = ["sitting", "walking", "bathing"] as const;
+const prices = [15, 20, 25, 30, 40, 50] as const;
+
+// Define the service schema
+export const serviceSchema = z.object({
+  description: z.string().optional(),
+  frequency: z.enum(frequencies),
+  // frequency: z.string().min(1, "Frequency is required"),
+  id: z.string().optional(),
+  price: z.coerce.number().min(0, "Price must be a positive number"),
+  // type: z.enum(services),
+  type: z.string().min(1, "Service type is required"),
+});
+
+export const serviceListSchema = z.object({
+  services: z.array(serviceSchema),
+});
+
+export type ServiceFormData = z.infer<typeof serviceListSchema>;
+
+export type Service2 = z.infer<typeof serviceSchema>;
+
 export type UserProfile2 = {
   id: string;
   name: string;

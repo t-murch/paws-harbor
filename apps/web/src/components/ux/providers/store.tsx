@@ -1,11 +1,11 @@
 import { Pet } from "@/lib/types";
-import { atomFamily, unwrap } from "jotai/utils";
-import { atom, Provider } from "jotai";
+import { atomFamily, atomWithStorage, unwrap } from "jotai/utils";
+import { atom, Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { supabaseClient } from "@/lib/supabase/client";
 import React from "react";
 
 // **** USER ****
-export const sessionAtom = atom(async (get) => {
+export const sessionAtom = atom(async () => {
   const { data } = await supabaseClient.auth.getSession();
   return data.session;
 });
@@ -18,18 +18,8 @@ export const userAtom = atom((get) => {
 });
 
 // **** PETS ****
-export const testPet: Pet = {
-  id: "dog-id",
-  age: 7,
-  name: "Day-Z",
-  breed: "American Terrier",
-  gender: "female",
-  size: "large",
-  species: "dog",
-};
-
 // Define a global atom to store all pet details
-export const petsAtom = atom<Pet[]>([testPet]);
+export const petsAtom = atom<Pet[]>([]);
 
 // A helper function to create dynamic atoms for individual pet edits
 const petEditAtom = (petId: string) =>
@@ -50,6 +40,45 @@ export const petEditAtomFamily = atomFamily((petId: string) =>
     },
   ),
 );
+
+// **** PRICING ****
+// Define the type for our pricing structure
+type PricingStructure = Record<string, number>;
+
+// Create an atom with storage to persist pricing data
+const pricingAtom = atomWithStorage<PricingStructure>("pricing", {});
+
+// Derived atom for getting a specific price
+const getPriceAtom = atom(
+  (get) => (serviceType: string) => get(pricingAtom)[serviceType] || 0,
+);
+
+// Derived atom for updating a price
+const updatePriceAtom = atom(
+  null,
+  (get, set, update: { serviceType: string; price: number }) => {
+    const currentPricing = get(pricingAtom);
+    set(pricingAtom, {
+      ...currentPricing,
+      [update.serviceType]: update.price,
+    });
+  },
+);
+
+// Custom hook to use pricing functionality
+export function usePricing() {
+  const prices = useAtomValue(pricingAtom);
+  const getPrice = useAtomValue(getPriceAtom);
+  const updatePrice = useSetAtom(updatePriceAtom);
+
+  return {
+    getPrice,
+    prices,
+    updatePrice: (serviceType: string, price: number) =>
+      updatePrice({ price, serviceType }),
+  };
+}
+// ********
 
 export function ContextStore({
   children,
