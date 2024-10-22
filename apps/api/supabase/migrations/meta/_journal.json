@@ -43,6 +43,20 @@
       "when": 1729268397606,
       "tag": "20241018161957_pets_dropdefault_size_only_neededformigration",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1729539086364,
+      "tag": "20241021193126_pets_services_description",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1729618034725,
+      "tag": "20241022172714_users_admincol",
+      "breakpoints": true
     }
   ]
 }
