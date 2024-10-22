@@ -9,6 +9,7 @@ import { showRoutes } from 'hono/dev';
 import { prettyJSON } from 'hono/pretty-json';
 import petsRoute from './routes/pets';
 import servicesRoute from './routes/services';
+import { adminMiddleware } from './middleware/adminMiddleware';
 
 type Variables = {
   user: User;
@@ -30,7 +31,7 @@ app
   )
   .use('users/*', authMiddleware)
   .use('pets/*', authMiddleware)
-  .use('admin/services/*', authMiddleware)
+  .use('admin/services/*', ...[authMiddleware, adminMiddleware])
   .use(prettyJSON());
 
 app.route('/users', userRoute);

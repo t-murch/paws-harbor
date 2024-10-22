@@ -1,5 +1,6 @@
 import { ServiceFrequencyEnum, ServiceTypesEnum } from '@/types';
 import {
+  boolean,
   pgEnum,
   pgTable,
   text,
@@ -11,6 +12,7 @@ import z from 'zod';
 
 export const profilesTable = pgTable('profiles', {
   address: text('address'),
+  admin: boolean('admin').default(false),
   bio: text('bio'),
   createdAt: timestamp('created_at').defaultNow(),
   email: text('email').notNull().unique(),
@@ -26,6 +28,7 @@ export type InsertProfile = typeof profilesTable.$inferInsert;
 export type SelectProfile = typeof profilesTable.$inferSelect;
 export const profileSchema = z.object({
   address: z.string().nullable(),
+  admin: z.boolean().optional(),
   bio: z.string().nullable(),
   createdAt: z.string().datetime(),
   email: z.string().email(),

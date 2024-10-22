@@ -22,11 +22,20 @@ export const petSizes = ['giant', 'large', 'medium', 'small'] as const;
 export type PetSizes = (typeof petSizes)[number];
 export const PetSizesEnum = z.enum(petSizes);
 
-const serviceTypes = ['pet-walking', 'pet-sitting', 'pet-bathing'] as const;
+export const serviceTypes = [
+  'pet-walking',
+  'pet-sitting',
+  'pet-bathing',
+] as const;
 export type ServiceType = (typeof serviceTypes)[number];
 export const ServiceTypesEnum = z.enum(serviceTypes);
 
-const serviceFrequencies = ['a-la-carte', 'recurring-monthly'] as const;
+export const serviceFrequencies = [
+  'a-la-carte',
+  'daily',
+  'weekly',
+  'monthly',
+] as const;
 export type ServiceFrequency = (typeof serviceFrequencies)[number];
 export const ServiceFrequencyEnum = z.enum(serviceFrequencies);
 
@@ -35,7 +44,7 @@ export type Service = {
   walkerId: string; // Reference to the walker's User ID
   type: ServiceType; // Type of service offered
   description: string; // Description of the service
-  duration: number; // Duration in minutes for walks, or days for pet-sitting
+  duration: string; // Duration in minutes for walks, or days for pet-sitting
   frequency: ServiceFrequency;
   price: number; // Price in the desired currency
   createdAt: Date;

@@ -26,8 +26,12 @@ export const authMiddleware = async (context: Context, next: Next) => {
     jwtObject?.access_token
   );
 
-  if (data?.user) {
-    context.set('user', data.user);
+  if (!data?.user) {
+    const errorMsg = `Unauthorized. User not found.`;
+    log(errorMsg);
+    return context.json({ error: errorMsg }, 401);
   }
+
+  context.set('user', data.user);
   return next();
 };
