@@ -9,91 +9,95 @@ type Variables = {
   user: User;
 };
 
-const petsRoute = new Hono<{ Variables: Variables }>()
-  .post(
-    'pets/new',
-    validator('json', (val, context) => {
-      const parsed = newPetSchema.safeParse(val);
+const petsRoute = new Hono<{ Variables: Variables }>();
 
-      if (!parsed.success) {
-        log(
-          `Validation failed. Errors: ${JSON.stringify({ ...parsed.error.issues })}`
-        );
-        return context.json({ message: 'CreatePet failure.. ' });
-      }
-      return parsed.data;
-    }),
-    async (context) => {
-      const authUser = context.get('user');
-      const newPet = context.req.valid('json');
-      newPet.userId = authUser.id;
+petsRoute.post(
+  '/new',
+  validator('json', (val, context) => {
+    const parsed = newPetSchema.safeParse(val);
 
-      const newPetId = await PetService.createPet(newPet);
-      if (!newPetId) {
-        log(`Failed to create new pet. UserId=${authUser.id}`);
-        context.json({ data: newPet, error: 'Failed to create new pet. ' });
-      }
-
-      return context.json({ data: newPetId, error: null });
+    if (!parsed.success) {
+      log(
+        `Validation failed. Errors: ${JSON.stringify({ ...parsed.error.issues })}`
+      );
+      return context.json({ message: 'CreatePet failure.. ' });
     }
-  )
-  .get('pets/user', async (context) => {
-    const user = context.get('user');
-    const userPets = await PetService.getUserPets(user.id);
+    return parsed.data;
+  }),
+  async (context) => {
+    const authUser = context.get('user');
+    const newPet = context.req.valid('json');
+    newPet.userId = authUser.id;
 
-    return context.json({ data: userPets, error: null });
-  })
-  .put(
-    'pets/:id',
-    validator('json', (val, context) => {
-      const parsed = existingPetSchema.safeParse(val);
-
-      if (!parsed.success) {
-        log(
-          `Validation failed. Errors: ${JSON.stringify({ ...parsed.error.issues })}`
-        );
-        return context.json({ message: 'UpdatePet failure.. ' });
-      }
-      return parsed.data;
-    }),
-    async (context) => {
-      const authUser = context.get('user');
-      const petId = context.req.param('id');
-      const petInput = context.req.valid('json');
-
-      if (petId !== petInput.id || petInput.userId !== authUser.id) {
-        const errorMessage = `Error on Pet Update. Mismatch at pet ID or attempt to edit non-owned pet.`;
-        log(errorMessage);
-        return context.json({ data: null, error: errorMessage });
-      }
-
-      const updatedPet = await PetService.updatePet(petInput);
-
-      return context.json({ data: updatedPet, error: null });
+    const newPetId = await PetService.createPet(newPet);
+    if (!newPetId) {
+      log(`Failed to create new pet. UserId=${authUser.id}`);
+      context.json({ data: newPet, error: 'Failed to create new pet. ' });
     }
-  )
-  .delete('pets/:id', async (context) => {
+
+    return context.json({ data: newPetId, error: null });
+  }
+);
+
+petsRoute.get('/user', async (context) => {
+  const user = context.get('user');
+  const userPets = await PetService.getUserPets(user.id);
+
+  return context.json({ data: userPets, error: null });
+});
+
+petsRoute.put(
+  '/:id',
+  validator('json', (val, context) => {
+    const parsed = existingPetSchema.safeParse(val);
+
+    if (!parsed.success) {
+      log(
+        `Validation failed. Errors: ${JSON.stringify({ ...parsed.error.issues })}`
+      );
+      return context.json({ message: 'UpdatePet failure.. ' });
+    }
+    return parsed.data;
+  }),
+  async (context) => {
     const authUser = context.get('user');
     const petId = context.req.param('id');
+    const petInput = context.req.valid('json');
 
-    const existingPetIdx = (
-      await PetService.getUserPets(authUser.id)
-    ).findIndex((pet) => pet.userId === authUser.id);
-    if (existingPetIdx === -1) {
-      const errorMsg = `User does not own the pet to delete.`;
-      console.error(errorMsg);
-      return context.json({ error: { message: errorMsg }, success: false });
+    if (petId !== petInput.id || petInput.userId !== authUser.id) {
+      const errorMessage = `Error on Pet Update. Mismatch at pet ID or attempt to edit non-owned pet.`;
+      log(errorMessage);
+      return context.json({ data: null, error: errorMessage });
     }
 
-    const response = await PetService.deletePet(petId);
-    if (!response || response?.length < 1) {
-      const errorMsg = `Failed to delete Pet.`;
-      console.error(errorMsg);
-      return context.json({ error: { message: errorMsg }, success: false });
-    }
-    console.debug(`response = ${JSON.stringify(response)}`);
+    const updatedPet = await PetService.updatePet(petInput);
 
-    return context.json({ data: response.at(0), success: true });
-  });
+    return context.json({ data: updatedPet, error: null });
+  }
+);
+
+petsRoute.delete('/:id', async (context) => {
+  const authUser = context.get('user');
+  const petId = context.req.param('id');
+
+  const existingPetIdx = (await PetService.getUserPets(authUser.id)).findIndex(
+    (pet) => pet.userId === authUser.id
+  );
+  if (existingPetIdx === -1) {
+    const errorMsg = `User does not own the pet to delete.`;
+    console.error(errorMsg);
+    return context.json({ error: { message: errorMsg }, success: false });
+  }
+
+  const response = await PetService.deletePet(petId);
+  if (!response || response?.length < 1) {
+    const errorMsg = `Failed to delete Pet.`;
+    console.error(errorMsg);
+    return context.json({ error: { message: errorMsg }, success: false });
+  }
+  console.debug(`response = ${JSON.stringify(response)}`);
+
+  return context.json({ data: response.at(0), success: true });
+});
 
 export default petsRoute;

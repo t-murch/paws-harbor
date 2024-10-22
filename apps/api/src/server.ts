@@ -8,6 +8,7 @@ import { User } from '@supabase/supabase-js';
 import { showRoutes } from 'hono/dev';
 import { prettyJSON } from 'hono/pretty-json';
 import petsRoute from './routes/pets';
+import servicesRoute from './routes/services';
 
 type Variables = {
   user: User;
@@ -27,12 +28,14 @@ app
       origin: 'https://localhost:3000', // Replace with your client origin
     })
   )
-  .use('/users/*', authMiddleware)
-  .use('/pets/*', authMiddleware)
+  .use('users/*', authMiddleware)
+  .use('pets/*', authMiddleware)
+  .use('admin/services/*', authMiddleware)
   .use(prettyJSON());
 
-app.route('/', userRoute);
-app.route('/', petsRoute);
+app.route('/users', userRoute);
+app.route('/pets', petsRoute);
+app.route('/admin/services', servicesRoute);
 
 app.get('/message/:name', (c) => {
   return c.json({ message: `hello ${c.req.param('name')}` });
