@@ -1,35 +1,8 @@
 import placeholderImage from "@/../public/paws-placeholder.jpg";
 import Icon from "@/components/ux/Icon";
-import { API_HOST } from "@/lib/utils";
 import Image from "next/image";
 
 export default function Web() {
-  function handleLogin() {
-    fetch(`${API_HOST}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: "user", password: "password" }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
-  }
-
-  function handleRegister() {
-    fetch(`${API_HOST}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ username: "user", password: "password" }),
-    })
-      .then((response) => response.json())
-      .then((data) => console.log(data))
-      .catch((error) => console.error(error));
-  }
-
   return (
     <main className="home h-full w-full grid grid-rows-20 gap-2 items-center">
       <section className="content flex row-span-7">

@@ -1,3 +1,5 @@
+"use server";
+
 import pawsIcon from "@/../public/paws-round.svg";
 import { logoutAction } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
@@ -13,8 +15,11 @@ import Icon from "@/components/ux/Icon";
 import Image from "next/image";
 import Link from "next/link";
 import ClientBtn from "./ClientBtn";
+import { supabaseServerClient } from "@/lib/supabase/server";
 
-export function Header() {
+export async function Header() {
+  //TODO: THIS USER CHECK NEEDS TO BE UPDATED TO RBAC,
+  const user = await supabaseServerClient.auth.getUser();
   return (
     <header className="header h-24 mb-4 flex flex-row items-center justify-between">
       <div className="title flex flex-row gap-2">
@@ -33,6 +38,13 @@ export function Header() {
           <SheetTitle />
           <SheetDescription />
           <div className="flex flex-col items-center gap-6 px-6">
+            {user && (
+              <SheetClose asChild>
+                <Link href="/admin">
+                  <h4>Admin</h4>
+                </Link>
+              </SheetClose>
+            )}
             <SheetClose asChild>
               <Link href="/about">
                 <h4>About</h4>

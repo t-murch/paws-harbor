@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -15,23 +17,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ServiceFormData, serviceListSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useRef, useState } from "react";
+import { useFormState } from "react-dom";
 import { useFieldArray, useForm } from "react-hook-form";
 import { usePricing } from "../providers/store";
-import { useFormState } from "react-dom";
+import {
+  ServiceFormData,
+  serviceListSchema,
+  ServiceSchemaClient,
+} from "@/lib/types";
+import { SelectService } from "../../../../../api/src/db/services";
 
 interface ServiceListProps {
-  initialServices: ServiceFormData["services"];
-  onSave: (services: ServiceFormData["services"]) => void;
+  initialServices: ServiceFormData;
+  onSave?: (services: ServiceFormData["services"]) => void;
 }
 
-const ServiceList: React.FC<ServiceListProps> = ({
-  initialServices,
-  onSave,
-}) => {
-  const [state, formAction] = useFormState(
+const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
+  const [, formAction] = useFormState(
     (prev, formData) => ({ fields: {}, message: "" }),
     { fields: {}, message: "" },
   );
@@ -40,7 +44,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
 
   const form = useForm<ServiceFormData>({
     // defaultValues: { services: { ...initialServices, ...state.fields } },
-    defaultValues: { services: initialServices },
+    defaultValues: { services: initialServices.services },
     resolver: zodResolver(serviceListSchema),
   });
   const { control } = form;
@@ -50,6 +54,7 @@ const ServiceList: React.FC<ServiceListProps> = ({
     control,
     name: "services",
   });
+
   // useEffect(() => {
   //   // Update pricing atoms when services change
   //   watchServices.forEach((service) => {
@@ -159,26 +164,26 @@ const ServiceList: React.FC<ServiceListProps> = ({
               </div>
             ))}
 
-            {isEditMode && (
-              <>
-                <Button
-                  type="button"
-                  onClick={() =>
-                    append({
-                      description: "",
-                      frequency: "daily",
-                      price: 0,
-                      type: "",
-                    })
-                  }
-                >
-                  Add Service
-                </Button>
-                <Button type="submit" className="ml-2">
-                  Save
-                </Button>
-              </>
-            )}
+            {/* {isEditMode && ( */}
+            {/*   <> */}
+            {/*     <Button */}
+            {/*       type="button" */}
+            {/*       onClick={() => */}
+            {/*         append({ */}
+            {/*           description: "", */}
+            {/*           frequency: "daily", */}
+            {/*           price: 0, */}
+            {/*           type: "pet-walking", */}
+            {/*         }) */}
+            {/*       } */}
+            {/*     > */}
+            {/*       Add Service */}
+            {/*     </Button> */}
+            {/*     <Button type="submit" className="ml-2"> */}
+            {/*       Save */}
+            {/*     </Button> */}
+            {/*   </> */}
+            {/* )} */}
           </form>
         </Form>
       </CardContent>

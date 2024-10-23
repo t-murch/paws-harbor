@@ -1,17 +1,26 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Service } from "@/lib/types";
-import React from "react";
+import React, { useCallback, useState } from "react";
+import { SelectService } from "../../../../../api/src/db/services";
+import { BASE_SERVICES, BaseService } from "../../../../../api/src/types";
+
+// Base services that are always available
 
 interface ServiceListProps {
-  services: Service[];
+  services: SelectService[];
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
+  const [state, setServices] = useState<SelectService[]>(services);
+  const [newService, setNewService] = useState("");
+  const [error, setError] = useState("");
+
   return (
     <div>
       <h3>Services</h3>
-      {services.map((service) => (
+      {state.map((service) => (
         <div key={service.id}>
           <Label>Type</Label>
           <Input value={service.type} readOnly />

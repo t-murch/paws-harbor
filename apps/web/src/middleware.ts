@@ -1,10 +1,7 @@
-import { type NextRequest } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
-import { cookies } from "next/headers";
+import { type NextRequest } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const cookieStore = cookies().getAll();
-  // console.log(`cookies=${JSON.stringify(cookieStore)}`);
   return await updateSession(request);
 }
 

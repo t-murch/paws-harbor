@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ServiceList from "@/components/ux/Services/ServiceList";
-import { Pet, Service2, ServiceFormData } from "@/lib/types";
+import { Pet, ServiceFormData } from "@/lib/types";
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { useAtom } from "jotai";
 import { Dog } from "lucide-react";
@@ -11,6 +11,7 @@ import { userAtom, UserProfile } from "../atoms";
 import { petsAtom } from "../providers/store";
 import Bio from "./Bio";
 import PetComponent from "./Pet";
+import { SelectService } from "../../../../../api/src/db/services";
 
 export const testUser: UserProfile = {
   address: "123 BrownTree Trail Leander, TX 78641",
@@ -43,7 +44,7 @@ export type SectionEditMode = {
 type ProfileFormProps = {
   profile: UserProfile;
   pets: Pet[];
-  services: Service2[];
+  services: SelectService[];
 };
 const ProfileForm: React.FC<ProfileFormProps> = ({
   profile,
@@ -87,7 +88,10 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           {globalUser && <PetComponent userId={globalUser.id} />}
         </CardContent>
       </Card>
-      <ServiceList initialServices={services} onSave={handleSaveServices} />
+      <ServiceList
+        initialServices={{ services: services }}
+        onSave={handleSaveServices}
+      />
     </div>
   );
 };

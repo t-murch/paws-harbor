@@ -1,16 +1,14 @@
-"use server";
-
+import { cookies } from "next/headers";
+import { SelectService } from "../../../../api/src/db/services";
 import {
   API_HOST,
   GeneralResponse,
   handleError,
   PROJECT_URL,
 } from "@/lib/utils";
-import { log } from "console";
-import { cookies } from "next/headers";
-import { SelectService } from "../../../../../api/src/db/services";
+import { log } from "@repo/logger";
 
-export async function getUserServices(): Promise<SelectService[]> {
+export async function getAllServices(): Promise<SelectService[]> {
   // get the user from supabase
   // attach auth cookie headers
   // call API
@@ -24,7 +22,7 @@ export async function getUserServices(): Promise<SelectService[]> {
   authHeaders.append("Authorization", `Bearer ${authCookies?.value}`);
   authHeaders.append("Content-Type", "application/json");
 
-  const res = await fetch(`${API_HOST}/services/all`, {
+  const res = await fetch(`${API_HOST}/admin/services/all`, {
     headers: authHeaders,
     method: "GET",
   }).catch((e) => {

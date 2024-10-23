@@ -1,4 +1,11 @@
 import { z } from "zod";
+import {
+  ServiceSchema,
+  InsertService,
+  InsertServiceSchema,
+  SelectService,
+} from "@/../../../api/src/db/services";
+import { serviceFrequencies, BASE_SERVICES } from "@/../../../api/src/types";
 
 export type Pet = {
   id: string;
@@ -79,29 +86,34 @@ export type Service = {
   notes?: string;
 };
 
-const frequencies = ["2xdaily", "daily", "weekly", "monthly"] as const;
-const services = ["sitting", "walking", "bathing"] as const;
-const prices = [15, 20, 25, 30, 40, 50] as const;
+/**
+ * DIRECT FROM SERVER
+ */
+export const frequencies = serviceFrequencies;
+export const services = BASE_SERVICES;
 
-// Define the service schema
-export const serviceSchema = z.object({
-  description: z.string().optional(),
-  frequency: z.enum(frequencies),
-  // frequency: z.string().min(1, "Frequency is required"),
-  id: z.string().optional(),
-  price: z.coerce.number().min(0, "Price must be a positive number"),
-  // type: z.enum(services),
-  type: z.string().min(1, "Service type is required"),
-});
+// Example of Zod schema matching the `petServicesTable` structure
+export const InsertServiceSchemaClient = InsertServiceSchema;
+export const ServiceSchemaClient = ServiceSchema;
+export type InsertServiceClient = InsertService;
+export type SelectServiceClient = SelectService;
 
+// // Define the service schema
+// export const serviceSchema = z.object({
+//   description: z.string().optional(),
+//   frequency: z.enum(frequencies),
+//   // frequency: z.string().min(1, "Frequency is required"),
+//   id: z.string().optional(),
+//   price: z.coerce.number().min(0, "Price must be a positive number"),
+//   // type: z.enum(services),
+//   type: z.string().min(1, "Service type is required"),
+// });
+//
 export const serviceListSchema = z.object({
-  services: z.array(serviceSchema),
+  services: z.array(ServiceSchema),
 });
 
 export type ServiceFormData = z.infer<typeof serviceListSchema>;
-
-export type Service2 = z.infer<typeof serviceSchema>;
-
 export type UserProfile2 = {
   id: string;
   name: string;
