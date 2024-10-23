@@ -1,4 +1,4 @@
-import { ServiceFrequencyEnum, ServiceTypesEnum } from '@/types';
+import { ServiceFrequencyEnum, ServiceTypesEnum } from '../types';
 import {
   boolean,
   pgEnum,
