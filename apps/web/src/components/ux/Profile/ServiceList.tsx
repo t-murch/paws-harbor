@@ -1,19 +1,17 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import React, { useCallback, useState } from "react";
-import { SelectService } from "../../../../../api/src/db/services";
-import { BASE_SERVICES, BaseService } from "../../../../../api/src/types";
+import React, { useState } from "react";
+import { Service } from "../../../../../api/src/db/services";
 
 // Base services that are always available
 
 interface ServiceListProps {
-  services: SelectService[];
+  services: Service[];
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
-  const [state, setServices] = useState<SelectService[]>(services);
+  const [state, setServices] = useState<Service[]>(services);
   const [newService, setNewService] = useState("");
   const [error, setError] = useState("");
 
@@ -23,10 +21,10 @@ const ServiceList: React.FC<ServiceListProps> = ({ services }) => {
       {state.map((service) => (
         <div key={service.id}>
           <Label>Type</Label>
-          <Input value={service.type} readOnly />
+          {/* <Input value={service.type} readOnly /> */}
 
           <Label>Frequency</Label>
-          <Input value={service.frequency} readOnly />
+          {/* <Input value={service.frequency} readOnly /> */}
 
           {/* Add more fields as needed */}
         </div>

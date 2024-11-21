@@ -8,9 +8,9 @@ import {
 } from "@/lib/utils";
 import { log } from "console";
 import { cookies } from "next/headers";
-import { SelectService } from "../../../../../api/src/db/services";
+import { Service } from "../../../../../api/src/db/services";
 
-export async function getUserServices(): Promise<SelectService[]> {
+export async function getUserServices(): Promise<Service[]> {
   // get the user from supabase
   // attach auth cookie headers
   // call API
@@ -43,7 +43,7 @@ export async function getUserServices(): Promise<SelectService[]> {
     return [];
   }
 
-  const r: GeneralResponse<SelectService[], { message: string }> = await res
+  const r: GeneralResponse<Service[], { message: string }> = await res
     .json()
     .catch((e) => {
       const errorMsg = handleError("", e);

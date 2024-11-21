@@ -71,6 +71,13 @@
       "when": 1730579576523,
       "tag": "20241102203256_services_duration_splitCol",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1731962728612,
+      "tag": "20241118204528_services.pricingModel",
+      "breakpoints": true
     }
   ]
 }

@@ -1,11 +1,12 @@
-import { z } from "zod";
 import {
-  ServiceSchema,
-  InsertService,
   InsertServiceSchema,
-  SelectService,
+  NewService,
+  SelectServiceSchema,
+  Service,
 } from "@/../../../api/src/db/services";
-import { serviceFrequencies, BASE_SERVICES } from "@/../../../api/src/types";
+import { serviceFrequencies } from "@/../../../api/src/types";
+import { log } from "@repo/logger";
+import { z } from "zod";
 
 export type Pet = {
   id: string;
@@ -79,7 +80,7 @@ export const existingPetSchema = z.object({
   userId: z.string().nullable(),
 });
 
-export type Service = {
+export type ServiceT = {
   id: string;
   type: "pet-walking" | "pet-sitting" | "pet-bathing";
   frequency: "a-la-carte" | "recurring-monthly";
@@ -90,13 +91,14 @@ export type Service = {
  * DIRECT FROM SERVER
  */
 export const frequencies = serviceFrequencies;
-export const services = BASE_SERVICES;
+// export const services = BASE_SERVICES;
 
 // Example of Zod schema matching the `petServicesTable` structure
 export const InsertServiceSchemaClient = InsertServiceSchema;
-export const ServiceSchemaClient = ServiceSchema;
-export type InsertServiceClient = InsertService;
-export type SelectServiceClient = SelectService;
+export const ServiceSchemaClient = SelectServiceSchema;
+export type InsertServiceClient = NewService;
+export type SelectServiceClient = Service;
+export type ServiceClient = InsertServiceClient | SelectServiceClient;
 
 // // Define the service schema
 // export const serviceSchema = z.object({
@@ -110,7 +112,7 @@ export type SelectServiceClient = SelectService;
 // });
 //
 export const serviceListSchema = z.object({
-  services: z.array(ServiceSchema),
+  services: z.array(InsertServiceSchema),
 });
 
 export type ServiceFormData = z.infer<typeof serviceListSchema>;
@@ -123,3 +125,96 @@ export type UserProfile2 = {
   pets: Pet[];
   services: Service[];
 };
+
+export type CreateResponse<T> =
+  | {
+      data: T;
+      success: true;
+    }
+  | {
+      error: string;
+      success: false;
+    };
+
+const AdminServiceFormSchema = z.object({
+  services: z.record(z.string(), InsertServiceSchema),
+});
+
+type AdminServiceForm = z.infer<typeof AdminServiceFormSchema>;
+
+export function transformServiceFormToSchema(formData: {
+  [k: string]: FormDataEntryValue;
+}): z.infer<typeof InsertServiceSchema | typeof SelectServiceSchema>[] {
+  const serviceKeys = Object.keys(formData)
+    .filter((key) => key.startsWith("services."))
+    .reduce(
+      (acc, key) => {
+        const match = key.match(/services\.(\d+)\.(.*)/);
+        if (match) {
+          const [, index, attribute] = match;
+          if (!acc[index]) acc[index] = {};
+          acc[index][attribute] = formData[key];
+        }
+        return acc;
+      },
+      {} as Record<string, any>,
+    );
+
+  // Convert the object to an array and transform
+  return Object.values(serviceKeys).map((service) => {
+    // Dynamically handle metadata
+    const metadata: Record<string, unknown> = {};
+    const metadataPrefix = "metadata.";
+    Object.keys(service)
+      .filter((key) => key.startsWith(metadataPrefix))
+      .forEach((key) => {
+        const metadataKey = key.slice(metadataPrefix.length);
+        // Try to parse numbers, booleans, or keep as string
+        let value: unknown = service[key];
+        if (value === "true") value = true;
+        else if (value === "false") value = false;
+        else if (!isNaN(Number(value))) value = Number(value);
+        metadata[metadataKey] = value;
+      });
+
+    // Dynamically handle addons
+    const addons: Record<string, number> = {};
+    const addonsPrefix = "pricingModel.addons.";
+    Object.keys(service)
+      .filter((key) => key.startsWith(addonsPrefix))
+      .forEach((key) => {
+        const addonKey = key.slice(addonsPrefix.length);
+        addons[addonKey] = parseFloat(service[key] || "0");
+      });
+
+    const transformedService: ServiceClient = {
+      description: service.description,
+      metadata,
+      name: service.name,
+      pricingModel: {
+        additionalPrice: parseFloat(service["pricingModel.additionalPrice"]),
+        additionalTime: parseFloat(service["pricingModel.additionalTime"]),
+        addons,
+        basePrice: parseFloat(service["pricingModel.basePrice"]),
+        baseTime: parseFloat(service["pricingModel.baseTime"]),
+        timeUnit: service["pricingModel.timeUnit"],
+        type: service["pricingModel.type"],
+      },
+    };
+    log(`service=${JSON.stringify(service, null, 2)}`);
+
+    if ("id" in service) {
+      transformedService.id = service.id;
+    }
+
+    if ("createdAt" in service) {
+      transformedService.createdAt = service.createdAt;
+    }
+
+    if ("updatedAt" in service) {
+      transformedService.updatedAt = service.updatedAt;
+    }
+
+    return transformedService;
+  });
+}

@@ -11,7 +11,7 @@ import { userAtom, UserProfile } from "../atoms";
 import { petsAtom } from "../providers/store";
 import Bio from "./Bio";
 import PetComponent from "./Pet";
-import { SelectService } from "../../../../../api/src/db/services";
+import { Service } from "../../../../../api/src/db/services";
 
 export const testUser: UserProfile = {
   address: "123 BrownTree Trail Leander, TX 78641",
@@ -44,7 +44,7 @@ export type SectionEditMode = {
 type ProfileFormProps = {
   profile: UserProfile;
   pets: Pet[];
-  services: SelectService[];
+  services: Service[];
 };
 const ProfileForm: React.FC<ProfileFormProps> = ({
   profile,

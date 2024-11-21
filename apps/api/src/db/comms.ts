@@ -7,7 +7,7 @@ import {
   uuid,
 } from 'drizzle-orm/pg-core';
 import { profilesTable } from './users';
-import { petServicesTable } from './services';
+import { servicesTable } from './services';
 import { petsTable } from './pets';
 
 export const bookings = pgTable('bookings', {
@@ -16,7 +16,7 @@ export const bookings = pgTable('bookings', {
   notes: text('notes'), // Additional notes for the booking
   petId: uuid('pet_id').references(() => petsTable.id, { onDelete: 'cascade' }), // The pet being serviced
   price: integer('price').notNull(), // Total price for the booking
-  serviceId: uuid('service_id').references(() => petServicesTable.id, {
+  serviceId: uuid('service_id').references(() => servicesTable.id, {
     onDelete: 'cascade',
   }), // The service being booked
   startTime: timestamp('start_time').notNull(),

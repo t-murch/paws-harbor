@@ -1,9 +1,9 @@
 "use server";
 
-import { InsertService, SelectService } from "@/../../api/src/db/services";
+import { NewService, Service } from "@/../../api/src/db/services";
 import { PROJECT_URL } from "@/lib/utils";
 import { cookies } from "next/headers";
-export const createService = async (service: InsertService) => {
+export const createService = async (service: NewService) => {
   const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
   myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);

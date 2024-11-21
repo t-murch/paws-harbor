@@ -22,13 +22,20 @@ export const petSizes = ['giant', 'large', 'medium', 'small'] as const;
 export type PetSizes = (typeof petSizes)[number];
 export const PetSizesEnum = z.enum(petSizes);
 
-export const serviceTypes = [
+export const baseServiceFormValues = [
+  { label: 'Pet Walking', value: 'pet-walking' },
+  { label: 'Pet Sitting', value: 'pet-sitting' },
+  { label: 'Pet Bathing', value: 'pet-bathing' },
+] as const;
+export const BASE_SERVICES = [
   'pet-walking',
   'pet-sitting',
   'pet-bathing',
 ] as const;
-export type ServiceType = (typeof serviceTypes)[number];
-export const ServiceTypesEnum = z.enum(serviceTypes);
+export type BaseService = (typeof BASE_SERVICES)[number];
+type CustomService = string & {};
+type ServiceType = BaseService | CustomService;
+export const ServiceTypesEnum = z.enum(BASE_SERVICES);
 
 export const serviceFrequencies = [
   'a-la-carte',
@@ -50,6 +57,37 @@ export type Service = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+/**
+ * MINUTES OR DAYS
+ */
+interface Pricing {
+  sitting: {
+    basePrice: number;
+    baseTime: number;
+    additionalPrice: number;
+    additionalTime: number;
+    overnightFee: number;
+    weekendFee: number;
+  };
+  walking: {
+    basePrice: number;
+    baseTime: number;
+    additionalPrice: number;
+    additionalTime: number;
+  };
+  bathing: {
+    small: number;
+    medium: number;
+    large: number;
+    xlarge: number;
+  };
+  subscription: {
+    daily: number;
+    weekly: number;
+    monthly: number;
+  };
+}
 
 const bookingStatus = [
   'pending',

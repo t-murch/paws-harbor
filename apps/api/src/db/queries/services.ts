@@ -1,78 +1,140 @@
-import { eq } from 'drizzle-orm';
-import { db } from '..';
-import { InsertService, petServicesTable, SelectService } from '../services';
+import { eq, inArray, sql } from 'drizzle-orm';
 
-const initialServices: SelectService[] = [
-  {
-    createdAt: null,
-    description: '30-minute walk',
-    duration: '',
-    frequency: 'daily',
-    id: '1',
-    ownerId: null,
-    price: 20,
-    type: 'pet-walking',
-    updatedAt: null,
-  },
-  {
-    createdAt: null,
-    description: 'Includes feeding and litter box cleaning',
-    duration: '',
-    frequency: 'weekly',
-    id: '2',
-    ownerId: null,
-    price: 15,
-    type: 'pet-sitting',
-    updatedAt: null,
-  },
-];
+import {
+  NewService,
+  servicesTable,
+  Service,
+  InsertServiceSchema,
+  AllServices,
+} from '../services';
+import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { ServicePricing } from '@/types/pricing';
+import { log } from '@repo/logger';
 
-export async function createService(service: InsertService) {
-  const newService = await db
-    .insert(petServicesTable)
-    .values(service)
-    .returning({ insertId: petServicesTable.id });
+// Database operations with type safety
+export class ServiceRepository {
+  constructor(private db: PostgresJsDatabase<Record<string, never>>) {
+    this.db = db;
+  }
 
-  return newService?.[0] ?? null;
+  async create(service: NewService): Promise<Service> {
+    // Validate the service data
+    const validated = InsertServiceSchema.parse(service);
+
+    const [created] = await this.db
+      .insert(servicesTable)
+      .values(validated)
+      .returning();
+
+    return created;
+  }
+
+  async update(id: string, service: Partial<NewService>): Promise<Service> {
+    // Validate the update data
+    const validated = InsertServiceSchema.partial().parse(service);
+
+    const [updated] = await this.db
+      .update(servicesTable)
+      .set({
+        ...validated,
+        updatedAt: new Date(),
+      })
+      .where(eq(servicesTable.id, id))
+      .returning();
+
+    return updated;
+  }
+
+  async bulkUpdate(services: AllServices[]): Promise<Service[]> {
+    log(`services=${JSON.stringify(services, null, 2)}`);
+    const validated = InsertServiceSchema.array().parse(services);
+    log(`validated=${JSON.stringify(validated, null, 2)}`);
+    const newServices = validated.filter((s) => s.id === undefined);
+    const ids = validated.map((s) => s.id).filter((s) => s !== undefined);
+    log(`ids=${JSON.stringify(ids, null, 2)}`);
+
+    if (validated.length === 0) {
+      return [];
+    }
+
+    // need to match existing services by id if input services have the same id
+    const existingServices = await this.db
+      .select()
+      .from(servicesTable)
+      .where(inArray(servicesTable.id, ids));
+
+    log(`existingServices=${JSON.stringify(existingServices, null, 2)}`);
+    const existingServiceMap = new Map<string, Service>(
+      existingServices.map((s) => [s.id, s])
+    );
+    log(`existingServiceMap=${JSON.stringify(existingServiceMap, null, 2)}`);
+
+    const updatedServices = validated.map((s) => {
+      const existingService = existingServiceMap.get(s.id ?? '');
+      if (existingService) {
+        return {
+          ...existingService,
+          ...s,
+          updatedAt: new Date(),
+        };
+      }
+      return s;
+    });
+
+    // updatedServices.push(...newServices);
+    // log(`newServices=${JSON.stringify(newServices, null, 2)}`);
+    log(`updatedServices=${JSON.stringify(updatedServices, null, 2)}`);
+
+    // upsert
+    return await this.db.transaction(async (tx) => {
+      await tx.delete(servicesTable);
+
+      return await tx
+        .insert(servicesTable)
+        .values(updatedServices)
+        .onConflictDoUpdate({
+          set: {
+            // Manually spread known fields to satisfy type checking
+            description: sql`excluded.description`,
+            metadata: sql`excluded.metadata`,
+            name: sql`excluded.name`,
+            pricingModel: sql`excluded.pricing_model`,
+            // Add any other specific fields from your services table
+            updatedAt: new Date(),
+          },
+          target: servicesTable.id,
+        })
+        .returning();
+    });
+  }
+
+  async findById(id: string): Promise<Service | null> {
+    const service = await this.db
+      .select()
+      .from(servicesTable)
+      .where(eq(servicesTable.id, id))
+      .limit(1);
+
+    return service[0] ?? null;
+  }
+
+  // Example of type-safe query with pricing model filter
+  async findByPricingType(type: ServicePricing['type']): Promise<Service[]> {
+    return this.db
+      .select()
+      .from(servicesTable)
+      .where(sql`${servicesTable.pricingModel}->>'type' = ${type}`);
+  }
+
+  async getAll(): Promise<Service[]> {
+    return await this.db.select().from(servicesTable);
+  }
+
+  async deleteOne(id: string) {
+    if (!id) return null;
+    return await this.db
+      .delete(servicesTable)
+      .where(eq(servicesTable.id, id))
+      .returning({ id: servicesTable.id });
+  }
 }
-
-export async function getService(id: string): Promise<SelectService[]> {
-  if (!id) return [];
-  return await db
-    .select()
-    .from(petServicesTable)
-    .where(eq(petServicesTable.id, id));
-}
-
-export async function getAllServices(): Promise<SelectService[]> {
-  return new Promise((resolve) => {
-    return resolve(initialServices);
-  });
-  // return await db.select().from(petServicesTable);
-}
-
-export async function updateService(service: SelectService) {
-  return await db
-    .update(petServicesTable)
-    .set(service)
-    .where(eq(petServicesTable.id, service.id))
-    .returning({ id: petServicesTable.id });
-}
-
-export async function deleteService(id: string) {
-  if (!id) return null;
-  return await db
-    .delete(petServicesTable)
-    .where(eq(petServicesTable.id, id))
-    .returning({ id: petServicesTable.id });
-}
-
-const OfferingService = {
-  createService,
-  deleteService,
-  getAllServices,
-  getService,
-  updateService,
-};
-
-export default OfferingService;

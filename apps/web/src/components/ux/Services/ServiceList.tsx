@@ -2,188 +2,177 @@
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Form } from "@/components/ui/form";
+import { ServiceFormData, serviceListSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useFieldArray, useForm } from "react-hook-form";
-import { usePricing } from "../providers/store";
+// import { usePricing } from "../providers/store";
+import { createServiceAction } from "@/app/admin/actions";
+import ServiceFormItem from "./ServiceFormItem";
+import { log } from "@repo/logger";
 import {
-  ServiceFormData,
-  serviceListSchema,
-  ServiceSchemaClient,
-} from "@/lib/types";
-import { SelectService } from "../../../../../api/src/db/services";
+  BASE_SERVICES,
+  baseServiceFormValues,
+} from "../../../../../api/src/types";
 
 interface ServiceListProps {
   initialServices: ServiceFormData;
-  onSave?: (services: ServiceFormData["services"]) => void;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
-  const [, formAction] = useFormState(
-    (prev, formData) => ({ fields: {}, message: "" }),
-    { fields: {}, message: "" },
-  );
-  const { updatePrice } = usePricing();
+  const [state, formAction] = useFormState(createServiceAction, {
+    formFields: {},
+    message: "",
+  });
+  // const { updatePrice } = usePricing();
   const [isEditMode, setIsEditMode] = useState(false);
+  log(`initialServices=${JSON.stringify(initialServices, null, 2)}`);
 
   const form = useForm<ServiceFormData>({
     // defaultValues: { services: { ...initialServices, ...state.fields } },
     defaultValues: { services: initialServices.services },
     resolver: zodResolver(serviceListSchema),
   });
-  const { control } = form;
+  const {
+    control,
+    formState: { errors },
+  } = form;
   const formRef = useRef<HTMLFormElement>(null);
 
   const { fields, append, remove } = useFieldArray({
     control,
+    keyName: "_id",
     name: "services",
   });
 
-  // useEffect(() => {
-  //   // Update pricing atoms when services change
-  //   watchServices.forEach((service) => {
-  //     if (service.type && service.price) {
-  //       updatePrice(service.type, service.price);
-  //     }
-  //   });
-  // }, [watchServices, updatePrice]);
+  const availableServices = baseServiceFormValues.filter(
+    (s) => !fields.map((f) => f.name).includes(s.value),
+  );
 
   const handleSubmit = form.handleSubmit(() => {
+    console.log(`handleSubmit`);
+    const formData = new FormData(formRef.current!);
+    const serviceTypes = Object.fromEntries(formData);
+    const formServiceNames: [string, string][] = [];
+    for (const p in serviceTypes) {
+      if (p.endsWith("name"))
+        formServiceNames.push([p, String(serviceTypes[p])]);
+    }
+    // log(`formServiceNames=${JSON.stringify(formServiceNames, null, 2)}`);
+
+    const existingFields = fields
+      .filter((f) => {
+        return (f.createdAt && f.updatedAt && f.id) !== undefined;
+      })
+      .map((f) => {
+        //hydrate formData with existing fields
+        return {
+          createdAt: f.createdAt,
+          id: f.id,
+          name: f.name,
+          updatedAt: f.updatedAt,
+        };
+      });
+
+    existingFields.forEach((f) => {
+      const some = formServiceNames.find(
+        ([k, v]) => k.endsWith("name") && v === f.name,
+      );
+      if (some) {
+        const prefix = some[0].replace("name", "").trim();
+        log(`prefix=${prefix}`);
+        formData.append(`${prefix}createdAt`, String(f.createdAt));
+        formData.append(`${prefix}updatedAt`, String(f.updatedAt));
+        formData.append(`${prefix}id`, String(f.id));
+      }
+    });
+
+    const data = Object.fromEntries(formData);
+    log(`data=${JSON.stringify(data, null, 2)}`);
+    // log(`existingFields=${JSON.stringify(existingFields, null, 2)}`);
+
     return new Promise<void>((resolve) => {
-      // const formData = new FormData(formRef.current!);
-      // formAction(formData);
-      // onSave(formData);
+      formAction(formData);
       setIsEditMode(false);
       resolve();
     });
   });
-  const onSubmit = (data: ServiceFormData) => {};
+
+  function handleEditToggle() {
+    console.log(`toggle clicked editmode=${isEditMode}`);
+    return setIsEditMode((prev) => !prev);
+  }
+
+  console.log(`errors=${JSON.stringify(errors, null, 2)}`);
+  console.log(`fields=${JSON.stringify(fields, null, 2)}`);
+  console.log(`message=${JSON.stringify(state, null, 2)}`);
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex justify-between items-center">
+        <CardTitle className="flex justify-center">
           <span>Services</span>
-          <Button onClick={() => setIsEditMode(!isEditMode)}>
-            {isEditMode ? "Cancel" : "Edit"}
-          </Button>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
           <form action={formAction} onSubmit={handleSubmit} ref={formRef}>
-            {fields.map((field, index) => (
-              <div key={field.id} className="mb-4 p-4 border rounded">
-                <FormField
-                  control={form.control}
-                  name={`services.${index}.type`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Type</FormLabel>
-                      <FormControl>
-                        <Input readOnly={!isEditMode} {...field} />
-                      </FormControl>
-                    </FormItem>
-                  )}
+            {fields.length > 0 &&
+              fields.map((field, index) => (
+                <ServiceFormItem
+                  availableServices={availableServices}
+                  key={field.id}
+                  form={form}
+                  index={index}
+                  field={field}
+                  isEditMode={isEditMode}
+                  remove={remove}
                 />
+              ))}
 
-                <FormField
-                  control={form.control}
-                  name={`services.${index}.frequency`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Frequency</FormLabel>
-                      <Select
-                        defaultValue={field.value}
-                        disabled={!isEditMode}
-                        onValueChange={field.onChange}
-                        // value={watchServices[index]?.frequency}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select frequency" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                          <SelectItem value="monthly">Monthly</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={`services.${index}.price`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price</FormLabel>
-                      <Input {...field} type="number" readOnly={!isEditMode} />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name={`services.${index}.description`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description</FormLabel>
-                      <Input {...field} readOnly={!isEditMode} />
-                    </FormItem>
-                  )}
-                />
-
-                {isEditMode && (
-                  <Button
-                    type="button"
-                    onClick={() => remove(index)}
-                    className="mt-2"
-                  >
-                    Remove
-                  </Button>
-                )}
+            <div
+              className={`flex ${isEditMode ? "justify-between" : "justify-end"}`}
+            >
+              {isEditMode && availableServices.length > 0 && (
+                <Button
+                  type="button"
+                  onClick={() =>
+                    append({
+                      description: "",
+                      metadata: {
+                        maxDogs: 3,
+                        requiresKey: false,
+                      },
+                      name: availableServices[0].value,
+                      pricingModel: {
+                        additionalPrice: 0,
+                        additionalTime: 0,
+                        addons: {
+                          extendedArea: 5,
+                          extraDog: 10,
+                          holidays: 15,
+                        },
+                        basePrice: 0,
+                        baseTime: 0,
+                        timeUnit: "hours",
+                        type: "baseRate",
+                      },
+                    })
+                  }
+                >
+                  Add
+                </Button>
+              )}
+              <div className="flex gap-2">
+                {isEditMode && <Button type="submit">Save</Button>}
+                <Button onClick={handleEditToggle} type="button">
+                  {/* This should also reset the form state as well. */}
+                  {isEditMode ? "Cancel" : "Edit"}
+                </Button>
               </div>
-            ))}
-
-            {/* {isEditMode && ( */}
-            {/*   <> */}
-            {/*     <Button */}
-            {/*       type="button" */}
-            {/*       onClick={() => */}
-            {/*         append({ */}
-            {/*           description: "", */}
-            {/*           frequency: "daily", */}
-            {/*           price: 0, */}
-            {/*           type: "pet-walking", */}
-            {/*         }) */}
-            {/*       } */}
-            {/*     > */}
-            {/*       Add Service */}
-            {/*     </Button> */}
-            {/*     <Button type="submit" className="ml-2"> */}
-            {/*       Save */}
-            {/*     </Button> */}
-            {/*   </> */}
-            {/* )} */}
+            </div>
           </form>
         </Form>
       </CardContent>
