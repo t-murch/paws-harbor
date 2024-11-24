@@ -15,10 +15,12 @@ import {
   Service,
   AllServices,
   SelectServiceSchema,
+  mapDbToServiceConfig,
 } from "../../../../api/src/db/services";
 import { z } from "zod";
+import { PersistedServiceConfig } from "../../../../api/src/types/pricing";
 
-export async function getAllServices(): Promise<Service[]> {
+export async function getAllServices(): Promise<PersistedServiceConfig[]> {
   // get the user from supabase
   // attach auth cookie headers
   // call API
@@ -61,7 +63,7 @@ export async function getAllServices(): Promise<Service[]> {
     throw new Error(r.error.message);
   }
 
-  return r.data;
+  return r.data.map(mapDbToServiceConfig);
 }
 
 export async function createServiceAction(_prevState: any, formData: FormData) {

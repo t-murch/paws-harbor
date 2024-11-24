@@ -143,3 +143,10 @@ export type Notification = {
   createdAt: Date; // Timestamp of when the notification was created
   readAt?: Date; // Optional timestamp of when the notification was read
 };
+
+// pretty print camelCased strings
+export function prettyPrint(str: string) {
+  return str
+    .replace(/([A-Z])/g, ' $1')
+    .replace(/^./, (str) => str.toUpperCase());
+}

@@ -1,4 +1,9 @@
 import {
+  BaseRatePricing,
+  PersistedServiceConfig,
+  Pricing,
+} from "@/../../api/src/types/pricing";
+import {
   Card,
   CardContent,
   CardDescription,
@@ -6,22 +11,44 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  TableHeader,
-  TableRow,
-  TableHead,
+  Table,
   TableBody,
   TableCell,
-  Table,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Pricing } from "@/../../api/src/types/pricing";
+import { log } from "@repo/logger";
+import {
+  baseServiceFormValues,
+  prettyPrint,
+} from "../../../../../api/src/types";
 
 export default function Pricelist({
-  bathing: bathingPrices,
-  sitting: sittingPrices,
-  subscription: subscriptionPrices,
-  walking: walkingPrices,
-}: Pricing) {
+  pricing: {
+    bathing: bathingPrices,
+    sitting: sittingPrices,
+    subscription: subscriptionPrices,
+    walking: walkingPrices,
+  },
+  services,
+}: {
+  pricing: Pricing;
+  services: PersistedServiceConfig[];
+}) {
+  const baseRateServices: PersistedServiceConfig[] = [],
+    tierBasedServices: PersistedServiceConfig[] = [];
+
+  services.forEach((service) => {
+    if (service.pricingModel.type === "baseRate")
+      baseRateServices.push(service);
+    else if (service.pricingModel.type === "tiered")
+      tierBasedServices.push(service);
+  });
+
+  log(`services=${JSON.stringify(services, null, 2)}`);
+
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       <Card className="w-full justify-center">
@@ -45,104 +72,111 @@ export default function Pricelist({
               </div>
               <TabsContent value="alacarte" className="mt-6">
                 <div className="grid gap-6 md:grid-cols-2">
-                  <Card className="overflow-hidden">
-                    <CardHeader className="space-y-1">
-                      <CardTitle>Pet Sitting & Walking</CardTitle>
-                      <CardDescription>Time-based pricing</CardDescription>
-                    </CardHeader>
-                    <CardContent className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="whitespace-nowrap">
-                              Service
-                            </TableHead>
-                            <TableHead className="whitespace-nowrap">
-                              Base Price
-                            </TableHead>
-                            <TableHead className="whitespace-nowrap">
-                              Additional
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell className="whitespace-nowrap">
-                              Pet Sitting
-                            </TableCell>
-                            <TableCell className="whitespace-nowrap">
-                              ${sittingPrices.basePrice} /{" "}
-                              {sittingPrices.baseTime}hrs
-                            </TableCell>
-                            <TableCell className="whitespace-nowrap">
-                              ${sittingPrices.additionalPrice} /{" "}
-                              {sittingPrices.additionalTime}hr
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell className="whitespace-nowrap">
-                              Pet Walking
-                            </TableCell>
-                            <TableCell className="whitespace-nowrap">
-                              ${walkingPrices.basePrice} /{" "}
-                              {walkingPrices.baseTime}min
-                            </TableCell>
-                            <TableCell className="whitespace-nowrap">
-                              ${walkingPrices.additionalPrice} /{" "}
-                              {walkingPrices.additionalTime}min
-                            </TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Overnight Fee</TableCell>
-                            <TableCell>${sittingPrices.overnightFee}</TableCell>
-                            <TableCell>-</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Weekend Fee</TableCell>
-                            <TableCell>${sittingPrices.weekendFee}</TableCell>
-                            <TableCell>-</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </CardContent>
-                  </Card>
+                  {baseRateServices.map((service, idx) => {
+                    service.pricingModel =
+                      service.pricingModel as BaseRatePricing;
+                    return (
+                      <Card key={idx} className="overflow-hidden">
+                        <CardHeader className="space-y-1">
+                          <CardTitle>
+                            {baseServiceFormValues.find(
+                              (s) => s.value === service.name,
+                            )?.label ?? service.name}
+                          </CardTitle>
+                          <CardDescription>Time-based pricing</CardDescription>
+                        </CardHeader>
+                        <CardContent className="overflow-x-auto">
+                          <Table>
+                            <TableHeader>
+                              <TableRow>
+                                <TableHead className="whitespace-nowrap">
+                                  Service
+                                </TableHead>
+                                <TableHead className="whitespace-nowrap">
+                                  Base Price
+                                </TableHead>
+                                <TableHead className="whitespace-nowrap">
+                                  Additional
+                                </TableHead>
+                              </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                              <TableRow>
+                                <TableCell className="whitespace-nowrap">
+                                  {baseServiceFormValues.find(
+                                    (s) => s.value === service.name,
+                                  )?.label ?? service.name}
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                  ${service.pricingModel.basePrice} /{" "}
+                                  {service.pricingModel.baseTime}{" "}
+                                  {service.pricingModel.timeUnit}
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                  ${service.pricingModel.additionalPrice} /{" "}
+                                  {service.pricingModel.additionalTime}{" "}
+                                  {service.pricingModel.timeUnit}
+                                </TableCell>
+                              </TableRow>
+                              {service.pricingModel.addons &&
+                                Object.entries(service.pricingModel.addons).map(
+                                  ([key, value], idx) => (
+                                    <TableRow key={idx}>
+                                      <TableCell className="whitespace-nowrap">
+                                        {prettyPrint(key)}
+                                      </TableCell>
+                                      <TableCell className="whitespace-nowrap">
+                                        ${value}
+                                      </TableCell>
+                                      <TableCell className="whitespace-nowrap">
+                                        -
+                                      </TableCell>
+                                    </TableRow>
+                                  ),
+                                )}
+                            </TableBody>
+                          </Table>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
 
-                  <Card className="overflow-hidden">
-                    <CardHeader className="space-y-1">
-                      <CardTitle>Pet Bathing</CardTitle>
-                      <CardDescription>
-                        Size/weight-based pricing
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="overflow-x-auto">
-                      <Table>
-                        <TableHeader>
-                          <TableRow>
-                            <TableHead className="whitespace-nowrap">
-                              Pet Size
-                            </TableHead>
-                            <TableHead className="whitespace-nowrap">
-                              Price
-                            </TableHead>
-                          </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                          <TableRow>
-                            <TableCell>Small</TableCell>
-                            <TableCell>${bathingPrices.small}</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Medium</TableCell>
-                            <TableCell>${bathingPrices.medium}</TableCell>
-                          </TableRow>
-                          <TableRow>
-                            <TableCell>Large</TableCell>
-                            <TableCell>${bathingPrices.large}</TableCell>
-                          </TableRow>
-                        </TableBody>
-                      </Table>
-                    </CardContent>
-                  </Card>
+                  {tierBasedServices.map((service, idx) => (
+                    <Card key={idx} className="overflow-hidden">
+                      <CardHeader className="space-y-1">
+                        <CardTitle>{service.name}</CardTitle>
+                        <CardDescription>
+                          Size/weight-based pricing
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent className="overflow-x-auto">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead className="whitespace-nowrap">
+                                Pet Size
+                              </TableHead>
+                              <TableHead className="whitespace-nowrap">
+                                Price
+                              </TableHead>
+                            </TableRow>
+                          </TableHeader>
+                          <TableBody>
+                            {service.pricingModel.tiers.map((tier, idx) => (
+                              <TableRow key={idx}>
+                                <TableCell className="whitespace-nowrap">
+                                  {tier.size}
+                                </TableCell>
+                                <TableCell className="whitespace-nowrap">
+                                  ${tier.price}
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </CardContent>
+                    </Card>
+                  ))}
                 </div>
               </TabsContent>
 

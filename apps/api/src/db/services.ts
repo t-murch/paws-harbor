@@ -88,7 +88,9 @@ export const SelectServiceSchema = createSelectSchema(servicesTable, {
 });
 
 // Example usage with your existing types
-function mapDbToServiceConfig(dbService: Service): PersistedServiceConfig {
+export function mapDbToServiceConfig(
+  dbService: Service
+): PersistedServiceConfig {
   return {
     description: dbService.description,
     id: dbService.id,
