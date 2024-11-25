@@ -28,7 +28,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
   });
   // const { updatePrice } = usePricing();
   const [isEditMode, setIsEditMode] = useState(false);
-  log(`initialServices=${JSON.stringify(initialServices, null, 2)}`);
+  // log(`initialServices=${JSON.stringify(initialServices, null, 2)}`);
 
   const form = useForm<ServiceFormData>({
     // defaultValues: { services: { ...initialServices, ...state.fields } },
@@ -106,7 +106,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
   }
 
   console.log(`errors=${JSON.stringify(errors, null, 2)}`);
-  console.log(`fields=${JSON.stringify(fields, null, 2)}`);
+  // console.log(`fields=${JSON.stringify(fields, null, 2)}`);
   console.log(`message=${JSON.stringify(state, null, 2)}`);
 
   return (
@@ -141,19 +141,12 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
                   onClick={() =>
                     append({
                       description: "",
-                      metadata: {
-                        maxDogs: 3,
-                        requiresKey: false,
-                      },
+                      metadata: {},
                       name: availableServices[0].value,
                       pricingModel: {
                         additionalPrice: 0,
                         additionalTime: 0,
-                        addons: {
-                          extendedArea: 5,
-                          extraDog: 10,
-                          holidays: 15,
-                        },
+                        addons: {},
                         basePrice: 0,
                         baseTime: 0,
                         timeUnit: "hours",

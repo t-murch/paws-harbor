@@ -131,13 +131,15 @@ interface TieredPricingSchema {
 }
 
 // Type guards
-function isBaseRatePricing(
+export function isBaseRatePricing(
   pricing: ServicePricing
 ): pricing is BaseRatePricing {
   return pricing.type === 'baseRate';
 }
 
-function isTieredPricing(pricing: ServicePricing): pricing is TieredPricing {
+export function isTieredPricing(
+  pricing: ServicePricing
+): pricing is TieredPricing {
   return pricing.type === 'tiered';
 }
 

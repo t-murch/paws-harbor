@@ -1,4 +1,4 @@
-import { BASE_SERVICES, baseServiceFormValues } from "@/../../api/src/types";
+import { baseServiceFormValues } from "@/../../api/src/types";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -17,8 +17,15 @@ import {
 } from "@/components/ui/select";
 import { ServiceFormData } from "@/lib/types";
 import { UseFormReturn } from "react-hook-form";
-import { durationUnit } from "../../../../../api/src/db/services";
+import {
+  isBaseRatePricing,
+  isTieredPricing,
+  ServicePricing,
+} from "../../../../../api/src/types/pricing";
+import BasePricingFormFields from "./BasePricingFormFields";
 import DynamicServiceFields from "./ServiceFields";
+import TieredPricingFormFields from "./TieredPricingFormFields";
+import { log } from "@repo/logger";
 
 interface ServiceFormItemProps {
   availableServices: any[];
@@ -29,6 +36,29 @@ interface ServiceFormItemProps {
   isEditMode: boolean;
   remove: (index: number) => void;
 }
+
+const parseMe = (model: ServicePricing) => {
+  if (isBaseRatePricing(model)) {
+    return {
+      additionalPrice: model.additionalPrice,
+      additionalTime: model.additionalTime ?? 0,
+      addons: model.addons,
+      basePrice: model.basePrice,
+      baseTime: model.baseTime ?? 0,
+      timeUnit: model.timeUnit,
+      type: model.type,
+    };
+  } else if (isTieredPricing(model)) {
+    log(`isTiered!==${JSON.stringify(model, null, 2)}`);
+    return {
+      tierMapping: model.tierMapping ?? [],
+      tiers: model.tiers ?? {},
+      type: model.type,
+    };
+  }
+
+  return model;
+};
 
 export default function ServiceFormItem({
   availableServices,
@@ -46,6 +76,12 @@ export default function ServiceFormItem({
     ...availableServices,
   ];
   if (instanceOption) currentOptions.push(instanceOption);
+
+  const pricingModelType = form.watch(`services.${index}.pricingModel.type`);
+  let pricingModel = form.watch(`services.${index}.pricingModel`);
+
+  // pricingModel = parseMe(pricingModel);
+  // log(`pricingModel=${JSON.stringify(pricingModel, null, 2)}`);
 
   return (
     <div key={field.id} className="min-h-[350px] mb-4 p-4 border rounded">
@@ -102,7 +138,15 @@ export default function ServiceFormItem({
               {...field}
               defaultValue={field.value}
               disabled={!isEditMode}
-              onValueChange={field.onChange}
+              onValueChange={(e) => {
+                field.onChange(e);
+                log(
+                  `parseMe=${JSON.stringify(parseMe(pricingModel), null, 2)}`,
+                );
+                form.setValue(`services.${index}.pricingModel`, {
+                  ...parseMe(pricingModel),
+                });
+              }}
             >
               <FormControl>
                 <SelectTrigger>
@@ -119,118 +163,21 @@ export default function ServiceFormItem({
         )}
       />
 
-      {/* FormField representing the BaseRatePricing interface
-       * will be refactored to solo component handling BaseRatePricing
-       * and TieredPricing
-       */}
-      <div className="grid grid-rows-1 grid-cols-2 gap-2">
-        <FormField
-          control={form.control}
-          name={`services.${index}.pricingModel.basePrice`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Base Price</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  disabled={!isEditMode}
-                  // type="number"
-                  // readOnly={!isEditMode}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      {pricingModelType === "baseRate" && (
+        <BasePricingFormFields
+          form={form}
+          index={index}
+          isEditMode={isEditMode}
         />
-        <FormField
-          control={form.control}
-          name={`services.${index}.pricingModel.additionalPrice`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Additional Price</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  disabled={!isEditMode}
-                  type="number"
-                  // readOnly={!isEditMode}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
+      )}
 
-      <div className="grid grid-rows-1 grid-cols-2 gap-2">
-        <FormField
-          control={form.control}
-          name={`services.${index}.pricingModel.baseTime`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Base Time</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  disabled={!isEditMode}
-                  type="number"
-                  // readOnly={!isEditMode}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+      {pricingModelType === "tiered" && (
+        <TieredPricingFormFields
+          form={form}
+          index={index}
+          isEditMode={isEditMode}
         />
-
-        <FormField
-          control={form.control}
-          name={`services.${index}.pricingModel.timeUnit`}
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Unit</FormLabel>
-              <Select
-                defaultValue={field.value}
-                disabled={!isEditMode}
-                onValueChange={field.onChange}
-                {...field}
-              >
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="hours / days" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {durationUnit.map((u, idx) => (
-                    <SelectItem key={idx} value={u}>
-                      {u}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      </div>
-
-      <FormField
-        control={form.control}
-        name={`services.${index}.pricingModel.additionalTime`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Additional Time</FormLabel>
-            <FormControl>
-              <Input
-                {...field}
-                disabled={!isEditMode}
-                type="number"
-                // readOnly={!isEditMode}
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      )}
 
       <br />
 

@@ -1,5 +1,7 @@
 import {
   BaseRatePricing,
+  isBaseRatePricing,
+  isTieredPricing,
   PersistedServiceConfig,
   Pricing,
 } from "@/../../api/src/types/pricing";
@@ -41,9 +43,8 @@ export default function Pricelist({
     tierBasedServices: PersistedServiceConfig[] = [];
 
   services.forEach((service) => {
-    if (service.pricingModel.type === "baseRate")
-      baseRateServices.push(service);
-    else if (service.pricingModel.type === "tiered")
+    if (isBaseRatePricing(service.pricingModel)) baseRateServices.push(service);
+    else if (isTieredPricing(service.pricingModel))
       tierBasedServices.push(service);
   });
 
@@ -144,7 +145,11 @@ export default function Pricelist({
                   {tierBasedServices.map((service, idx) => (
                     <Card key={idx} className="overflow-hidden">
                       <CardHeader className="space-y-1">
-                        <CardTitle>{service.name}</CardTitle>
+                        <CardTitle>
+                          {baseServiceFormValues.find(
+                            (s) => s.value === service.name,
+                          )?.label ?? service.name}
+                        </CardTitle>
                         <CardDescription>
                           Size/weight-based pricing
                         </CardDescription>
@@ -162,16 +167,19 @@ export default function Pricelist({
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {service.pricingModel.tiers.map((tier, idx) => (
-                              <TableRow key={idx}>
-                                <TableCell className="whitespace-nowrap">
-                                  {tier.size}
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                  ${tier.price}
-                                </TableCell>
-                              </TableRow>
-                            ))}
+                            {isTieredPricing(service.pricingModel) &&
+                              Object.entries(service.pricingModel.tiers).map(
+                                ([key, value], idx) => (
+                                  <TableRow key={idx}>
+                                    <TableCell className="whitespace-nowrap">
+                                      {key}
+                                    </TableCell>
+                                    <TableCell className="whitespace-nowrap">
+                                      ${value}
+                                    </TableCell>
+                                  </TableRow>
+                                ),
+                              )}
                           </TableBody>
                         </Table>
                       </CardContent>

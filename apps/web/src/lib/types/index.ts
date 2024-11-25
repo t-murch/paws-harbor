@@ -7,6 +7,7 @@ import {
 import { serviceFrequencies } from "@/../../../api/src/types";
 import { log } from "@repo/logger";
 import { z } from "zod";
+import { ServicePricing } from "../../../../api/src/types/pricing";
 
 export type Pet = {
   id: string;
@@ -187,20 +188,15 @@ export function transformServiceFormToSchema(formData: {
         addons[addonKey] = parseFloat(service[key] || "0");
       });
 
+    const pricingModel: ServicePricing = parsePricingModel(service, addons);
+
     const transformedService: ServiceClient = {
       description: service.description,
       metadata,
       name: service.name,
-      pricingModel: {
-        additionalPrice: parseFloat(service["pricingModel.additionalPrice"]),
-        additionalTime: parseFloat(service["pricingModel.additionalTime"]),
-        addons,
-        basePrice: parseFloat(service["pricingModel.basePrice"]),
-        baseTime: parseFloat(service["pricingModel.baseTime"]),
-        timeUnit: service["pricingModel.timeUnit"],
-        type: service["pricingModel.type"],
-      },
+      pricingModel,
     };
+
     log(`service=${JSON.stringify(service, null, 2)}`);
 
     if ("id" in service) {
@@ -217,4 +213,36 @@ export function transformServiceFormToSchema(formData: {
 
     return transformedService;
   });
+}
+
+function parsePricingModel(
+  service: any,
+  addons: Record<string, number>,
+): ServicePricing {
+  if (service["pricingModel.type"] === "baseRate") {
+    return {
+      additionalPrice: parseFloat(service["pricingModel.additionalPrice"]),
+      additionalTime: parseFloat(service["pricingModel.additionalTime"]),
+      addons,
+      basePrice: parseFloat(service["pricingModel.basePrice"]),
+      baseTime: parseFloat(service["pricingModel.baseTime"]),
+      timeUnit: service["pricingModel.timeUnit"],
+      type: service["pricingModel.type"],
+    };
+  } else {
+    const tiers: Record<string, number> = {};
+
+    Object.keys(service)
+      .filter((key) => key.startsWith("pricingModel.tiers."))
+      .forEach((key) => {
+        const tierKey = key.slice("pricingModel.tiers.".length);
+        tiers[tierKey] = parseFloat(service[key]);
+      });
+
+    return {
+      tierMapping: JSON.parse(service["pricingModel.tierMapping"] ?? "[]"),
+      tiers: tiers,
+      type: service["pricingModel.type"],
+    };
+  }
 }
