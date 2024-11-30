@@ -1,0 +1,1 @@
+ALTER TABLE "recurring_availability" ALTER COLUMN "end_time" DROP NOT NULL;

@@ -27,7 +27,7 @@ export const recurringAvailabilityTable = pgTable('recurring_availability', {
   }),
   createdAt: timestamp('created_at').defaultNow(),
   dayOfWeek: text('day_of_week').notNull(),
-  endDate: time('end_time').notNull(),
+  endDate: time('end_time'),
   id: uuid('id').defaultRandom().primaryKey(),
   serviceType: pgServiceTypes('service_type').notNull(),
   startDate: date('start_date').notNull(),
