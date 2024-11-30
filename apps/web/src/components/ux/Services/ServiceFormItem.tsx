@@ -140,9 +140,6 @@ export default function ServiceFormItem({
               disabled={!isEditMode}
               onValueChange={(e) => {
                 field.onChange(e);
-                log(
-                  `parseMe=${JSON.stringify(parseMe(pricingModel), null, 2)}`,
-                );
                 form.setValue(`services.${index}.pricingModel`, {
                   ...parseMe(pricingModel),
                 });

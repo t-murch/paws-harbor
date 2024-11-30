@@ -23,7 +23,6 @@ servicesRoute.get('/all', async (context) => {
     });
   }
   const allServices = await OfferingService.getAll();
-  log(`allServices=${JSON.stringify(allServices, null, 2)}`);
 
   return context.json({ data: allServices, success: true });
 });
@@ -40,7 +39,7 @@ servicesRoute.get('/:id', async (context) => {
 
   const service = await OfferingService.findById(id);
 
-  return context.json({ data: service[0] ?? null, success: true });
+  return context.json({ data: service ?? null, success: true });
 });
 
 servicesRoute.post(

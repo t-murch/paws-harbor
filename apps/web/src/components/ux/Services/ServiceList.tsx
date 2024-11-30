@@ -105,9 +105,11 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
     return setIsEditMode((prev) => !prev);
   }
 
-  console.log(`errors=${JSON.stringify(errors, null, 2)}`);
+  if (errors?.services && errors.services.length) {
+    console.log(`errors=${JSON.stringify(errors, null, 2)}`);
+  }
   // console.log(`fields=${JSON.stringify(fields, null, 2)}`);
-  console.log(`message=${JSON.stringify(state, null, 2)}`);
+  // console.log(`message=${JSON.stringify(state, null, 2)}`);
 
   return (
     <Card>

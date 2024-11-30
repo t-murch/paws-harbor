@@ -258,9 +258,7 @@ class ServiceFactory {
     };
   }
 
-  static createSittingService(
-    config: BaseRatePricing = BASE_PRICES.sitting
-  ): ServiceConfig {
+  static createSittingService(config: BaseRatePricing): ServiceConfig {
     return {
       description: 'Professional dog walking service',
       isBase: true,

@@ -21,7 +21,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { log } from "@repo/logger";
 import {
   baseServiceFormValues,
   prettyPrint,
@@ -47,8 +46,6 @@ export default function Pricelist({
     else if (isTieredPricing(service.pricingModel))
       tierBasedServices.push(service);
   });
-
-  log(`services=${JSON.stringify(services, null, 2)}`);
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 py-6">

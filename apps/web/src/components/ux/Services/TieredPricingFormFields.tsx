@@ -9,8 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ServiceFormData } from "@/lib/types";
-import { log } from "@repo/logger";
-import { Trash2, PlusCircle } from "lucide-react";
+import { PlusCircle, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -55,13 +54,11 @@ function TieredPricingFormFields({
     `services.${index}.pricingModel.tiers`,
   ) as Record<string, number>;
 
-  log(`priceTiers,${index}==${JSON.stringify(priceTiers, null, 2)}`);
-
   return (
     <>
       {/* Existing Addons */}
       <div className="space-y-3">
-        {Object.entries(priceTiers || {}).map(([key, value]) => (
+        {Object.entries(priceTiers || {}).map(([key]) => (
           <div key={key} className="flex gap-3">
             <div className="grid grid-cols-2 gap-3 flex-1">
               <FormItem>
