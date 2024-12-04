@@ -17,6 +17,7 @@ export default defineConfig({
     },
     environment: 'node', // Node.js environment for testing
     globals: true, // Enable global test APIs like `describe`, `it`, `expect`
+    poolOptions: { threads: { singleThread: true } },
     setupFiles: [], // Add setup files if needed
   },
 });
