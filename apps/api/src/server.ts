@@ -10,6 +10,7 @@ import { prettyJSON } from 'hono/pretty-json';
 import petsRoute from './routes/pets';
 import servicesRoute from './routes/services';
 import { adminMiddleware } from './middleware/adminMiddleware';
+import availabilityRoute from './routes/availability';
 
 type Variables = {
   user: User;
@@ -31,12 +32,15 @@ app
   )
   .use('users/*', authMiddleware)
   .use('pets/*', authMiddleware)
+  // TODO: implement admin middleware
   .use('admin/services/*', ...[authMiddleware, adminMiddleware])
+  .use('admin/availability/*', ...[authMiddleware, adminMiddleware])
   .use(prettyJSON());
 
 app.route('/users', userRoute);
 app.route('/pets', petsRoute);
 app.route('/admin/services', servicesRoute);
+app.route('/admin/availability', availabilityRoute);
 
 app.get('/message/:name', (c) => {
   return c.json({ message: `hello ${c.req.param('name')}` });
