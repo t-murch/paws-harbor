@@ -1,3 +1,13 @@
+import {
+  InsertRecurringAvailability,
+  InsertServiceAvailability,
+  RequestRecurringServiceAvailability,
+  RequestServiceAvailability,
+  SelectRecurringAvailability,
+  SelectServiceAvailability,
+  UpdateRecurringAvailability,
+  UpdateServiceAvailability,
+} from '@/db/availability';
 import z from 'zod';
 
 export type User = {
@@ -57,6 +67,30 @@ export type Service = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type ServiceAvailability =
+  | InsertServiceAvailability
+  | SelectServiceAvailability
+  | RequestServiceAvailability
+  | UpdateServiceAvailability;
+
+export const daysofWeek = [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
+] as const;
+export type DaysofWeek = (typeof daysofWeek)[number];
+export const DaysofWeekEnum = z.enum(daysofWeek);
+
+export type RecurringAvailability =
+  | InsertRecurringAvailability
+  | SelectRecurringAvailability
+  | RequestRecurringServiceAvailability
+  | UpdateRecurringAvailability;
 
 /**
  * MINUTES OR DAYS
