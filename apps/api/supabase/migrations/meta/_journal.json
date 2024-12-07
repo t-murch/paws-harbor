@@ -92,6 +92,20 @@
       "when": 1733009442014,
       "tag": "20241130233042_serviceAvailability",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1733518405391,
+      "tag": "20241206205325_serviceAvailability_edit_01_drop_col_for_reassign",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1733518474302,
+      "tag": "20241206205434_serviceAvailability_edit_02_readd_dayOfWeek_col",
+      "breakpoints": true
     }
   ]
 }
