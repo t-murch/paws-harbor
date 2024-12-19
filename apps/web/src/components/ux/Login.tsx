@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { MaskInputLogin } from "./MaskInput";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { mergeClassNames } from "@/lib/utils";
+import { useSearchParams } from "next/navigation";
 
 interface LoginProps extends HTMLProps<HTMLInputTypeAttribute> {
   loginAction: LoginAction;
@@ -28,12 +29,12 @@ interface LoginProps extends HTMLProps<HTMLInputTypeAttribute> {
 export function Login({ loginAction, className }: LoginProps) {
   const [state, formAction] = useFormState(loginAction, { message: "" });
   const form = useForm<z.infer<typeof loginFormSchema>>({
-    resolver: zodResolver(loginFormSchema),
     defaultValues: {
       email: "",
       password: "",
       ...(state?.fields ?? {}),
     },
+    resolver: zodResolver(loginFormSchema),
   });
   const {
     formState: { isSubmitted, isSubmitting },
@@ -64,6 +65,12 @@ export function Login({ loginAction, className }: LoginProps) {
             }}
             className="space-y-1"
           >
+            <Input
+              {...form.register("redirect", {
+                value: useSearchParams().get("redirect") ?? "/",
+              })}
+              type="hidden"
+            />
             <FormField
               control={form.control}
               name="email"

@@ -33,7 +33,9 @@ app
   .use('users/*', authMiddleware)
   .use('pets/*', authMiddleware)
   // TODO: implement admin middleware
-  .use('admin/services/*', ...[authMiddleware, adminMiddleware])
+  .post('admin/services/*', ...[authMiddleware, adminMiddleware])
+  .put('admin/services/*', ...[authMiddleware, adminMiddleware])
+  .delete('admin/services/*', ...[authMiddleware, adminMiddleware])
   .use('admin/availability/*', ...[authMiddleware, adminMiddleware])
   .use(prettyJSON());
 

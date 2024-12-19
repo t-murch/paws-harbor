@@ -14,4 +14,5 @@ export const signupFormSchema = z
 export const loginFormSchema = z.object({
   email: z.string().trim().email(),
   password: z.string().trim().min(8).max(32),
+  redirect: z.string().optional(),
 });

@@ -57,6 +57,7 @@ export async function loginActionOld(
   _prevState: FormStateUno,
   formData: FormData,
 ): Promise<FormStateUno> {
+  // getting query params from url
   const dirtyData = Object.fromEntries(formData);
   const parsed = loginFormSchema.safeParse(dirtyData);
 
@@ -69,8 +70,8 @@ export async function loginActionOld(
     }
 
     return {
-      message: "Invalid form data",
       fields,
+      message: "Invalid form data",
     };
   }
 
@@ -88,10 +89,8 @@ export async function loginActionOld(
     redirect("/login");
   }
 
-  log(`nextjs-cookies=${JSON.stringify(cookies())}`);
-
   revalidatePath("/", "layout");
-  redirect("/");
+  redirect((formData.get("redirect") as string) ?? "/");
 }
 
 export type LoginAction = typeof loginActionOld;

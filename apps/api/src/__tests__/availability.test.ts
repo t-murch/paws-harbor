@@ -13,6 +13,7 @@ import { InsertProfile, profilesTable, SelectProfile } from '@/db/users';
 import { RecurringAvailability } from '@/types';
 import { eq } from 'drizzle-orm';
 import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { Context, Next } from 'hono';
 import postgres from 'postgres';
 import { assert, describe, expect, it, vi } from 'vitest';
 
@@ -23,12 +24,32 @@ const testUser: InsertProfile = {
   role: 'admin',
 };
 
+// Mock the authClient function
+vi.mock('@/db/auth', () => ({
+  authClient: vi.fn(),
+}));
+
 describe('AvailabilityRepository', () => {
   let testDb: PostgresJsDatabase<Record<string, never>> & {
     $client: postgres.Sql<{}>;
   };
   let availabilityRepository: AvailabilityRepository;
   let insertProfile: SelectProfile;
+  let context: Context;
+  let next: Next;
+
+  beforeEach(() => {
+    // Create a mock context and next function
+    context = {
+      req: {
+        header: vi.fn().mockReturnValue('base64-token'),
+      },
+      json: vi.fn(),
+      set: vi.fn(),
+    } as unknown as Context;
+
+    next = vi.fn();
+  });
 
   beforeAll(async () => {
     const client = postgres(

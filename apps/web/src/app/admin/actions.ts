@@ -29,13 +29,7 @@ export async function getAllServices(): Promise<PersistedServiceConfig[]> {
   // to have the `form-wrapper`
   // -- { fields,}
 
-  const authHeaders = new Headers();
-  const authCookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
-  authHeaders.append("Authorization", `Bearer ${authCookies?.value}`);
-  authHeaders.append("Content-Type", "application/json");
-
   const res = await fetch(`${API_HOST}/admin/services/all`, {
-    headers: authHeaders,
     method: "GET",
   }).catch((e) => {
     let errorMsg = "";
@@ -60,6 +54,7 @@ export async function getAllServices(): Promise<PersistedServiceConfig[]> {
       throw new Error(errorMsg);
     });
   if (!r.success) {
+    console.log(`Error: ${JSON.stringify(r.error)}`);
     throw new Error(r.error.message);
   }
 

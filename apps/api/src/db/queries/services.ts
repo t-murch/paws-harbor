@@ -127,6 +127,7 @@ export class ServiceRepository {
   }
 
   async getAll(): Promise<Service[]> {
+    console.log(`getAll query called.`);
     return await this.db.select().from(servicesTable);
   }
 

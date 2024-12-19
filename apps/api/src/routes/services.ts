@@ -15,13 +15,7 @@ const servicesRoute = new Hono<{ Variables: Variables }>();
 const OfferingService = new ServiceRepository(db);
 
 servicesRoute.get('/all', async (context) => {
-  const user = context.get('user');
-  if (!user) {
-    return context.json({
-      data: null,
-      error: { message: 'Unauthorized' },
-    });
-  }
+  log(`getAll called route called.`);
   const allServices = await OfferingService.getAll();
 
   return context.json({ data: allServices, success: true });

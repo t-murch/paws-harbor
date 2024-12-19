@@ -48,6 +48,7 @@ export async function updateSession(request: NextRequest) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
     url.pathname = "/login";
+    url.searchParams.set("redirect", request.nextUrl.pathname);
     return NextResponse.redirect(url);
   } else {
     log(`we have a user: ${JSON.stringify(user?.email)}`);
@@ -66,5 +67,6 @@ export async function updateSession(request: NextRequest) {
   // If this is not done, you may be causing the browser and server to go out
   // of sync and terminate the user's session prematurely!
 
+  console.log("request.next", request.nextUrl);
   return supabaseResponse;
 }
