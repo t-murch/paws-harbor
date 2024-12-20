@@ -1,10 +1,17 @@
 import { log } from "@repo/logger";
 import { type ClassValue, clsx } from "clsx";
-import { cookies } from "next/headers";
 import { twMerge } from "tailwind-merge";
 
 const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
-const PROJECT_URL = process.env.SB_AUTH_URL!;
+export const SUPABASE_URL = isProd()
+  ? process.env.NEXT_PUBLIC_SUPABASE_URL!
+  : process.env.NEXT_PUBLIC_LOCAL_SUPABASE_URL!;
+export const SUPABASE_ANON_KEY = isProd()
+  ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  : process.env.NEXT_PUBLIC_LOCAL_SUPABASE_ANON_KEY!;
+const PROJECT_URL = isProd()
+  ? process.env.SB_AUTH_URL!
+  : process.env.LOCAL_SB_AUTH_URL!;
 
 function mergeClassNames(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -68,11 +75,21 @@ export type GeneralResponse<T, E> =
   | { data: T; success: true }
   | { error: E; success: false };
 
+export function isFulfilled<T>(
+  result: PromiseSettledResult<T>,
+): result is { status: "fulfilled"; value: T } {
+  return result.status === "fulfilled";
+}
+
+function isProd() {
+  return process.env.NODE_ENV === "production";
+}
+
 export {
   API_HOST,
+  getErrorMessage,
   // getAuthHeaders,
   handleError,
   mergeClassNames,
-  getErrorMessage,
   PROJECT_URL,
 };

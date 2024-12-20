@@ -19,7 +19,10 @@ import { supabaseServerClient } from "@/lib/supabase/server";
 
 export async function Header() {
   //TODO: THIS USER CHECK NEEDS TO BE UPDATED TO RBAC,
-  const user = await supabaseServerClient.auth.getUser();
+  const {
+    data: { user },
+  } = await supabaseServerClient.auth.getUser();
+  console.log(`header user: ${JSON.stringify(user)}`);
   return (
     <header className="header h-24 mb-4 flex flex-row items-center justify-between">
       <div className="title flex flex-row gap-2">
@@ -65,10 +68,11 @@ export async function Header() {
                 <h4>Our Services</h4>
               </Link>
             </SheetClose>
-            {/* Should ALWAYS remain at the bottom of the list */}
-            <SheetClose asChild>
-              <ClientBtn action={logoutAction} label={"Log Out"}></ClientBtn>
-            </SheetClose>
+            {user && (
+              <SheetClose asChild>
+                <ClientBtn action={logoutAction} label={"Log Out"}></ClientBtn>
+              </SheetClose>
+            )}
           </div>
         </SheetContent>
       </Sheet>
