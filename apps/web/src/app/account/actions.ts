@@ -16,10 +16,13 @@ import { FormStateUno } from "../login/actions";
 
 export const getUserProfile = async (): Promise<{
   user: UserProfile | null;
-} | null> => {
+}> => {
   const mycookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   const myHeaders = new Headers();
-  myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
+  //TODO: Refactor this into a util.
+  if (mycookies) {
+    myHeaders.append("Authorization", `Bearer ${mycookies?.value}`);
+  }
   const res = await fetch(`${API_HOST}/users/profile`, {
     headers: myHeaders,
     method: "GET",
@@ -27,7 +30,7 @@ export const getUserProfile = async (): Promise<{
 
   if (!res.ok) {
     log(`res!ok=${res.statusText}`);
-    return null;
+    return { user: null };
   }
 
   const { data, error }: UserJSONResponse = await res.json();
@@ -72,10 +75,10 @@ export const getUserPets = async () => {
 
   if (!res.ok) {
     log(`res!ok=${res.statusText}`);
-    return null;
+    return [];
   }
 
-  const respnseJSON = await res.json();
+  const respnseJSON: { data: Pet[]; error: null } = await res.json();
 
   return respnseJSON.data;
 };

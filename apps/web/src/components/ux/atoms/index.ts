@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 
 export type UserProfile = {
+  admin: boolean | null;
   email: string;
   name: string | null;
   id: string;
