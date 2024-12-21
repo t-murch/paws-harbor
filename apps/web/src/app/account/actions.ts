@@ -112,9 +112,9 @@ export const createPet = async (
   }
 
   const respnseJSON: CreatePetResponse = await res.json();
-  // if (respnseJSON.error) {
-  //   log(`Create Pet failure. Error=${respnseJSON.error}`);
-  // }
+  if (respnseJSON.error) {
+    log(`Create Pet failure. Error=${respnseJSON.error}`);
+  }
   return respnseJSON;
 };
 

@@ -54,7 +54,7 @@ const petSizeDropDownRecords = Object.entries(PetSizes).map(([k, v]) => {
 const ageRange = new Array(30).fill(null).map((_val, idx) => idx + 1);
 
 const petSchema = z.object({
-  age: z.number().min(1).max(30),
+  age: z.union([z.number(), z.string().pipe(z.coerce.number())]),
   breed: z.string().min(1, "Breed is required"),
   id: z.string().optional(),
   name: z.string().min(1, "Name is required"),
@@ -205,6 +205,7 @@ const PetComponent: React.FC<PetProps> = ({ pet, userId }) => {
                     setBreeds(b);
                   }}
                   defaultValue={field.value}
+                  {...field}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -229,6 +230,7 @@ const PetComponent: React.FC<PetProps> = ({ pet, userId }) => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  {...field}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -256,6 +258,8 @@ const PetComponent: React.FC<PetProps> = ({ pet, userId }) => {
                 <Select
                   onValueChange={(value) => field.onChange(parseInt(value))}
                   defaultValue={`${field.value}`}
+                  {...field}
+                  value={`${field.value}`}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -284,6 +288,7 @@ const PetComponent: React.FC<PetProps> = ({ pet, userId }) => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  {...field}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -308,6 +313,7 @@ const PetComponent: React.FC<PetProps> = ({ pet, userId }) => {
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
+                  {...field}
                 >
                   <FormControl>
                     <SelectTrigger>

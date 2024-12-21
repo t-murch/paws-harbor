@@ -13,21 +13,6 @@ import Bio from "./Bio";
 import PetComponent from "./Pet";
 import { Service } from "../../../../../api/src/db/services";
 
-export const testUser: UserProfile = {
-  address: "123 BrownTree Trail Leander, TX 78641",
-  bio: null,
-  createdAt: null,
-  email: "toberuffin@domain.com",
-  id: "123",
-  name: "Tobias Ruffin",
-  // pets: [testPet],
-  phoneNumber: "253-111-1234",
-  profilePictureUrl: null,
-  role: "",
-  updatedAt: null,
-  // services: [],
-};
-
 const MyAvatar = () => <AvatarIcon className="w-16 h-16" />;
 
 export type UserJSONResponse = {
