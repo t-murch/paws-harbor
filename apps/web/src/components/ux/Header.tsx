@@ -26,12 +26,12 @@ export async function Header() {
   const adminInfo = await getUserProfile();
   return (
     <header className="header h-24 mb-4 flex flex-row items-center justify-between">
-      <div className="title flex flex-row gap-2">
+      <Link href="/" className="title flex flex-row gap-2">
         <Image alt="paws-logo" priority src={pawsIcon} />
         <h1 className="flex w-full items-center justify-center text-2xl font-extrabold">
           Paws on the Harbor
         </h1>
-      </div>
+      </Link>
       <Sheet>
         <SheetTrigger asChild>
           <Button variant="default" className="h-12 w-12">
@@ -42,6 +42,11 @@ export async function Header() {
           <SheetTitle />
           <SheetDescription />
           <div className="flex flex-col items-center gap-6 px-6">
+            <SheetClose asChild>
+              <Link href="/">
+                <h4>Home</h4>
+              </Link>
+            </SheetClose>
             {adminInfo?.user?.admin && (
               <SheetClose asChild>
                 <Link href="/admin">
