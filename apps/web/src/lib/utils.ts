@@ -17,6 +17,51 @@ function mergeClassNames(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+async function handleErrorBadRequest(response: Response) {
+  let errorMessage = "";
+
+  switch (response.headers.get("content-type")) {
+    case "application/json": {
+      const data = await response.json();
+      errorMessage = `Error, Bad Request: ${JSON.stringify(data)}`;
+      break;
+    }
+    case "text/plain": {
+      errorMessage = `Error, Bad Request: ${await response.text()}`;
+      break;
+    }
+    default: {
+      errorMessage = `Error, Bad Request: ${response.status} ${response.statusText}`;
+      break;
+    }
+  }
+
+  log(errorMessage);
+  return errorMessage;
+}
+
+async function fetcher<T>({
+  url,
+  options = { method: "GET" },
+}: {
+  url: string;
+  options?: RequestInit;
+}): Promise<T> {
+  const response = await fetch(url, options).catch((e) => {
+    const errorMessage = handleError("", e);
+    throw new Error(errorMessage);
+  });
+
+  if (!response.ok) {
+    const errorMessage = await handleErrorBadRequest(response);
+    throw new Error(errorMessage);
+  }
+
+  const data: T = await response.json();
+
+  return data;
+}
+
 /**
  * ERROR HANDLING
  */
@@ -32,6 +77,10 @@ function isErrorWithMessage(error: unknown): error is ErrorWithMessage {
     "message" in error &&
     typeof (error as Record<string, unknown>).message === "string"
   );
+}
+
+function isError(error: unknown): error is Error {
+  return error instanceof Error;
 }
 
 function toErrorWithMessage(maybeError: unknown): ErrorWithMessage {
@@ -63,17 +112,22 @@ function getErrorMessage(error: unknown) {
  * return errormsg for user throwing if desired.
  */
 function handleError(errorMsg: string, e: unknown) {
+  log(`handleError: ${JSON.stringify(e, null, 2)}`);
   if (e instanceof Error) errorMsg += e.message;
   else {
     errorMsg += JSON.stringify(e);
   }
-  log(errorMsg);
+  console.error(errorMsg);
   return errorMsg;
 }
 
+/** Server response type */
 export type GeneralResponse<T, E> =
   | { data: T; success: true }
   | { error: E; success: false };
+
+/* Client response type */
+export type ClientResponse<T> = { data: T; error: null | string };
 
 export function isFulfilled<T>(
   result: PromiseSettledResult<T>,
@@ -87,9 +141,12 @@ function isProd() {
 
 export {
   API_HOST,
+  fetcher,
   getErrorMessage,
   // getAuthHeaders,
   handleError,
+  isError,
   mergeClassNames,
+  handleErrorBadRequest,
   PROJECT_URL,
 };
