@@ -57,4 +57,10 @@ availabilityRoute.post(
   }
 );
 
+availabilityRoute.get('/service/all', async (context) => {
+  const query = context.req.query('days');
+  const param: number | undefined = query ? parseInt(query) : undefined;
+  return context.json(await AvailabilityService.getAllAvailability(param));
+});
+
 export default availabilityRoute;

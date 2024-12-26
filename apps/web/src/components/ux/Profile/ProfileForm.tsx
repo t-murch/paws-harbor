@@ -73,10 +73,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
           {globalUser && <PetComponent userId={globalUser.id} />}
         </CardContent>
       </Card>
-      <ServiceList
-        initialServices={{ services: services }}
-        onSave={handleSaveServices}
-      />
+      {/* Bring back ServiceList as `ActiveServices` */}
     </div>
   );
 };

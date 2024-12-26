@@ -19,7 +19,7 @@ import {
   ServiceAvailability,
 } from '@/types';
 import { log } from '@repo/logger';
-import { eq } from 'drizzle-orm';
+import { and, between, eq, gte, isNull, lte, or } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 //TODO: add to shared repo.
@@ -123,6 +123,58 @@ export class AvailabilityRepository {
     };
   }
 
+  /**
+   * Get *all* availability for optional
+   * DaysFromToday Param. Default is 30 days.
+   * query both recurring and non-recurring availabilities
+   * @param date
+   * @returns
+   */
+  async getAllAvailability(
+    DaysFromToday: number = 30
+  ): Promise<
+    GeneralResponse<
+      (SelectServiceAvailability | SelectRecurringAvailability)[],
+      { message: string }
+    >
+  > {
+    const daysFromTodayDate = new Date(
+      new Date().setDate(new Date().getDate() + DaysFromToday)
+    );
+    const [serviceAvailabilities, recurringAvailabilities] = await Promise.all([
+      this.db
+        .select()
+        .from(serviceAvailabilityTable)
+        .where(
+          between(
+            serviceAvailabilityTable.date,
+            new Date().toISOString(),
+            daysFromTodayDate.toISOString()
+          )
+        ),
+      this.db
+        .select()
+        .from(recurringAvailabilityTable)
+        .where(
+          and(
+            lte(recurringAvailabilityTable.startDate, new Date().toISOString()),
+            or(
+              gte(
+                recurringAvailabilityTable.endDate,
+                daysFromTodayDate.toISOString()
+              ),
+              isNull(recurringAvailabilityTable.endDate)
+            )
+          )
+        ),
+    ]);
+
+    return {
+      data: [...serviceAvailabilities, ...recurringAvailabilities],
+      success: true,
+    };
+  }
+
   async getAvailability(
     availabilityId: string,
     recurring?: boolean
@@ -152,6 +204,7 @@ export class AvailabilityRepository {
       success: true,
     };
   }
+
   async updateAvailability(
     availability: UpdateServiceAvailability | UpdateRecurringAvailability,
     adminId?: string

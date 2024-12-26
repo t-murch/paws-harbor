@@ -43,6 +43,7 @@ app.route('/users', userRoute);
 app.route('/pets', petsRoute);
 app.route('/admin/services', servicesRoute);
 app.route('/admin/availability', availabilityRoute);
+app.route('/availability', availabilityRoute);
 
 app.get('/message/:name', (c) => {
   return c.json({ message: `hello ${c.req.param('name')}` });

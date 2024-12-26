@@ -1,4 +1,5 @@
 import placeholderImage from "@/../public/paws-placeholder.jpg";
+// import placeholderImage from "@/../public/paws-placeholder.png";
 import Icon from "@/components/ux/Icon";
 import Image from "next/image";
 

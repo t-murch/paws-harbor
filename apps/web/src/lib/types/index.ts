@@ -8,6 +8,8 @@ import { serviceFrequencies } from "@/../../../api/src/types";
 import { log } from "@repo/logger";
 import { z } from "zod";
 import { ServicePricing } from "../../../../api/src/types/pricing";
+import { SelectServiceAvailability } from "../../../../api/src/db/availability";
+import { SchedulerProps } from "@/components/ux/Scheduler";
 
 export type Pet = {
   id: string;
@@ -245,4 +247,28 @@ function parsePricingModel(
       type: service["pricingModel.type"],
     };
   }
+}
+
+/** start && end are specifically datetime formatted strings */
+type SchedulerType = {
+  date: Date;
+} & SchedulerProps["availableTimeslots"][number];
+
+export function transformAvailabilityToScheduleType(
+  availability: SelectServiceAvailability,
+): SchedulerType {
+  return {
+    date: new Date(availability.date),
+    endTime: new Date(
+      new Date(availability.date).setHours(
+        parseInt(availability.endTime.split(":")[0]),
+      ),
+    ),
+    id: availability.id,
+    startTime: new Date(
+      new Date(availability.date).setHours(
+        parseInt(availability.startTime.split(":")[0]),
+      ),
+    ),
+  };
 }

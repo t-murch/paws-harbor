@@ -47,21 +47,19 @@ export async function Header() {
                 <h4>Home</h4>
               </Link>
             </SheetClose>
-            {adminInfo?.user?.admin && (
-              <SheetClose asChild>
-                <Link href="/admin">
-                  <h4>Admin</h4>
-                </Link>
-              </SheetClose>
-            )}
-            <SheetClose asChild>
-              <Link href="/about">
-                <h4>About</h4>
-              </Link>
-            </SheetClose>
             <SheetClose asChild>
               <Link href="/login">
                 <h4>Login / Signup</h4>
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link href="/services">
+                <h4>Our Services</h4>
+              </Link>
+            </SheetClose>
+            <SheetClose asChild>
+              <Link href="/booking">
+                <h4>Schedule Services</h4>
               </Link>
             </SheetClose>
             <SheetClose asChild>
@@ -70,10 +68,17 @@ export async function Header() {
               </Link>
             </SheetClose>
             <SheetClose asChild>
-              <Link href="/services">
-                <h4>Our Services</h4>
+              <Link href="/about">
+                <h4>About</h4>
               </Link>
             </SheetClose>
+            {adminInfo?.user?.admin && (
+              <SheetClose asChild>
+                <Link href="/admin">
+                  <h4>Admin</h4>
+                </Link>
+              </SheetClose>
+            )}
             {user && (
               <SheetClose asChild>
                 <ClientBtn action={logoutAction} label={"Log Out"}></ClientBtn>
