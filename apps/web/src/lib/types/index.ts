@@ -8,7 +8,10 @@ import { serviceFrequencies } from "@/../../../api/src/types";
 import { log } from "@repo/logger";
 import { z } from "zod";
 import { ServicePricing } from "../../../../api/src/types/pricing";
-import { SelectServiceAvailability } from "../../../../api/src/db/availability";
+import {
+  SelectRecurringAvailability,
+  SelectServiceAvailability,
+} from "../../../../api/src/db/availability";
 import { SchedulerProps } from "@/components/ux/Scheduler";
 
 export type Pet = {
@@ -250,7 +253,7 @@ function parsePricingModel(
 }
 
 /** start && end are specifically datetime formatted strings */
-type SchedulerType = {
+export type SchedulerType = {
   date: Date;
 } & SchedulerProps["availableTimeslots"][number];
 
@@ -271,4 +274,31 @@ export function transformAvailabilityToScheduleType(
       ),
     ),
   };
+}
+
+/** recurring availability has a 1 - many relationship */
+export function transformRecurringToScheduleType(
+  availability: SelectRecurringAvailability,
+): SchedulerType[] {
+  const dates: Date[] = [],
+    currentEndDate =
+      availability.endDate ??
+      new Date(new Date().setDate(new Date().getDate() + 90)).toISOString();
+  let currentDate = new Date(availability.startDate);
+
+  while (currentDate <= new Date(currentEndDate)) {
+    dates.push(currentDate);
+    currentDate = new Date(currentDate.setDate(currentDate.getDate() + 7));
+  }
+
+  return dates.map((date) => ({
+    date,
+    endTime: new Date(
+      new Date(date).setHours(parseInt(availability.endTime.split(":")[0])),
+    ),
+    id: availability.id,
+    startTime: new Date(
+      new Date(date).setHours(parseInt(availability.startTime.split(":")[0])),
+    ),
+  }));
 }

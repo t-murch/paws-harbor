@@ -1,6 +1,11 @@
 import { log } from "@repo/logger";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
+import {
+  daysofWeek,
+  RecurringAvailability,
+  ServiceAvailability,
+} from "../../../api/src/types";
 
 const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
 export const SUPABASE_URL = isProd()
@@ -139,6 +144,24 @@ function isProd() {
   return process.env.NODE_ENV === "production";
 }
 
+//TODO: Add to shared repo. This is copied from API
+// RecurringServiceAvailability type guard
+function isRecurringServiceAvailability(
+  availability: ServiceAvailability | RecurringAvailability,
+): availability is RecurringAvailability {
+  return (
+    (availability as RecurringAvailability).dayOfWeek !== undefined &&
+    daysofWeek.includes((availability as RecurringAvailability).dayOfWeek) &&
+    (availability as any).date === undefined
+  );
+}
+
+function isNonRecurringServiceAvailability(
+  availability: ServiceAvailability | RecurringAvailability,
+): availability is ServiceAvailability {
+  return !isRecurringServiceAvailability(availability);
+}
+
 export {
   API_HOST,
   fetcher,
@@ -146,6 +169,8 @@ export {
   // getAuthHeaders,
   handleError,
   isError,
+  isNonRecurringServiceAvailability,
+  isRecurringServiceAvailability,
   mergeClassNames,
   handleErrorBadRequest,
   PROJECT_URL,
