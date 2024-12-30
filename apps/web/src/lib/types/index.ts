@@ -255,6 +255,7 @@ function parsePricingModel(
 /** start && end are specifically datetime formatted strings */
 export type SchedulerType = {
   date: Date;
+  serviceType: SelectServiceAvailability["serviceType"];
 } & SchedulerProps["availableTimeslots"][number];
 
 export function transformAvailabilityToScheduleType(
@@ -268,6 +269,7 @@ export function transformAvailabilityToScheduleType(
       ),
     ),
     id: availability.id,
+    serviceType: availability.serviceType,
     startTime: new Date(
       new Date(availability.date).setHours(
         parseInt(availability.startTime.split(":")[0]),
@@ -297,6 +299,7 @@ export function transformRecurringToScheduleType(
       new Date(date).setHours(parseInt(availability.endTime.split(":")[0])),
     ),
     id: availability.id,
+    serviceType: availability.serviceType,
     startTime: new Date(
       new Date(date).setHours(parseInt(availability.startTime.split(":")[0])),
     ),

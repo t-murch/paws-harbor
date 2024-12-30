@@ -28,11 +28,7 @@ export default async function Page() {
 
   return (
     <div>
-      <h1>Booking</h1>
-      <Scheduler
-        availableTimeslots={allAvailability}
-        eventDurationInMinutes={30}
-      />
+      <Scheduler eventDurationInMinutes={30} timeSlots={allAvailability} />
     </div>
   );
 }

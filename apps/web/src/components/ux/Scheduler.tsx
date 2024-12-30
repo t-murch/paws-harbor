@@ -1,15 +1,35 @@
 "use client";
 
+import { SchedulerType } from "@/lib/types";
 import Color from "color";
 import { useEffect, useState } from "react";
 import { ScheduleMeeting } from "react-schedule-meeting";
+import { SelectServiceAvailability } from "../../../../api/src/db/availability";
+import { BASE_SERVICES } from "../../../../api/src/types";
+import ScheduleControl, { DropdownItem } from "./ScheduleControl";
 
-export type SchedulerProps = React.ComponentProps<typeof ScheduleMeeting>;
+const allFilters = BASE_SERVICES.map((val, idx) => {
+  return {
+    id: idx,
+    name: val,
+  };
+});
+
+export type SchedulerProps = {
+  timeSlots: SchedulerType[];
+  eventDurationInMinutes: number;
+};
 
 export function Scheduler({
-  availableTimeslots,
   eventDurationInMinutes,
+  timeSlots,
 }: SchedulerProps) {
+  const [filteredTimeSlots, setFilteredTimeSlots] =
+    useState<SchedulerType[]>(timeSlots);
+  const [activeFilters, setActiveFilters] =
+    useState<{ id: number; name: SelectServiceAvailability["serviceType"] }[]>(
+      allFilters,
+    );
   const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [primaryColor, setPrimaryColor] = useState<string>("");
   const [borderRadius, setBorderRadius] = useState<number>(0);
@@ -42,20 +62,35 @@ export function Scheduler({
     setBorderRadius(border);
   }, []);
 
+  function filterTimeSlots(types: DropdownItem[]) {
+    if (types.length === 0) {
+      setFilteredTimeSlots(timeSlots);
+      return;
+    }
+    const typeNames = types.map((val) => val.name);
+    setFilteredTimeSlots(
+      timeSlots.filter((val) => typeNames.includes(val.serviceType)),
+    );
+  }
+
   if (!primaryColor || !backgroundColor || !borderRadius) {
     return null;
   }
 
   return (
-    <div className="schedule-wrapper">
+    <>
+      <ScheduleControl
+        filters={activeFilters}
+        onServiceTypeChange={filterTimeSlots}
+      />
       <ScheduleMeeting
-        availableTimeslots={availableTimeslots}
+        availableTimeslots={filteredTimeSlots}
         borderRadius={borderRadius}
         backgroundColor={backgroundColor}
         eventDurationInMinutes={eventDurationInMinutes}
         onStartTimeSelect={console.log}
         primaryColor={primaryColor}
       />
-    </div>
+    </>
   );
 }
