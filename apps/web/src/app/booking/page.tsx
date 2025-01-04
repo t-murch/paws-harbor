@@ -28,7 +28,7 @@ export default async function Page() {
 
   return (
     <div>
-      <Scheduler eventDurationInMinutes={30} timeSlots={allAvailability} />
+      <Scheduler timeSlots={allAvailability} />
     </div>
   );
 }

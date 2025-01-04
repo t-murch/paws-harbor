@@ -12,7 +12,10 @@ import {
   SelectRecurringAvailability,
   SelectServiceAvailability,
 } from "../../../../api/src/db/availability";
-import { SchedulerProps } from "@/components/ux/Scheduler";
+import {
+  ScheduleMeetingProps,
+  SchedulerProps,
+} from "@/components/ux/Scheduler";
 
 export type Pet = {
   id: string;
@@ -256,7 +259,7 @@ function parsePricingModel(
 export type SchedulerType = {
   date: Date;
   serviceType: SelectServiceAvailability["serviceType"];
-} & SchedulerProps["availableTimeslots"][number];
+} & ScheduleMeetingProps["availableTimeslots"][number];
 
 export function transformAvailabilityToScheduleType(
   availability: SelectServiceAvailability,

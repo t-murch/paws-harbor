@@ -15,21 +15,20 @@ const allFilters = BASE_SERVICES.map((val, idx) => {
   };
 });
 
+export type ScheduleMeetingProps = React.ComponentProps<typeof ScheduleMeeting>;
+
 export type SchedulerProps = {
   timeSlots: SchedulerType[];
-  eventDurationInMinutes: number;
 };
 
-export function Scheduler({
-  eventDurationInMinutes,
-  timeSlots,
-}: SchedulerProps) {
-  const [filteredTimeSlots, setFilteredTimeSlots] =
-    useState<SchedulerType[]>(timeSlots);
-  const [activeFilters, setActiveFilters] =
+export function Scheduler({ timeSlots }: SchedulerProps) {
+  const [activeFilters] =
     useState<{ id: number; name: SelectServiceAvailability["serviceType"] }[]>(
       allFilters,
     );
+  const [filteredTimeSlots, setFilteredTimeSlots] = useState<SchedulerType[]>(
+    timeSlots.filter((val) => val.serviceType === activeFilters[0].name),
+  );
   const [backgroundColor, setBackgroundColor] = useState<string>("");
   const [primaryColor, setPrimaryColor] = useState<string>("");
   const [borderRadius, setBorderRadius] = useState<number>(0);
@@ -87,7 +86,7 @@ export function Scheduler({
         availableTimeslots={filteredTimeSlots}
         borderRadius={borderRadius}
         backgroundColor={backgroundColor}
-        eventDurationInMinutes={eventDurationInMinutes}
+        eventDurationInMinutes={30}
         onStartTimeSelect={console.log}
         primaryColor={primaryColor}
       />

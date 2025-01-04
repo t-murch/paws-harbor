@@ -16,7 +16,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import React from "react";
+import React, { useCallback, useEffect } from "react";
 
 export type ControlBarProps = {
   filters: DropdownItem[];
@@ -31,11 +31,11 @@ export type DropdownItem = {
 const ControlBar = ({ filters, onServiceTypeChange }: ControlBarProps) => {
   const [selectedServices, setSelectedServices] = React.useState<
     DropdownItem[]
-  >([]);
+  >([filters[0]]);
   const [open, setOpen] = React.useState(false);
 
   // Toggle service selection
-  const toggleService = (service) => {
+  const toggleService = (service: DropdownItem) => {
     let newServices;
     if (selectedServices.find((s) => s.id === service.id)) {
       newServices = selectedServices.filter((s) => s.id !== service.id);
@@ -47,7 +47,7 @@ const ControlBar = ({ filters, onServiceTypeChange }: ControlBarProps) => {
   };
 
   return (
-    <Card className="mx-4">
+    <Card className="mx-2 md:mx-4">
       <CardContent className="p-4">
         <div className="flex items-center justify-between">
           {/* Left side - Title */}
