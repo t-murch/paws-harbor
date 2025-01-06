@@ -106,6 +106,13 @@
       "when": 1733518474302,
       "tag": "20241206205434_serviceAvailability_edit_02_readd_dayOfWeek_col",
       "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1735574150855,
+      "tag": "20241230155550_serviceTable_edit_add_durationVal_enum_and_durationUnit",
+      "breakpoints": true
     }
   ]
 }
