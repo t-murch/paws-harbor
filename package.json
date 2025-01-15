@@ -1,5 +1,6 @@
 {
   "name": "paws-harbor",
+  "license": "BSD-3-Clause",
   "version": "0.0.0",
   "private": true,
   "scripts": {
