@@ -113,6 +113,13 @@
       "when": 1735574150855,
       "tag": "20241230155550_serviceTable_edit_add_durationVal_enum_and_durationUnit",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1736204014833,
+      "tag": "20250106225334_serviceTable_edit_and_new_pricingTable",
+      "breakpoints": true
     }
   ]
 }
