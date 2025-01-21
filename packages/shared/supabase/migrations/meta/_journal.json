@@ -1,0 +1,125 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1725935071522,
+      "tag": "20240910022431_cuddly_thaddeus_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1725988957173,
+      "tag": "20240910172237_silly_the_hood",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1725991884195,
+      "tag": "20240910181124_new_profile_from_auth_signup",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1729267032884,
+      "tag": "20241018155712_pets_add_sex_column_with_default",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1729268316451,
+      "tag": "20241018161836_pets_deletecol_weight_addcol_size",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1729268397606,
+      "tag": "20241018161957_pets_dropdefault_size_only_neededformigration",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1729539086364,
+      "tag": "20241021193126_pets_services_description",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1729618034725,
+      "tag": "20241022172714_users_admincol",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1729718783903,
+      "tag": "20241023212623_services_ownersCol_NoNull_dates",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1730579576523,
+      "tag": "20241102203256_services_duration_splitCol",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1731962728612,
+      "tag": "20241118204528_services.pricingModel",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1733009008419,
+      "tag": "20241130232328_serviceAvailability",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1733009442014,
+      "tag": "20241130233042_serviceAvailability",
+      "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1733518405391,
+      "tag": "20241206205325_serviceAvailability_edit_01_drop_col_for_reassign",
+      "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1733518474302,
+      "tag": "20241206205434_serviceAvailability_edit_02_readd_dayOfWeek_col",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1735574150855,
+      "tag": "20241230155550_serviceTable_edit_add_durationVal_enum_and_durationUnit",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1736204014833,
+      "tag": "20250106225334_serviceTable_edit_and_new_pricingTable",
+      "breakpoints": true
+    }
+  ]
+}
