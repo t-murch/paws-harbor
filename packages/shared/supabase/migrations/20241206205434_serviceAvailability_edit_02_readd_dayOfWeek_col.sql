@@ -1,0 +1,1 @@
+ALTER TABLE "recurring_availability" ADD COLUMN "day_of_week" "days_of_week" NOT NULL;
