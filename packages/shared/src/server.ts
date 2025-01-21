@@ -6,6 +6,11 @@ export const BASE_SERVICES = [
   "pet-bathing",
 ] as const;
 
+export type BaseService = (typeof BASE_SERVICES)[number];
+type CustomService = string & {};
+export type ServiceType = BaseService | CustomService;
+export const ServiceTypesEnum = z.enum(BASE_SERVICES);
+
 export const durationUnit = [`mins`, `hours`, `days`] as const;
 
 export const baseServiceFormValues = [
