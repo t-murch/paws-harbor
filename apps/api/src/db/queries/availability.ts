@@ -13,12 +13,9 @@ import {
   UpdateServiceAvailability,
   updateServiceAvailabilitySchema,
 } from '@/db/availability';
-import {
-  daysofWeek,
-  RecurringAvailability,
-  ServiceAvailability,
-} from '@/types';
+import { RecurringAvailability, ServiceAvailability } from '@/types';
 import { log } from '@repo/logger';
+import { daysofWeek } from '@repo/shared/src/server';
 import { and, between, eq, gte, isNull, lte, or } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 

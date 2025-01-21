@@ -4,18 +4,15 @@ import {
   SelectServiceSchema,
   Service,
 } from "@/../../../api/src/db/services";
-import { serviceFrequencies } from "@/../../../api/src/types";
+import { serviceFrequencies } from "@repo/shared/src/server";
+import { ScheduleMeetingProps } from "@/components/ux/Scheduler";
 import { log } from "@repo/logger";
 import { z } from "zod";
-import { ServicePricing } from "../../../../api/src/types/pricing";
 import {
   SelectRecurringAvailability,
   SelectServiceAvailability,
 } from "../../../../api/src/db/availability";
-import {
-  ScheduleMeetingProps,
-  SchedulerProps,
-} from "@/components/ux/Scheduler";
+import { ServicePricing } from "@repo/shared/src/server";
 
 export type Pet = {
   id: string;

@@ -2,10 +2,10 @@ import { log } from "@repo/logger";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
-  daysofWeek,
   RecurringAvailability,
   ServiceAvailability,
 } from "../../../api/src/types";
+import { daysofWeek } from "@repo/shared/src/server";
 
 const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
 export const SUPABASE_URL = isProd()

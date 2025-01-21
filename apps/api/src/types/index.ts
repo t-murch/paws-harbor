@@ -9,6 +9,7 @@ import {
   UpdateServiceAvailability,
 } from '@/db/availability';
 import z from 'zod';
+import { BASE_SERVICES, ServiceFrequency } from '@repo/shared/src/server';
 
 export type User = {
   id: string; // Unique identifier
@@ -32,29 +33,10 @@ export const petSizes = ['giant', 'large', 'medium', 'small'] as const;
 export type PetSizes = (typeof petSizes)[number];
 export const PetSizesEnum = z.enum(petSizes);
 
-export const baseServiceFormValues = [
-  { label: 'Pet Walking', value: 'pet-walking' },
-  { label: 'Pet Sitting', value: 'pet-sitting' },
-  { label: 'Pet Bathing', value: 'pet-bathing' },
-] as const;
-export const BASE_SERVICES = [
-  'pet-walking',
-  'pet-sitting',
-  'pet-bathing',
-] as const;
 export type BaseService = (typeof BASE_SERVICES)[number];
 type CustomService = string & {};
 type ServiceType = BaseService | CustomService;
 export const ServiceTypesEnum = z.enum(BASE_SERVICES);
-
-export const serviceFrequencies = [
-  'a-la-carte',
-  'daily',
-  'weekly',
-  'monthly',
-] as const;
-export type ServiceFrequency = (typeof serviceFrequencies)[number];
-export const ServiceFrequencyEnum = z.enum(serviceFrequencies);
 
 export type Service = {
   id: string; // Unique identifier
@@ -74,54 +56,11 @@ export type ServiceAvailability =
   | RequestServiceAvailability
   | UpdateServiceAvailability;
 
-export const daysofWeek = [
-  'monday',
-  'tuesday',
-  'wednesday',
-  'thursday',
-  'friday',
-  'saturday',
-  'sunday',
-] as const;
-export type DaysofWeek = (typeof daysofWeek)[number];
-export const DaysofWeekEnum = z.enum(daysofWeek);
-
 export type RecurringAvailability =
   | InsertRecurringAvailability
   | SelectRecurringAvailability
   | RequestRecurringServiceAvailability
   | UpdateRecurringAvailability;
-
-/**
- * MINUTES OR DAYS
- */
-interface Pricing {
-  sitting: {
-    basePrice: number;
-    baseTime: number;
-    additionalPrice: number;
-    additionalTime: number;
-    overnightFee: number;
-    weekendFee: number;
-  };
-  walking: {
-    basePrice: number;
-    baseTime: number;
-    additionalPrice: number;
-    additionalTime: number;
-  };
-  bathing: {
-    small: number;
-    medium: number;
-    large: number;
-    xlarge: number;
-  };
-  subscription: {
-    daily: number;
-    weekly: number;
-    monthly: number;
-  };
-}
 
 const bookingStatus = [
   'pending',

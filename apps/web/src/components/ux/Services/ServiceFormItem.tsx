@@ -1,4 +1,4 @@
-import { baseServiceFormValues } from "@/../../api/src/types";
+import { baseServiceFormValues } from "@repo/shared/src/server";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -21,7 +21,7 @@ import {
   isBaseRatePricing,
   isTieredPricing,
   ServicePricing,
-} from "../../../../../api/src/types/pricing";
+} from "@repo/shared/src/server";
 import BasePricingFormFields from "./BasePricingFormFields";
 import DynamicServiceFields from "./ServiceFields";
 import TieredPricingFormFields from "./TieredPricingFormFields";

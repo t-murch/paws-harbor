@@ -5,7 +5,7 @@ import Color from "color";
 import { useEffect, useState } from "react";
 import { ScheduleMeeting } from "react-schedule-meeting";
 import { SelectServiceAvailability } from "../../../../api/src/db/availability";
-import { BASE_SERVICES } from "../../../../api/src/types";
+import { BASE_SERVICES } from "@repo/shared/src/server";
 import ScheduleControl, { DropdownItem } from "./ScheduleControl";
 
 const allFilters = BASE_SERVICES.map((val, idx) => {
