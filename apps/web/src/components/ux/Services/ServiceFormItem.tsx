@@ -1,4 +1,3 @@
-import { baseServiceFormValues } from "@repo/shared/src/server";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -16,24 +15,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ServiceFormData } from "@/lib/types";
-import { UseFormReturn } from "react-hook-form";
+import { log } from "@repo/logger";
 import {
+  baseServiceFormValues,
   isBaseRatePricing,
   isTieredPricing,
   ServicePricing,
 } from "@repo/shared/src/server";
+import { UseFormReturn } from "react-hook-form";
 import BasePricingFormFields from "./BasePricingFormFields";
 import DynamicServiceFields from "./ServiceFields";
 import TieredPricingFormFields from "./TieredPricingFormFields";
-import { log } from "@repo/logger";
 
 interface ServiceFormItemProps {
   availableServices: any[];
-  // availableServices: (typeof baseServiceFormValues)[];
   form: UseFormReturn<ServiceFormData>;
   index: number;
   field: any;
   isEditMode: boolean;
+  // I dont want to combine another config change with active work.
+  // eslint-disable-next-line no-unused-vars
   remove: (index: number) => void;
 }
 

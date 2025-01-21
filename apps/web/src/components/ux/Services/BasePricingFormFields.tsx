@@ -166,7 +166,7 @@ function BasePricingFormFields({
 
         {/* Existing Addons */}
         <div className="space-y-3">
-          {Object.entries(addons || {}).map(([key, value]) => (
+          {Object.entries(addons || {}).map(([key]) => (
             <div key={key} className="flex gap-3">
               <div className="grid grid-cols-2 gap-3 flex-1">
                 <FormItem>

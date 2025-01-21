@@ -1,5 +1,3 @@
-import React from "react";
-import { UseFormReturn } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import {
   FormControl,
@@ -10,6 +8,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { ServiceFormData } from "@/lib/types";
 import { PlusCircle, Trash2 } from "lucide-react";
+import React from "react";
+import { UseFormReturn } from "react-hook-form";
 
 interface DynamicFieldsProps {
   form: UseFormReturn<ServiceFormData>;
@@ -22,7 +22,6 @@ const DynamicServiceFields = ({
   index,
   isEditMode,
 }: DynamicFieldsProps) => {
-  // Track temporary state for new field inputs
   const [newMetadataKey, setNewMetadataKey] = React.useState("");
   const [newMetadataValue, setNewMetadataValue] = React.useState("");
 
@@ -35,7 +34,6 @@ const DynamicServiceFields = ({
       [newMetadataKey]: newMetadataValue,
     });
 
-    // Reset inputs
     setNewMetadataKey("");
     setNewMetadataValue("");
   };
@@ -46,7 +44,6 @@ const DynamicServiceFields = ({
     delete newValues[fieldName];
     form.setValue(`services.${index}.metadata`, newValues);
   };
-  // Get current values for rendering
   const metadata = form.watch(`services.${index}.metadata`) as Record<
     string,
     unknown
@@ -59,7 +56,7 @@ const DynamicServiceFields = ({
 
         {/* Existing Metadata Fields */}
         <div className="space-y-3">
-          {Object.entries(metadata || {}).map(([key, value]) => (
+          {Object.entries(metadata || {}).map(([key]) => (
             <div key={key} className="flex gap-3">
               <FormField
                 control={form.control}

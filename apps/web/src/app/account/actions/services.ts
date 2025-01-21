@@ -8,7 +8,7 @@ import {
 } from "@/lib/utils";
 import { log } from "console";
 import { cookies } from "next/headers";
-import { Service } from "../../../../../api/src/db/services";
+import { Service } from "@repo/shared/src/db/schemas/services";
 
 export async function getUserServices(): Promise<Service[]> {
   // get the user from supabase

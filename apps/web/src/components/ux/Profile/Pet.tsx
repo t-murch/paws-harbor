@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
-import { useAtom } from "jotai";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useFormState } from "react-dom";
-import { z } from "zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
+import { useAtom } from "jotai";
+import React, { useEffect, useRef, useState } from "react";
+import { useFormState } from "react-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,15 +25,15 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { petEditAtomFamily } from "@/components/ux/providers/store";
 import {
   createPetFormAction,
-  updatePetInfoAction,
   deletePet,
+  updatePetInfoAction,
 } from "@/app/account/actions";
-import { Pet, PetSizeNames, PetSizes, PetSizeScales } from "@/lib/types";
-import dogs from "@/lib/dogs.json";
+import { petEditAtomFamily } from "@/components/ux/providers/store";
 import cats from "@/lib/cats.json";
+import dogs from "@/lib/dogs.json";
+import { Pet, PetSizeNames, PetSizes, PetSizeScales } from "@/lib/types";
 
 const dogBreeds = dogs.map((val) => val.Breed);
 const catBreeds = cats.map((val) => val.breed);
@@ -73,7 +73,7 @@ interface PetProps {
 const PetComponent: React.FC<PetProps> = ({ pet, userId }) => {
   const [editMode, setEditMode] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
-  const [thisPet, setPet] = useAtom(
+  const [thisPet] = useAtom(
     pet ? petEditAtomFamily(pet.id) : petEditAtomFamily(""),
   );
   const [formState, formAction] = useFormState(
@@ -112,7 +112,7 @@ const PetComponent: React.FC<PetProps> = ({ pet, userId }) => {
   const toggleEditMode = () => setEditMode((state) => !state);
 
   const handleSubmit = form.handleSubmit(() => {
-    return new Promise<void>((resolve, reject) => {
+    return new Promise<void>((resolve) => {
       const formData = new FormData(formRef.current!);
       if (pet?.id) formData.append("id", pet.id);
       formData.append("userId", userId);

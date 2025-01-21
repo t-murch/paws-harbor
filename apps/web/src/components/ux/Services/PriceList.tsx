@@ -25,12 +25,7 @@ import {
 } from "@repo/shared/src/server";
 
 export default function Pricelist({
-  pricing: {
-    bathing: bathingPrices,
-    sitting: sittingPrices,
-    subscription: subscriptionPrices,
-    walking: walkingPrices,
-  },
+  pricing: { subscription: subscriptionPrices },
   services,
 }: {
   pricing: Pricing;

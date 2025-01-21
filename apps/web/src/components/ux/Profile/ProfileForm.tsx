@@ -1,9 +1,9 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import ServiceList from "@/components/ux/Services/ServiceList";
 import { Pet, ServiceFormData } from "@/lib/types";
 import { AvatarIcon } from "@radix-ui/react-icons";
+import { Service } from "@repo/shared/src/db/schemas/services";
 import { useAtom } from "jotai";
 import { Dog } from "lucide-react";
 import React, { useEffect } from "react";
@@ -11,7 +11,6 @@ import { userAtom, UserProfile } from "../atoms";
 import { petsAtom } from "../providers/store";
 import Bio from "./Bio";
 import PetComponent from "./Pet";
-import { Service } from "../../../../../api/src/db/services";
 
 const MyAvatar = () => <AvatarIcon className="w-16 h-16" />;
 
@@ -34,7 +33,7 @@ type ProfileFormProps = {
 const ProfileForm: React.FC<ProfileFormProps> = ({
   profile,
   pets,
-  services,
+  // services,
 }: ProfileFormProps) => {
   const [globalUser, setGlobalUser] = useAtom(userAtom);
   const [allPets, setAllPets] = useAtom(petsAtom);
@@ -47,6 +46,7 @@ const ProfileForm: React.FC<ProfileFormProps> = ({
     if (pets.length) setAllPets(pets);
   });
 
+  // eslint-disable-next-line no-unused-vars
   const handleSaveServices = (updatedServices: ServiceFormData["services"]) => {
     // Handle saving the updated services, e.g., sending to an API
     console.log("Saving services:", updatedServices);

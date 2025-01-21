@@ -16,10 +16,11 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
-import React, { useCallback, useEffect } from "react";
+import React from "react";
 
 export type ControlBarProps = {
   filters: DropdownItem[];
+  // eslint-disable-next-line no-unused-vars
   onServiceTypeChange: (services: DropdownItem[]) => void;
 };
 

@@ -12,7 +12,6 @@ import { z } from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { signupFormSchema } from "./formSchema";
 import { MaskInputSignup } from "./MaskSignupInput";
-import { log } from "@repo/logger";
 
 interface SignupProps extends HTMLProps<HTMLInputTypeAttribute> {
   signupAction: SignupAction;
@@ -23,9 +22,9 @@ export function Signup({ signupAction }: SignupProps) {
   const form = useForm<z.infer<typeof signupFormSchema>>({
     resolver: zodResolver(signupFormSchema),
     defaultValues: {
+      confirm: "",
       email: "",
       password: "",
-      confirm: "",
       ...(state?.fields ?? {}),
     },
   });
@@ -45,14 +44,11 @@ export function Signup({ signupAction }: SignupProps) {
             onSubmit={(evt) => {
               evt.preventDefault();
               form.handleSubmit(() => {
-                return new Promise((resolve) => {
+                return new Promise(() => {
                   formAction(new FormData(formRef.current!));
                 });
-                // log(`form data: ${formRef.current!}`);
-                // formAction(new FormData(formRef.current!));
               })(evt);
             }}
-            // onSubmit={form.handleSubmit(() => formRef.current?.submit())}
             className="space-y-1"
           >
             <FormField
