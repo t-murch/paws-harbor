@@ -12,7 +12,7 @@ import {
   updateRecurringAvailabilitySchema,
   UpdateServiceAvailability,
   updateServiceAvailabilitySchema,
-} from '@/db/availability';
+} from '@repo/shared/src/db/schemas/availability';
 import { RecurringAvailability, ServiceAvailability } from '@/types';
 import { log } from '@repo/logger';
 import { daysofWeek } from '@repo/shared/src/server';

@@ -10,7 +10,11 @@ import { Context } from 'hono';
 import z from 'zod';
 import { db } from '..';
 import { authClient } from '../auth';
-import { InsertProfile, profilesTable, SelectProfile } from '../users';
+import {
+  InsertProfile,
+  profilesTable,
+  SelectProfile,
+} from '@repo/shared/src/db/schemas/users';
 
 export const loginFormSchema = z.object({
   email: z.string().trim().email(),

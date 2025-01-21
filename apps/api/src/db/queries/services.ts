@@ -1,15 +1,15 @@
 import { eq, inArray, sql } from 'drizzle-orm';
 
-import {
-  NewService,
-  servicesTable,
-  Service,
-  InsertServiceSchema,
-  AllServices,
-} from '../services';
-import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { log } from '@repo/logger';
+import {
+  AllServices,
+  InsertServiceSchema,
+  NewService,
+  Service,
+  servicesTable,
+} from '@repo/shared/src/db/schemas/services';
 import { ServicePricing } from '@repo/shared/src/server';
+import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 // Database operations with type safety
 export class ServiceRepository {

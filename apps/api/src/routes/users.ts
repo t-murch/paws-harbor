@@ -1,6 +1,9 @@
 import UserService, { loginFormSchema } from '@/db/queries/users';
-import { profileSchema, SelectProfile } from '@/db/users';
 import { log } from '@repo/logger';
+import {
+  profileSchema,
+  SelectProfile,
+} from '@repo/shared/src/db/schemas/users';
 import {
   AuthResponse,
   AuthResponsePassword,

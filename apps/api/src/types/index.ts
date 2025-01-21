@@ -7,9 +7,9 @@ import {
   SelectServiceAvailability,
   UpdateRecurringAvailability,
   UpdateServiceAvailability,
-} from '@/db/availability';
+} from '@repo/shared/src/db/schemas/availability';
+import { ServiceFrequency, ServiceType } from '@repo/shared/src/server';
 import z from 'zod';
-import { BASE_SERVICES, ServiceFrequency } from '@repo/shared/src/server';
 
 export type User = {
   id: string; // Unique identifier
@@ -32,11 +32,6 @@ export const PetSpeciesEnum = z.enum(petSpecies);
 export const petSizes = ['giant', 'large', 'medium', 'small'] as const;
 export type PetSizes = (typeof petSizes)[number];
 export const PetSizesEnum = z.enum(petSizes);
-
-export type BaseService = (typeof BASE_SERVICES)[number];
-type CustomService = string & {};
-type ServiceType = BaseService | CustomService;
-export const ServiceTypesEnum = z.enum(BASE_SERVICES);
 
 export type Service = {
   id: string; // Unique identifier
@@ -116,10 +111,3 @@ export type Notification = {
   createdAt: Date; // Timestamp of when the notification was created
   readAt?: Date; // Optional timestamp of when the notification was read
 };
-
-// pretty print camelCased strings
-export function prettyPrint(str: string) {
-  return str
-    .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, (str) => str.toUpperCase());
-}

@@ -2,7 +2,7 @@ import { PostgreSqlContainer } from '@testcontainers/postgresql';
 import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { migrate } from 'drizzle-orm/postgres-js/migrator';
-import * as schema from '@/db/schema'; // Import your database schema
+import * as schema from '@repo/shared/src/db/schemas/schema'; // Import your database schema
 
 export async function createTestDatabase() {
   // Start a PostgreSQL container
