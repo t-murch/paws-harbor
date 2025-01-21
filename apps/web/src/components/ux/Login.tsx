@@ -1,6 +1,7 @@
 "use client";
 
 import { LoginAction } from "@/app/login/actions";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
@@ -11,21 +12,21 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { loginFormSchema } from "@/components/ux/formSchema";
+import { mergeClassNames } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReloadIcon } from "@radix-ui/react-icons";
+import { useSearchParams } from "next/navigation";
 import { HTMLInputTypeAttribute, HTMLProps, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
 import { MaskInputLogin } from "./MaskInput";
-import { ReloadIcon } from "@radix-ui/react-icons";
-import { mergeClassNames } from "@/lib/utils";
-import { useSearchParams } from "next/navigation";
 
 interface LoginProps extends HTMLProps<HTMLInputTypeAttribute> {
   loginAction: LoginAction;
 }
 
+// eslint-disable-next-line no-unused-vars
 export function Login({ loginAction, className }: LoginProps) {
   const [state, formAction] = useFormState(loginAction, { message: "" });
   const form = useForm<z.infer<typeof loginFormSchema>>({
@@ -37,6 +38,7 @@ export function Login({ loginAction, className }: LoginProps) {
     resolver: zodResolver(loginFormSchema),
   });
   const {
+    // eslint-disable-next-line no-unused-vars
     formState: { isSubmitted, isSubmitting },
   } = form;
   const { pending } = useFormStatus();
@@ -58,7 +60,7 @@ export function Login({ loginAction, className }: LoginProps) {
             onSubmit={(evt) => {
               evt.preventDefault();
               form.handleSubmit(() => {
-                return new Promise((resolve) => {
+                return new Promise(() => {
                   formAction(new FormData(formRef.current!));
                 });
               })(evt);

@@ -43,7 +43,7 @@ const formatPetScale = ([k, val]: [k: PetSizeNames, thing: PetSizeScales]) => {
   return `${k} - ${val[0]} - ${val[1]} lbs`;
 };
 
-const petSizeDropDownRecords = Object.entries(PetSizes).map(([k, v]) => {
+export const petSizeDropDownRecords = Object.entries(PetSizes).map(([k, v]) => {
   const key = k as PetSizeNames;
   return {
     label: formatPetScale([key, v]),

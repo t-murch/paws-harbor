@@ -1,11 +1,11 @@
 "use client";
 
 import { SchedulerType } from "@/lib/types";
+import { BASE_SERVICES } from "@repo/shared/src/server";
 import Color from "color";
 import { useEffect, useState } from "react";
 import { ScheduleMeeting } from "react-schedule-meeting";
-import { SelectServiceAvailability } from "../../../../api/src/db/availability";
-import { BASE_SERVICES } from "@repo/shared/src/server";
+import { SelectServiceAvailability } from "@repo/shared/src/db/schemas/availability";
 import ScheduleControl, { DropdownItem } from "./ScheduleControl";
 
 const allFilters = BASE_SERVICES.map((val, idx) => {

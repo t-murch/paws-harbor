@@ -1,5 +1,5 @@
 import { mergeClassNames } from "@/lib/utils";
-import { Card, CardContent } from "../ui/card";
+import { Card } from "../ui/card";
 
 export function MySection({
   children,

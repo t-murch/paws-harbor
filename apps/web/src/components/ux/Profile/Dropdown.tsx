@@ -11,15 +11,16 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
+import { Label } from "@/components/ui/label";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { PetSizeNames, PetSizes, PetSizeScales } from "@/lib/types";
 import { mergeClassNames as cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
+import { petSizeDropDownRecords } from "./Pet";
 export type PetComboBoxProps = {
+  // eslint-disable-next-line no-unused-vars
   setFormFunc: (name: keyof FormData, value: string) => void;
   name: keyof FormData;
 };
