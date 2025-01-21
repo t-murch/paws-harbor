@@ -105,17 +105,6 @@ export type InsertServiceClient = NewService;
 export type SelectServiceClient = Service;
 export type ServiceClient = InsertServiceClient | SelectServiceClient;
 
-// // Define the service schema
-// export const serviceSchema = z.object({
-//   description: z.string().optional(),
-//   frequency: z.enum(frequencies),
-//   // frequency: z.string().min(1, "Frequency is required"),
-//   id: z.string().optional(),
-//   price: z.coerce.number().min(0, "Price must be a positive number"),
-//   // type: z.enum(services),
-//   type: z.string().min(1, "Service type is required"),
-// });
-//
 export const serviceListSchema = z.object({
   services: z.array(InsertServiceSchema),
 });
@@ -140,12 +129,6 @@ export type CreateResponse<T> =
       error: string;
       success: false;
     };
-
-const AdminServiceFormSchema = z.object({
-  services: z.record(z.string(), InsertServiceSchema),
-});
-
-type AdminServiceForm = z.infer<typeof AdminServiceFormSchema>;
 
 export function transformServiceFormToSchema(formData: {
   [k: string]: FormDataEntryValue;

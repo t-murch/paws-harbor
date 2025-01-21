@@ -1,7 +1,7 @@
-import { Pet } from "@/lib/types";
-import { atomFamily, atomWithStorage, unwrap } from "jotai/utils";
-import { atom, Provider, useAtom, useAtomValue, useSetAtom } from "jotai";
 import { supabaseClient } from "@/lib/supabase/client";
+import { Pet } from "@/lib/types";
+import { atom, Provider, useAtomValue, useSetAtom } from "jotai";
+import { atomFamily, atomWithStorage, unwrap } from "jotai/utils";
 import React from "react";
 
 // **** USER ****
@@ -22,6 +22,7 @@ export const userAtom = atom((get) => {
 export const petsAtom = atom<Pet[]>([]);
 
 // A helper function to create dynamic atoms for individual pet edits
+// eslint-disable-next-line no-unused-vars
 const petEditAtom = (petId: string) =>
   atom(
     (get) => get(petsAtom).find((pet) => pet.id === petId),
@@ -80,11 +81,6 @@ export function usePricing() {
 }
 // ********
 
-export function ContextStore({
-  children,
-  ...props
-}: {
-  children: React.ReactNode;
-}) {
+export function ContextStore({ children }: { children: React.ReactNode }) {
   return <Provider>{children}</Provider>;
 }

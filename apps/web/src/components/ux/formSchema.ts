@@ -2,9 +2,9 @@ import { z } from "zod";
 
 export const signupFormSchema = z
   .object({
+    confirm: z.string().trim().min(8).max(32),
     email: z.string().trim().email(),
     password: z.string().trim().min(8).max(32),
-    confirm: z.string().trim().min(8).max(32),
   })
   .refine((data) => data.password === data.confirm, {
     message: "Passwords do not match",

@@ -1,9 +1,9 @@
-import { useQuery } from "@tanstack/react-query";
-import { useAtom, useAtomValue } from "jotai";
-import { sessionAtom } from "@/components/ux/providers/store";
-import { API_HOST } from "../utils";
 import { UserJSONResponse } from "@/components/ux/Profile/ProfileForm";
 import { userAtom } from "@/components/ux/atoms";
+import { sessionAtom } from "@/components/ux/providers/store";
+import { useQuery } from "@tanstack/react-query";
+import { useAtom, useAtomValue } from "jotai";
+import { API_HOST } from "../utils";
 
 // Fetch user profile based on the session
 export const useUserProfile = () => {
@@ -11,12 +11,12 @@ export const useUserProfile = () => {
   const [user, setUser] = useAtom(userAtom);
 
   const query = useQuery({
-    queryKey: ["userProfile", { userId: session?.user.id }],
+    enabled: !!session?.user.id, // Only run the query if there's a user
     queryFn: async () => {
       if (!session?.user.id) return null;
       const res = await fetch(`${API_HOST}/users/profile`, {
-        method: "GET",
         credentials: "include",
+        method: "GET",
       });
 
       const { data, error }: UserJSONResponse = await res.json();
@@ -24,7 +24,7 @@ export const useUserProfile = () => {
 
       return data;
     },
-    enabled: !!session?.user.id, // Only run the query if there's a user
+    queryKey: ["userProfile", { userId: session?.user.id }],
   });
 
   if (query.data?.user && user !== query.data.user) setUser(query.data.user);
