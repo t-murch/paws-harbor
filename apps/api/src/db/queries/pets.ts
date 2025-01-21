@@ -1,6 +1,10 @@
-import { db } from '..';
+import {
+  InsertPet,
+  petsTable,
+  SelectPet,
+} from '@repo/shared/src/db/schemas/pets';
 import { eq } from 'drizzle-orm';
-import { InsertPet, petsTable, SelectPet } from '../pets';
+import { db } from '..';
 
 export async function createPet(pet: InsertPet) {
   const newRows = await db

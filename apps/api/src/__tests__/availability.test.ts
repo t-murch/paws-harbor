@@ -1,3 +1,5 @@
+import { AvailabilityRepository } from '@/db/queries/availability';
+import { RecurringAvailability } from '@/types';
 import {
   InsertRecurringAvailability,
   InsertServiceAvailability,
@@ -7,10 +9,12 @@ import {
   SelectServiceAvailability,
   serviceAvailabilityTable,
   UpdateRecurringAvailability,
-} from '@/db/availability';
-import { AvailabilityRepository } from '@/db/queries/availability';
-import { InsertProfile, profilesTable, SelectProfile } from '@/db/users';
-import { RecurringAvailability } from '@/types';
+} from '@repo/shared/src/db/schemas/availability';
+import {
+  InsertProfile,
+  profilesTable,
+  SelectProfile,
+} from '@repo/shared/src/db/schemas/users';
 import { eq } from 'drizzle-orm';
 import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Context, Next } from 'hono';
@@ -41,10 +45,10 @@ describe('AvailabilityRepository', () => {
   beforeEach(() => {
     // Create a mock context and next function
     context = {
+      json: vi.fn(),
       req: {
         header: vi.fn().mockReturnValue('base64-token'),
       },
-      json: vi.fn(),
       set: vi.fn(),
     } as unknown as Context;
 
@@ -388,11 +392,11 @@ describe('AvailabilityRepository', () => {
       const dbSpyDelete = vi.spyOn(testDb, 'delete'),
         availability: InsertRecurringAvailability = {
           adminId: insertProfile.id,
+          dayOfWeek: 'monday',
           endTime: '17:00:00',
           serviceType: 'pet-walking',
-          startTime: '10:00:00',
-          dayOfWeek: 'monday',
           startDate: '2024-12-04',
+          startTime: '10:00:00',
         };
 
       const [testQuery] = await testDb

@@ -5,9 +5,4 @@ export default defineConfig({
     url: process.env.DATABASE_URL!,
   },
   dialect: 'postgresql',
-  migrations: {
-    prefix: 'supabase',
-  },
-  out: './supabase/migrations',
-  schema: './src/db/schema.ts',
 });

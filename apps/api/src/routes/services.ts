@@ -1,7 +1,10 @@
 import { db } from '@/db';
 import { ServiceRepository } from '@/db/queries/services';
-import { InsertServiceSchema, SelectServiceSchema } from '@/db/services';
 import { log } from '@repo/logger';
+import {
+  InsertServiceSchema,
+  SelectServiceSchema,
+} from '@repo/shared/src/db/schemas/services';
 import { User } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';

@@ -1,6 +1,9 @@
-import { existingPetSchema, newPetSchema } from '@/db/pets';
 import PetService from '@/db/queries/pets';
 import { log } from '@repo/logger';
+import {
+  existingPetSchema,
+  newPetSchema,
+} from '@repo/shared/src/db/schemas/pets';
 import { User } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';

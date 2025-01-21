@@ -1,7 +1,7 @@
 import { db } from '@/db';
-import { requestServiceAvailabilitySchema } from '@/db/availability';
 import { AvailabilityRepository } from '@/db/queries/availability';
 import { log } from '@repo/logger';
+import { requestServiceAvailabilitySchema } from '@repo/shared/src/db/schemas/availability';
 import { User } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
