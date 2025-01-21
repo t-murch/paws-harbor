@@ -8,8 +8,8 @@ import {
   AllServices,
 } from '../services';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { ServicePricing } from '@/types/pricing';
 import { log } from '@repo/logger';
+import { ServicePricing } from '@repo/shared/src/server';
 
 // Database operations with type safety
 export class ServiceRepository {

@@ -8,21 +8,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useFieldArray, useForm } from "react-hook-form";
-// import { usePricing } from "../providers/store";
 import { createServiceAction } from "@/app/admin/actions";
 import ServiceFormItem from "./ServiceFormItem";
 import { log } from "@repo/logger";
-import {
-  BASE_SERVICES,
-  baseServiceFormValues,
-} from "../../../../../api/src/types";
+import { baseServiceFormValues } from "@repo/shared/src/server";
 
 interface ServiceListProps {
   initialServices: ServiceFormData;
 }
 
 const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
-  const [state, formAction] = useFormState(createServiceAction, {
+  const [, formAction] = useFormState(createServiceAction, {
     formFields: {},
     message: "",
   });

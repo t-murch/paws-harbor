@@ -1,4 +1,3 @@
-import { DaysofWeek, DaysofWeekEnum } from '@/types';
 import {
   date,
   pgEnum,
@@ -10,6 +9,7 @@ import {
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
 import z from 'zod';
 import { pgServiceTypes, profilesTable } from './users';
+import { DaysofWeek, DaysofWeekEnum } from '@repo/shared/src/server';
 
 export const serviceAvailabilityTable = pgTable('service_availability', {
   adminId: uuid('admin_id')

@@ -8,7 +8,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { durationUnit } from "../../../../../api/src/db/services";
+import { durationUnit } from "@repo/shared/src/server";
 import { ServiceFormData } from "@/lib/types";
 import { UseFormReturn } from "react-hook-form";
 import {

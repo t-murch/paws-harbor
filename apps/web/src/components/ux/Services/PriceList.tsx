@@ -1,11 +1,4 @@
 import {
-  BaseRatePricing,
-  isBaseRatePricing,
-  isTieredPricing,
-  PersistedServiceConfig,
-  Pricing,
-} from "@/../../api/src/types/pricing";
-import {
   Card,
   CardContent,
   CardDescription,
@@ -21,10 +14,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { prettyPrint } from "../../../../../api/src/types";
 import {
+  BaseRatePricing,
   baseServiceFormValues,
-  prettyPrint,
-} from "../../../../../api/src/types";
+  isBaseRatePricing,
+  isTieredPricing,
+  PersistedServiceConfig,
+  Pricing,
+} from "@repo/shared/src/server";
 
 export default function Pricelist({
   pricing: {

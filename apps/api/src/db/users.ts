@@ -1,4 +1,5 @@
-import { ServiceFrequencyEnum, ServiceTypesEnum } from '../types';
+import { ServiceFrequencyEnum } from '@repo/shared/src/server';
+import { ServiceTypesEnum } from '../types';
 import {
   boolean,
   pgEnum,

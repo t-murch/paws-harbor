@@ -18,7 +18,7 @@ import {
   mapDbToServiceConfig,
 } from "../../../../api/src/db/services";
 import { z } from "zod";
-import { PersistedServiceConfig } from "../../../../api/src/types/pricing";
+import { PersistedServiceConfig } from "@repo/shared/src/server";
 
 export async function getAllServices(): Promise<PersistedServiceConfig[]> {
   // get the user from supabase

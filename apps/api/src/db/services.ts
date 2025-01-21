@@ -1,4 +1,8 @@
-import { PersistedServiceConfig, ServicePricing } from '@/types/pricing';
+import {
+  durationUnit,
+  PersistedServiceConfig,
+  ServicePricing,
+} from '@repo/shared/src/server';
 import {
   boolean,
   jsonb,
@@ -67,12 +71,10 @@ export const hours = [
   0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 6.5, 7, 7.5, 8,
 ] as const;
 export const days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14] as const;
-export const durationUnit = [`mins`, `hours`, `days`] as const;
 export type duration =
   | `${(typeof hours)[number]} ${(typeof durationUnit)[0]}`
   | `${(typeof days)[number]} ${(typeof durationUnit)[1]}`;
 
-// Zod schemas for validation
 export const InsertServiceSchema = createInsertSchema(servicesTable, {
   createdAt: z.union([z.string(), z.date()]).pipe(z.coerce.date()).optional(),
   metadata: z.record(z.string(), z.unknown()),
