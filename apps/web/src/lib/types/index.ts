@@ -1,18 +1,17 @@
+import { ScheduleMeetingProps } from "@/components/ux/Scheduler";
+import { log } from "@repo/logger";
+import {
+  SelectRecurringAvailability,
+  SelectServiceAvailability,
+} from "@repo/shared/src/db/schemas/availability";
 import {
   InsertServiceSchema,
   NewService,
   SelectServiceSchema,
   Service,
-} from "@/../../../api/src/db/services";
-import { serviceFrequencies } from "@repo/shared/src/server";
-import { ScheduleMeetingProps } from "@/components/ux/Scheduler";
-import { log } from "@repo/logger";
+} from "@repo/shared/src/db/schemas/services";
+import { serviceFrequencies, ServicePricing } from "@repo/shared/src/server";
 import { z } from "zod";
-import {
-  SelectRecurringAvailability,
-  SelectServiceAvailability,
-} from "../../../../api/src/db/availability";
-import { ServicePricing } from "@repo/shared/src/server";
 
 export type Pet = {
   id: string;

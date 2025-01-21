@@ -14,7 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { prettyPrint } from "../../../../../api/src/types";
+import { prettyPrint } from "@/lib/utils";
 import {
   BaseRatePricing,
   baseServiceFormValues,
