@@ -19,7 +19,11 @@ module.exports = {
     {
       files: ["*.ts"],
       rules: {
-        "sort-keys": "error",
+        "sort-keys": [
+          "error",
+          "asc",
+          { allowLineSeparatedGroups: true, minKeys: 4, natural: true },
+        ],
       },
     },
   ],

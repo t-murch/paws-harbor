@@ -37,7 +37,11 @@ module.exports = {
       files: ["*.ts", "*.tsx"],
       rules: {
         "no-undef": "off",
-        "sort-keys": "error",
+        "sort-keys": [
+          "error",
+          "asc",
+          { allowLineSeparatedGroups: true, minKeys: 4, natural: true },
+        ],
       },
     },
   ],
