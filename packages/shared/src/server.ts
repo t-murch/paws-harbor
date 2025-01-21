@@ -1,9 +1,9 @@
-import z from "zod";
+import z from 'zod';
 
 export const BASE_SERVICES = [
-  "pet-walking",
-  "pet-sitting",
-  "pet-bathing",
+  'pet-walking',
+  'pet-sitting',
+  'pet-bathing',
 ] as const;
 
 export type BaseService = (typeof BASE_SERVICES)[number];
@@ -14,15 +14,15 @@ export const ServiceTypesEnum = z.enum(BASE_SERVICES);
 export const durationUnit = [`mins`, `hours`, `days`] as const;
 
 export const baseServiceFormValues = [
-  { label: "Pet Walking", value: "pet-walking" },
-  { label: "Pet Sitting", value: "pet-sitting" },
-  { label: "Pet Bathing", value: "pet-bathing" },
+  { label: 'Pet Walking', value: 'pet-walking' },
+  { label: 'Pet Sitting', value: 'pet-sitting' },
+  { label: 'Pet Bathing', value: 'pet-bathing' },
 ] as const;
 
-export type TimeUnit = "mins" | "hours" | "days";
+export type TimeUnit = 'mins' | 'hours' | 'days';
 
 export interface BaseRatePricing {
-  type: "baseRate";
+  type: 'baseRate';
   basePrice: number;
   additionalPrice: number;
   baseTime: number;
@@ -32,7 +32,7 @@ export interface BaseRatePricing {
 }
 
 export interface TieredPricing {
-  type: "tiered";
+  type: 'tiered';
   tiers: Record<string, number>;
   tierMapping: {
     description: string;
@@ -43,34 +43,34 @@ export interface TieredPricing {
 export type ServicePricing = BaseRatePricing | TieredPricing;
 
 export function isBaseRatePricing(
-  pricing: ServicePricing,
+  pricing: ServicePricing
 ): pricing is BaseRatePricing {
-  return pricing.type === "baseRate";
+  return pricing.type === 'baseRate';
 }
 
 export function isTieredPricing(
-  pricing: ServicePricing,
+  pricing: ServicePricing
 ): pricing is TieredPricing {
-  return pricing.type === "tiered";
+  return pricing.type === 'tiered';
 }
 
 export const serviceFrequencies = [
-  "a-la-carte",
-  "daily",
-  "weekly",
-  "monthly",
+  'a-la-carte',
+  'daily',
+  'weekly',
+  'monthly',
 ] as const;
 export type ServiceFrequency = (typeof serviceFrequencies)[number];
 export const ServiceFrequencyEnum = z.enum(serviceFrequencies);
 
 export const daysofWeek = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday',
 ] as const;
 export type DaysofWeek = (typeof daysofWeek)[number];
 export const DaysofWeekEnum = z.enum(daysofWeek);

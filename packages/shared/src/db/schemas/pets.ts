@@ -1,7 +1,14 @@
-import { PetSizesEnum, PetSpeciesEnum } from '@/types';
 import { integer, pgEnum, pgTable, text, uuid } from 'drizzle-orm/pg-core';
 import z from 'zod';
 import { profilesTable } from './users';
+
+export const petSizes = ['giant', 'large', 'medium', 'small'] as const;
+export type PetSizes = (typeof petSizes)[number];
+export const PetSizesEnum = z.enum(petSizes);
+
+const petSpecies = ['dog', 'cat'] as const;
+export type PetSpecies = (typeof petSpecies)[number];
+export const PetSpeciesEnum = z.enum(petSpecies);
 
 export const pgSpecies = pgEnum('species', PetSpeciesEnum.options);
 export const pgSizes = pgEnum('sizes', PetSizesEnum.options);
