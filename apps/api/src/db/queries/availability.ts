@@ -3,17 +3,18 @@ import {
   insertRecurringAvailabilitySchema,
   InsertServiceAvailability,
   insertServiceAvailabilitySchema,
+  RecurringAvailability,
   recurringAvailabilityTable,
   RequestServiceAvailability,
   SelectRecurringAvailability,
   SelectServiceAvailability,
+  ServiceAvailability,
   serviceAvailabilityTable,
   UpdateRecurringAvailability,
   updateRecurringAvailabilitySchema,
   UpdateServiceAvailability,
   updateServiceAvailabilitySchema,
 } from '@repo/shared/src/db/schemas/availability';
-import { RecurringAvailability, ServiceAvailability } from '@/types';
 import { log } from '@repo/logger';
 import { daysofWeek } from '@repo/shared/src/server';
 import { and, between, eq, gte, isNull, lte, or } from 'drizzle-orm';

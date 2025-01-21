@@ -1,13 +1,3 @@
-import {
-  InsertRecurringAvailability,
-  InsertServiceAvailability,
-  RequestRecurringServiceAvailability,
-  RequestServiceAvailability,
-  SelectRecurringAvailability,
-  SelectServiceAvailability,
-  UpdateRecurringAvailability,
-  UpdateServiceAvailability,
-} from '@repo/shared/src/db/schemas/availability';
 import { ServiceFrequency, ServiceType } from '@repo/shared/src/server';
 import z from 'zod';
 
@@ -36,18 +26,6 @@ export type Service = {
   createdAt: Date;
   updatedAt: Date;
 };
-
-export type ServiceAvailability =
-  | InsertServiceAvailability
-  | SelectServiceAvailability
-  | RequestServiceAvailability
-  | UpdateServiceAvailability;
-
-export type RecurringAvailability =
-  | InsertRecurringAvailability
-  | SelectRecurringAvailability
-  | RequestRecurringServiceAvailability
-  | UpdateRecurringAvailability;
 
 const bookingStatus = [
   'pending',

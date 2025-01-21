@@ -1,8 +1,8 @@
 import { AvailabilityRepository } from '@/db/queries/availability';
-import { RecurringAvailability } from '@/types';
 import {
   InsertRecurringAvailability,
   InsertServiceAvailability,
+  RecurringAvailability,
   recurringAvailabilityTable,
   RequestRecurringServiceAvailability,
   RequestServiceAvailability,
@@ -39,7 +39,9 @@ describe('AvailabilityRepository', () => {
   };
   let availabilityRepository: AvailabilityRepository;
   let insertProfile: SelectProfile;
+  // eslint-disable-next-line no-unused-vars
   let context: Context;
+  // eslint-disable-next-line no-unused-vars
   let next: Next;
 
   beforeEach(() => {

@@ -1,11 +1,11 @@
 import { log } from "@repo/logger";
-import { type ClassValue, clsx } from "clsx";
-import { twMerge } from "tailwind-merge";
 import {
   RecurringAvailability,
   ServiceAvailability,
-} from "../../../api/src/types";
+} from "@repo/shared/src/db/schemas/availability";
 import { daysofWeek } from "@repo/shared/src/server";
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
 export const SUPABASE_URL = isProd()
@@ -175,11 +175,11 @@ export {
   getErrorMessage,
   // getAuthHeaders,
   handleError,
+  handleErrorBadRequest,
   isError,
   isNonRecurringServiceAvailability,
   isRecurringServiceAvailability,
   mergeClassNames,
-  handleErrorBadRequest,
   prettyPrint,
   PROJECT_URL,
 };

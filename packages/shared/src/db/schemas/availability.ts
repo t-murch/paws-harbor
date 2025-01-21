@@ -195,3 +195,15 @@ export type UpdateRecurringAvailability =
     id: string;
     dayOfWeek: DaysofWeek;
   };
+
+export type ServiceAvailability =
+  | InsertServiceAvailability
+  | SelectServiceAvailability
+  | RequestServiceAvailability
+  | UpdateServiceAvailability;
+
+export type RecurringAvailability =
+  | InsertRecurringAvailability
+  | SelectRecurringAvailability
+  | RequestRecurringServiceAvailability
+  | UpdateRecurringAvailability;
