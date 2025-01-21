@@ -7,26 +7,26 @@ import { redirect } from "next/navigation";
 import { loginFormSchema, signupFormSchema } from "@/components/ux/formSchema";
 import { supabaseServerClient } from "@/lib/supabase/server";
 import { API_HOST } from "@/lib/utils";
-import { cookies } from "next/headers";
 
 export type FormStateUno = {
   message: string;
   fields?: Record<string, string>;
 };
 
-interface PawsEndpoints {
-  "/users/login": {};
-  "/users/logout": {};
-  "/users/signup": {};
-}
+// TODO: Strengthen type-security of api endpoints.
+// interface PawsEndpoints {
+//   "/users/login": {};
+//   "/users/logout": {};
+//   "/users/signup": {};
+// }
 
 export const loginUser = async (data: { email: string; password: string }) => {
   const res = await fetch(`${API_HOST}/users/login`, {
-    method: "POST",
+    body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    method: "POST",
   });
 
   if (!res.ok) {
@@ -35,16 +35,16 @@ export const loginUser = async (data: { email: string; password: string }) => {
 
   const responseJSON = await res.json();
   log(`responseJSON-loginUser=${JSON.stringify(responseJSON)}`);
-  return responseJSON; // Assuming it contains user and token info
+  return responseJSON;
 };
 
 export const login = async (data: { email: string; password: string }) => {
   const res = await fetch(`${API_HOST}/users/login`, {
-    method: "POST",
+    body: JSON.stringify(data),
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    method: "POST",
   });
   const responseJSON = await res.json();
   if (responseJSON.error) {
@@ -57,11 +57,9 @@ export async function loginActionOld(
   _prevState: FormStateUno,
   formData: FormData,
 ): Promise<FormStateUno> {
-  // getting query params from url
   const dirtyData = Object.fromEntries(formData);
   const parsed = loginFormSchema.safeParse(dirtyData);
-
-  log("**NEW** loginAction invoked.");
+  log("loginAction invoked.");
 
   if (!parsed.success) {
     const fields: Record<string, string> = {};
@@ -75,8 +73,6 @@ export async function loginActionOld(
     };
   }
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const loginCreds = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
@@ -109,13 +105,11 @@ export async function signupAction(
     }
 
     return {
-      message: "Invalid form data",
       fields,
+      message: "Invalid form data",
     };
   }
 
-  // type-casting here for convenience
-  // in practice, you should validate your inputs
   const signupCreds = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
