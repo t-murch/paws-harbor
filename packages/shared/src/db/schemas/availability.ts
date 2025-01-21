@@ -5,25 +5,25 @@ import {
   time,
   timestamp,
   uuid,
-} from "drizzle-orm/pg-core";
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import z from "zod";
-import { pgServiceTypes, profilesTable } from "./users";
-import { DaysofWeek, DaysofWeekEnum } from "../../server";
+} from 'drizzle-orm/pg-core';
+import { createInsertSchema, createSelectSchema } from 'drizzle-zod';
+import z from 'zod';
+import { pgServiceTypes, profilesTable } from './users';
+import { DaysofWeek, DaysofWeekEnum } from '../../server';
 
-export const serviceAvailabilityTable = pgTable("service_availability", {
-  adminId: uuid("admin_id")
+export const serviceAvailabilityTable = pgTable('service_availability', {
+  adminId: uuid('admin_id')
     .references(() => profilesTable.id, {
-      onDelete: "cascade",
+      onDelete: 'cascade',
     })
     .notNull(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  date: date("date").notNull(),
-  endTime: time("end_time").notNull(),
-  id: uuid("id").defaultRandom().primaryKey(),
-  serviceType: pgServiceTypes("service_type").notNull(),
-  startTime: time("start_time").notNull(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+  date: date('date').notNull(),
+  endTime: time('end_time').notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  serviceType: pgServiceTypes('service_type').notNull(),
+  startTime: time('start_time').notNull(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const insertServiceAvailabilitySchema = createInsertSchema(
@@ -61,7 +61,7 @@ export const insertServiceAvailabilitySchema = createInsertSchema(
         .transform((date) => date.toISOString())
         .pipe(updatedAt)
         .optional(),
-  },
+  }
 );
 export const selectServiceAvailabilitySchema = createSelectSchema(
   serviceAvailabilityTable,
@@ -96,7 +96,7 @@ export const selectServiceAvailabilitySchema = createSelectSchema(
         .pipe(z.coerce.date())
         .pipe(updatedAt)
         .optional(),
-  },
+  }
 );
 export const requestServiceAvailabilitySchema =
   insertServiceAvailabilitySchema.omit({ adminId: true });
@@ -110,27 +110,27 @@ export type SelectServiceAvailability =
   typeof serviceAvailabilityTable.$inferSelect;
 export type RequestServiceAvailability = Omit<
   InsertServiceAvailability,
-  "id" | "adminId"
+  'id' | 'adminId'
 >;
 export type UpdateServiceAvailability = Partial<SelectServiceAvailability> & {
   id: string;
 };
 
-export const pgDaysOfWeek = pgEnum("days_of_week", DaysofWeekEnum.options);
+export const pgDaysOfWeek = pgEnum('days_of_week', DaysofWeekEnum.options);
 
-export const recurringAvailabilityTable = pgTable("recurring_availability", {
-  adminId: uuid("admin_id").references(() => profilesTable.id, {
-    onDelete: "cascade",
+export const recurringAvailabilityTable = pgTable('recurring_availability', {
+  adminId: uuid('admin_id').references(() => profilesTable.id, {
+    onDelete: 'cascade',
   }),
-  createdAt: timestamp("created_at").defaultNow(),
-  dayOfWeek: pgDaysOfWeek("day_of_week").notNull(),
-  endDate: date("end_date"),
-  endTime: time("end_time").notNull(),
-  id: uuid("id").defaultRandom().primaryKey(),
-  serviceType: pgServiceTypes("service_type").notNull(),
-  startDate: date("start_date").notNull(),
-  startTime: time("start_time").notNull(),
-  updatedAt: timestamp("updated_at").defaultNow(),
+  createdAt: timestamp('created_at').defaultNow(),
+  dayOfWeek: pgDaysOfWeek('day_of_week').notNull(),
+  endDate: date('end_date'),
+  endTime: time('end_time').notNull(),
+  id: uuid('id').defaultRandom().primaryKey(),
+  serviceType: pgServiceTypes('service_type').notNull(),
+  startDate: date('start_date').notNull(),
+  startTime: time('start_time').notNull(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 export const insertRecurringAvailabilitySchema = createInsertSchema(
@@ -174,10 +174,10 @@ export const insertRecurringAvailabilitySchema = createInsertSchema(
         .transform((date) => date.toISOString())
         .pipe(updatedAt)
         .optional(),
-  },
+  }
 );
 export const selectRecurringAvailabilitySchema = createSelectSchema(
-  recurringAvailabilityTable,
+  recurringAvailabilityTable
 );
 export const updateRecurringAvailabilitySchema =
   selectRecurringAvailabilitySchema.partial().required({ id: true });
@@ -188,7 +188,7 @@ export type SelectRecurringAvailability =
   typeof recurringAvailabilityTable.$inferSelect;
 export type RequestRecurringServiceAvailability = Omit<
   InsertRecurringAvailability,
-  "id" | "adminId"
+  'id' | 'adminId'
 >;
 export type UpdateRecurringAvailability =
   Partial<SelectRecurringAvailability> & {
