@@ -16,7 +16,7 @@ import {
   AllServices,
   SelectServiceSchema,
   mapDbToServiceConfig,
-} from "../../../../api/src/db/services";
+} from "@repo/shared/src/db/schemas/services";
 import { z } from "zod";
 import { PersistedServiceConfig } from "@repo/shared/src/server";
 

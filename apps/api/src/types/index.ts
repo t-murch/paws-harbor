@@ -25,14 +25,6 @@ export type User = {
   updatedAt: Date;
 };
 
-const petSpecies = ['dog', 'cat'] as const;
-export type PetSpecies = (typeof petSpecies)[number];
-export const PetSpeciesEnum = z.enum(petSpecies);
-
-export const petSizes = ['giant', 'large', 'medium', 'small'] as const;
-export type PetSizes = (typeof petSizes)[number];
-export const PetSizesEnum = z.enum(petSizes);
-
 export type Service = {
   id: string; // Unique identifier
   walkerId: string; // Reference to the walker's User ID
