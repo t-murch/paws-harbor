@@ -9,7 +9,7 @@ import {
   ServicePricing,
   TieredPricing,
   TimeUnit,
-} from '@repo/shared/src/server';
+} from '@repo/shared/server';
 
 // Type guards
 function isPersisted(

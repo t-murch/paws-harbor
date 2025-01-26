@@ -2,7 +2,7 @@ import {
   InsertPet,
   petsTable,
   SelectPet,
-} from '@repo/shared/src/db/schemas/pets';
+} from '@repo/shared/db/schemas/schema';
 import { eq } from 'drizzle-orm';
 import { db } from '..';
 

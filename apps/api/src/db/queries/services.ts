@@ -7,7 +7,7 @@ import {
   NewService,
   Service,
   servicesTable,
-} from '@repo/shared/src/db/schemas/services';
+} from '@repo/shared/db/schemas/schema';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
 export class ServiceRepository {

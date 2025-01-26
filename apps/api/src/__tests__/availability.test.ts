@@ -1,20 +1,18 @@
 import { AvailabilityRepository } from '@/db/queries/availability';
 import {
+  InsertProfile,
   InsertRecurringAvailability,
   InsertServiceAvailability,
+  profilesTable,
   RecurringAvailability,
   recurringAvailabilityTable,
   RequestRecurringServiceAvailability,
   RequestServiceAvailability,
+  SelectProfile,
   SelectServiceAvailability,
   serviceAvailabilityTable,
   UpdateRecurringAvailability,
-} from '@repo/shared/src/db/schemas/availability';
-import {
-  InsertProfile,
-  profilesTable,
-  SelectProfile,
-} from '@repo/shared/src/db/schemas/users';
+} from '@repo/shared/db/schemas/schema';
 import { eq } from 'drizzle-orm';
 import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Context, Next } from 'hono';

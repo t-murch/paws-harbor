@@ -1,10 +1,10 @@
+import * as mySchema from '@repo/shared/db/schemas/schema';
 import { config } from 'dotenv';
+import { getTableColumns, SQL, sql } from 'drizzle-orm';
+import { PgTable } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import { seed } from 'drizzle-seed';
 import postgres from 'postgres';
-import * as mySchema from './schema';
-import { PgTable } from 'drizzle-orm/pg-core';
-import { getTableColumns, SQL, sql } from 'drizzle-orm';
 
 config({ path: '.env' });
 export const isProd = process.env.NODE_ENV === 'production';
@@ -21,6 +21,7 @@ export type GeneralResponse<T, E> =
   | { error: E; success: false };
 export type GeneralError = { details?: any; message: string };
 
+// eslint-disable-next-line no-unused-vars
 async function main() {
   // eslint-disable-next-line no-unused-vars
   await seed(db, mySchema).refine((_f) => ({

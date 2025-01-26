@@ -1,9 +1,5 @@
-import UserService, { loginFormSchema } from '@/db/queries/users';
 import { log } from '@repo/logger';
-import {
-  profileSchema,
-  SelectProfile,
-} from '@repo/shared/src/db/schemas/users';
+import { profileSchema, SelectProfile } from '@repo/shared/db/schemas/schema';
 import {
   AuthResponse,
   AuthResponsePassword,
@@ -13,6 +9,7 @@ import {
 } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
+import UserService, { loginFormSchema } from '../db/queries/users';
 
 type Variables = {
   user: User;

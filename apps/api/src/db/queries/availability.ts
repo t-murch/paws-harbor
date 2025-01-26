@@ -1,3 +1,5 @@
+import { GeneralResponse } from '@/db/index';
+import { log } from '@repo/logger';
 import {
   InsertRecurringAvailability,
   insertRecurringAvailabilitySchema,
@@ -14,12 +16,10 @@ import {
   updateRecurringAvailabilitySchema,
   UpdateServiceAvailability,
   updateServiceAvailabilitySchema,
-} from '@repo/shared/src/db/schemas/availability';
-import { log } from '@repo/logger';
-import { daysofWeek } from '@repo/shared/src/server';
+} from '@repo/shared/db/schemas/schema';
+import { daysofWeek } from '@repo/shared/server';
 import { and, between, eq, gte, isNull, lte, or } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import { GeneralResponse } from '@/db/index';
 
 export class AvailabilityRepository {
   private db: PostgresJsDatabase;

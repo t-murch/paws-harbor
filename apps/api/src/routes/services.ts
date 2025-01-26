@@ -1,15 +1,12 @@
 import { db, GeneralError, GeneralResponse } from '@/db';
 import { ServicePricingRepository } from '@/db/queries/servicePricing';
 import { ServiceRepository } from '@/db/queries/services';
+import { log } from '@repo/logger';
+import { SelectServiceSchema, Service } from '@repo/shared/db/schemas/schema';
 import {
   ServicePricingDetails,
   ServicePricingService,
-} from '@/types/servicePricing';
-import { log } from '@repo/logger';
-import {
-  SelectServiceSchema,
-  Service,
-} from '@repo/shared/src/db/schemas/services';
+} from '@repo/shared/types/servicePricing';
 import { User } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';

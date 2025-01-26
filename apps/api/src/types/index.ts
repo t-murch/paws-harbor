@@ -1,4 +1,4 @@
-import { ServiceFrequency, ServiceType } from '@repo/shared/src/server';
+import { ServiceFrequency, ServiceType } from '@repo/shared/server';
 import z from 'zod';
 
 export type User = {

@@ -3,7 +3,7 @@ import { log } from '@repo/logger';
 import {
   existingPetSchema,
   newPetSchema,
-} from '@repo/shared/src/db/schemas/pets';
+} from '@repo/shared/db/schemas/schema';
 import { User } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
