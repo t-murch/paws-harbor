@@ -1,12 +1,12 @@
 "use client";
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Pet, ServiceFormData } from "@/lib/types";
 import { AvatarIcon } from "@radix-ui/react-icons";
-import { Service } from "@repo/shared/src/db/schemas/services";
+import { Service } from "@repo/shared/db/schemas/services";
 import { useAtom } from "jotai";
 import { Dog } from "lucide-react";
 import React, { useEffect } from "react";
+import { Pet, ServiceFormData } from "../../../lib/types";
+import { Card, CardContent, CardHeader } from "../../ui/card";
 import { userAtom, UserProfile } from "../atoms";
 import { petsAtom } from "../providers/store";
 import Bio from "./Bio";

@@ -1,43 +1,38 @@
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
+import { baseServiceFormValues, Pricing } from "@repo/shared/server";
+import { ServicePricingDetails } from "@repo/shared/types/servicePricing";
+import { Table } from "lucide-react";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "../../ui/card";
 import {
-  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { prettyPrint } from "@/lib/utils";
-import {
-  BaseRatePricing,
-  baseServiceFormValues,
-  isBaseRatePricing,
-  isTieredPricing,
-  PersistedServiceConfig,
-  Pricing,
-} from "@repo/shared/src/server";
+} from "../../ui/table";
 
 export default function Pricelist({
   pricing: { subscription: subscriptionPrices },
   services,
 }: {
   pricing: Pricing;
-  services: PersistedServiceConfig[];
+  services: ServicePricingDetails[];
 }) {
-  const baseRateServices: PersistedServiceConfig[] = [],
-    tierBasedServices: PersistedServiceConfig[] = [];
+  const baseRateServices: ServicePricingDetails[] = [],
+    tierBasedServices: ServicePricingDetails[] = [];
 
   services.forEach((service) => {
-    if (isBaseRatePricing(service.pricingModel)) baseRateServices.push(service);
-    else if (isTieredPricing(service.pricingModel))
+    if (service.isTiered) {
       tierBasedServices.push(service);
+    } else {
+      baseRateServices.push(service);
+    }
   });
 
   return (
@@ -63,74 +58,74 @@ export default function Pricelist({
               </div>
               <TabsContent value="alacarte" className="mt-6">
                 <div className="grid gap-6 grid-cols-1 md:grid-cols-2">
-                  {baseRateServices.map((service, idx) => {
-                    service.pricingModel =
-                      service.pricingModel as BaseRatePricing;
-                    return (
-                      <Card key={idx} className="overflow-hidden">
-                        <CardHeader className="space-y-1">
-                          <CardTitle>
-                            {baseServiceFormValues.find(
-                              (s) => s.value === service.name,
-                            )?.label ?? service.name}
-                          </CardTitle>
-                          <CardDescription>Time-based pricing</CardDescription>
-                        </CardHeader>
-                        <CardContent className="overflow-x-auto">
-                          <Table>
-                            <TableHeader>
-                              <TableRow>
-                                <TableHead className="whitespace-nowrap">
-                                  Service
-                                </TableHead>
-                                <TableHead className="whitespace-nowrap">
-                                  Base Price
-                                </TableHead>
-                                <TableHead className="whitespace-nowrap">
-                                  Additional
-                                </TableHead>
-                              </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                              <TableRow>
-                                <TableCell className="whitespace-nowrap">
-                                  {baseServiceFormValues.find(
-                                    (s) => s.value === service.name,
-                                  )?.label ?? service.name}
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                  ${service.pricingModel.basePrice} /{" "}
-                                  {service.pricingModel.baseTime}{" "}
-                                  {service.pricingModel.timeUnit}
-                                </TableCell>
-                                <TableCell className="whitespace-nowrap">
-                                  ${service.pricingModel.additionalPrice} /{" "}
-                                  {service.pricingModel.additionalTime}{" "}
-                                  {service.pricingModel.timeUnit}
-                                </TableCell>
-                              </TableRow>
-                              {service.pricingModel.addons &&
-                                Object.entries(service.pricingModel.addons).map(
-                                  ([key, value], idx) => (
-                                    <TableRow key={idx}>
-                                      <TableCell className="whitespace-nowrap">
-                                        {prettyPrint(key)}
-                                      </TableCell>
-                                      <TableCell className="whitespace-nowrap">
-                                        ${value}
-                                      </TableCell>
-                                      <TableCell className="whitespace-nowrap">
-                                        -
-                                      </TableCell>
-                                    </TableRow>
-                                  ),
-                                )}
-                            </TableBody>
-                          </Table>
-                        </CardContent>
-                      </Card>
-                    );
-                  })}
+                  {/* {baseRateServices.map((service, idx) => { */}
+                  {/*   service.pricingModel = */}
+                  {/*     service.pricingModel as BaseRatePricing; */}
+                  {/*   return ( */}
+                  {/*     <Card key={idx} className="overflow-hidden"> */}
+                  {/*       <CardHeader className="space-y-1"> */}
+                  {/*         <CardTitle> */}
+                  {/*           {baseServiceFormValues.find( */}
+                  {/*             (s) => s.value === service.name, */}
+                  {/*           )?.label ?? service.name} */}
+                  {/*         </CardTitle> */}
+                  {/*         <CardDescription>Time-based pricing</CardDescription> */}
+                  {/*       </CardHeader> */}
+                  {/*       <CardContent className="overflow-x-auto"> */}
+                  {/*         <Table> */}
+                  {/*           <TableHeader> */}
+                  {/*             <TableRow> */}
+                  {/*               <TableHead className="whitespace-nowrap"> */}
+                  {/*                 Service */}
+                  {/*               </TableHead> */}
+                  {/*               <TableHead className="whitespace-nowrap"> */}
+                  {/*                 Base Price */}
+                  {/*               </TableHead> */}
+                  {/*               <TableHead className="whitespace-nowrap"> */}
+                  {/*                 Additional */}
+                  {/*               </TableHead> */}
+                  {/*             </TableRow> */}
+                  {/*           </TableHeader> */}
+                  {/*           <TableBody> */}
+                  {/*             <TableRow> */}
+                  {/*               <TableCell className="whitespace-nowrap"> */}
+                  {/*                 {baseServiceFormValues.find( */}
+                  {/*                   (s) => s.value === service.name, */}
+                  {/*                 )?.label ?? service.name} */}
+                  {/*               </TableCell> */}
+                  {/*               <TableCell className="whitespace-nowrap"> */}
+                  {/*                 ${service.pricingModel.basePrice} /{" "} */}
+                  {/*                 {service.pricingModel.baseTime}{" "} */}
+                  {/*                 {service.pricingModel.timeUnit} */}
+                  {/*               </TableCell> */}
+                  {/*               <TableCell className="whitespace-nowrap"> */}
+                  {/*                 ${service.pricingModel.additionalPrice} /{" "} */}
+                  {/*                 {service.pricingModel.additionalTime}{" "} */}
+                  {/*                 {service.pricingModel.timeUnit} */}
+                  {/*               </TableCell> */}
+                  {/*             </TableRow> */}
+                  {/*             {service.pricingModel.addons && */}
+                  {/*               Object.entries(service.pricingModel.addons).map( */}
+                  {/*                 ([key, value], idx) => ( */}
+                  {/*                   <TableRow key={idx}> */}
+                  {/*                     <TableCell className="whitespace-nowrap"> */}
+                  {/*                       {prettyPrint(key)} */}
+                  {/*                     </TableCell> */}
+                  {/*                     <TableCell className="whitespace-nowrap"> */}
+                  {/*                       ${value} */}
+                  {/*                     </TableCell> */}
+                  {/*                     <TableCell className="whitespace-nowrap"> */}
+                  {/*                       - */}
+                  {/*                     </TableCell> */}
+                  {/*                   </TableRow> */}
+                  {/*                 ), */}
+                  {/*               )} */}
+                  {/*           </TableBody> */}
+                  {/*         </Table> */}
+                  {/*       </CardContent> */}
+                  {/*     </Card> */}
+                  {/*   ); */}
+                  {/* })} */}
 
                   {tierBasedServices.map((service, idx) => (
                     <Card key={idx} className="overflow-hidden">
@@ -157,15 +152,15 @@ export default function Pricelist({
                             </TableRow>
                           </TableHeader>
                           <TableBody>
-                            {isTieredPricing(service.pricingModel) &&
-                              Object.entries(service.pricingModel.tiers).map(
-                                ([key, value], idx) => (
+                            {service.isTiered &&
+                              Object.entries(service.durationOptions).map(
+                                ([, value], idx) => (
                                   <TableRow key={idx}>
                                     <TableCell className="whitespace-nowrap">
-                                      {key}
+                                      {value.durationUnit}
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap">
-                                      ${value}
+                                      ${value.tieredRate}
                                     </TableCell>
                                   </TableRow>
                                 ),

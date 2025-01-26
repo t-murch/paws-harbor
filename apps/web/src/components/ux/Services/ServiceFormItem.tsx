@@ -1,25 +1,25 @@
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { ServiceFormData } from "@/lib/types";
+} from "@radix-ui/react-select";
+import { baseServiceFormValues } from "@repo/shared/server";
 import { UseFormReturn } from "react-hook-form";
+import { ServiceFormData } from "../../../lib/types";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "../../ui/form";
+import { Input } from "../../ui/input";
 import BasePricingFormFields from "./BasePricingFormFields";
 import DurationOptionsFormFields from "./DurationOptions";
 import DynamicServiceFields from "./ServiceFields";
-import { baseServiceFormValues } from "@repo/shared/src/server";
+import { Button } from "../../ui/button";
 
 interface ServiceFormItemProps {
   availableServices: any[];
@@ -50,8 +50,8 @@ export default function ServiceFormItem({
   if (instanceOption) currentOptions.push(instanceOption);
 
   const pricingModelType = form.watch(`services.${index}.isTiered`);
-  let pricingModel = form.watch(`services.${index}.durationOptions`),
-    baseRate = form.watch(`services.${index}.baseRate`);
+  let pricingModel = form.watch(`services.${index}.durationOptions`);
+  // baseRate = form.watch(`services.${index}.baseRate`);
 
   return (
     <div className="min-h-[350px] mb-4 p-4 border rounded">
@@ -116,9 +116,10 @@ export default function ServiceFormItem({
                     `services.${index}.durationOptions`,
                     pricingModel,
                   );
-                } else {
-                  form.setValue(`services.${index}.baseRate`, baseRate ?? 0);
                 }
+                // else {
+                //   form.setValue(`services.${index}.baseRate`, baseRate ?? 0);
+                // }
               }}
               {...field}
               value={field.value?.toString()}

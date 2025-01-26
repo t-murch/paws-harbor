@@ -1,23 +1,25 @@
 "use client";
 
-import { createServiceAction } from "@/app/admin/actions";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
-import { ServiceFormData, serviceListSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { log } from "@repo/logger";
-import { baseServiceFormValues } from "@repo/shared/src/server";
+import { baseServiceFormValues } from "@repo/shared/server";
 import React, { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useFieldArray, useForm } from "react-hook-form";
+import { createServiceAction } from "../../../app/admin/actions";
+import { ServiceFormData, serviceListSchema } from "../../../lib/types";
+import { Card, CardContent, CardHeader, CardTitle } from "../../ui/card";
+import ServiceFormItem from "./ServiceFormItem";
+import { Form } from "../../ui/form";
+import { Button } from "../../ui/button";
 
 interface ServiceListProps {
   initialServices: ServiceFormData;
 }
 
+// update the props to have a default value for intiialServices.isTiered = false.
 const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
-  const [, formAction] = useFormState(createServiceAction, {
+  const [state, formAction] = useFormState(createServiceAction, {
     formFields: {},
     message: "",
   });
@@ -30,6 +32,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
   const {
     control,
     formState: { errors },
+    // eslint-disable-next-line no-unused-vars
     register,
   } = form;
   const formRef = useRef<HTMLFormElement>(null);

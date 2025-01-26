@@ -1,14 +1,14 @@
 "use server";
 
+import { log } from "@repo/logger";
+import { Service } from "@repo/shared/db/schemas/services";
+import { cookies } from "next/headers";
 import {
   API_HOST,
   GeneralResponse,
   handleError,
   PROJECT_URL,
-} from "@/lib/utils";
-import { log } from "console";
-import { cookies } from "next/headers";
-import { Service } from "@repo/shared/src/db/schemas/services";
+} from "../../../lib/utils";
 
 export async function getUserServices(): Promise<Service[]> {
   // get the user from supabase

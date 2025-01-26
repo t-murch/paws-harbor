@@ -1,23 +1,22 @@
 "use server";
 
-import { CreateResponse, transformServiceFormToSchema } from "@/lib/types";
+import { log } from "@repo/logger";
+import { AllServices, NewService } from "@repo/shared/db/schemas/services";
+import {
+  ServicePricingDetails,
+  ServicePricingService,
+} from "@repo/shared/types/servicePricing";
+import { cookies } from "next/headers";
+import { z } from "zod";
+import { CreateResponse, transformServiceFormToSchema } from "../../lib/types";
 import {
   API_HOST,
   GeneralResponse,
   handleError,
   PROJECT_URL,
-} from "@/lib/utils";
-import { log } from "@repo/logger";
-import {
-  AllServices,
-  NewService,
-  Service,
-} from "@repo/shared/src/db/schemas/services";
-import { ServicePricingService } from "@repo/shared/src/types/servicePricing";
-import { cookies } from "next/headers";
-import { z } from "zod";
+} from "../../lib/utils";
 
-export async function getAllServices(): Promise<Service[]> {
+export async function getAllServices(): Promise<ServicePricingDetails[]> {
   // get the user from supabase
   // attach auth cookie headers
   // call API
@@ -44,9 +43,8 @@ export async function getAllServices(): Promise<Service[]> {
     return [];
   }
 
-  const r: GeneralResponse<Service[], { message: string }> = await res
-    .json()
-    .catch((e) => {
+  const r: GeneralResponse<ServicePricingDetails[], { message: string }> =
+    await res.json().catch((e) => {
       const errorMsg = handleError("", e);
       throw new Error(errorMsg);
     });

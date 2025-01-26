@@ -1,21 +1,19 @@
-import { ScheduleMeetingProps } from "@/components/ux/Scheduler";
-import { log } from "@repo/logger";
-import {
-  SelectRecurringAvailability,
-  SelectServiceAvailability,
-} from "@repo/shared/src/db/schemas/availability";
 import {
   InsertServiceSchema,
   NewService,
+  SelectRecurringAvailability,
+  SelectServiceAvailability,
   SelectServiceSchema,
   Service,
-} from "@repo/shared/src/db/schemas/services";
-import { serviceFrequencies } from "@repo/shared/src/server";
+  ServicePricingInsertDTOSchema,
+} from "@repo/shared/db/schemas/schema";
+import { serviceFrequencies } from "@repo/shared/server";
 import {
   NewServicePricingT,
   ServicePricingService,
-} from "@repo/shared/src/types/servicePricing";
+} from "@repo/shared/types/servicePricing";
 import { z } from "zod";
+import { ScheduleMeetingProps } from "../../components/ux/Scheduler";
 
 export type Pet = {
   id: string;
@@ -108,7 +106,7 @@ export type SelectServiceClient = Service;
 export type ServiceClient = InsertServiceClient | SelectServiceClient;
 
 export const serviceListSchema = z.object({
-  services: z.array(ServicePricingService.NewServicePricingSchema),
+  services: z.array(ServicePricingInsertDTOSchema),
 });
 
 export type ServiceFormData = z.infer<typeof serviceListSchema>;
@@ -244,7 +242,9 @@ export function transformServiceFormToSchema(formData: {
       }
     }
 
-    log(`Transformed service: ${JSON.stringify(transformedService, null, 2)}`);
+    console.log(
+      `Transformed service: ${JSON.stringify(transformedService, null, 2)}`,
+    );
     return transformedService;
   });
 }

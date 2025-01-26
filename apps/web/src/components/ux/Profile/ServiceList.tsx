@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 "use client";
 
-import { Label } from "@/components/ui/label";
+import { Service } from "@repo/shared/db/schemas/schema";
 import React, { useState } from "react";
-import { Service } from "@repo/shared/src/db/schemas/services";
+import { Label } from "../../ui/label";
 
 interface ServiceListProps {
   services: Service[];

@@ -2,8 +2,8 @@ import { log } from "@repo/logger";
 import {
   RecurringAvailability,
   ServiceAvailability,
-} from "@repo/shared/src/db/schemas/availability";
-import { daysofWeek } from "@repo/shared/src/server";
+} from "@repo/shared/db/schemas/schema";
+import { daysofWeek } from "@repo/shared/server";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 

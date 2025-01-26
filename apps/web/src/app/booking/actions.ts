@@ -1,5 +1,5 @@
-import { API_HOST, ClientResponse, fetcher, isError } from "@/lib/utils";
-import { type SelectServiceAvailability } from "@repo/shared/src/db/schemas/availability";
+import { type SelectServiceAvailability } from "@repo/shared/db/schemas/schema";
+import { API_HOST, ClientResponse, fetcher, isError } from "../../lib/utils";
 
 async function getAllAvailability(
   daysFromToday = 30,
