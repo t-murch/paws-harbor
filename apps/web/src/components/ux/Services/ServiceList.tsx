@@ -1,17 +1,16 @@
 "use client";
 
+import { createServiceAction } from "@/app/admin/actions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { ServiceFormData, serviceListSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { log } from "@repo/logger";
+import { baseServiceFormValues } from "@repo/shared/src/server";
 import React, { useRef, useState } from "react";
 import { useFormState } from "react-dom";
 import { useFieldArray, useForm } from "react-hook-form";
-import { createServiceAction } from "@/app/admin/actions";
-import ServiceFormItem from "./ServiceFormItem";
-import { log } from "@repo/logger";
-import { baseServiceFormValues } from "@repo/shared/src/server";
 
 interface ServiceListProps {
   initialServices: ServiceFormData;
@@ -22,18 +21,16 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
     formFields: {},
     message: "",
   });
-  // const { updatePrice } = usePricing();
   const [isEditMode, setIsEditMode] = useState(false);
-  // log(`initialServices=${JSON.stringify(initialServices, null, 2)}`);
 
   const form = useForm<ServiceFormData>({
-    // defaultValues: { services: { ...initialServices, ...state.fields } },
     defaultValues: { services: initialServices.services },
     resolver: zodResolver(serviceListSchema),
   });
   const {
     control,
     formState: { errors },
+    register,
   } = form;
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -50,13 +47,13 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
   const handleSubmit = form.handleSubmit(() => {
     console.log(`handleSubmit`);
     const formData = new FormData(formRef.current!);
+    formData.append("discounts", "[]");
     const serviceTypes = Object.fromEntries(formData);
     const formServiceNames: [string, string][] = [];
     for (const p in serviceTypes) {
       if (p.endsWith("name"))
         formServiceNames.push([p, String(serviceTypes[p])]);
     }
-    // log(`formServiceNames=${JSON.stringify(formServiceNames, null, 2)}`);
 
     const existingFields = fields
       .filter((f) => {
@@ -85,9 +82,10 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
       }
     });
 
-    const data = Object.fromEntries(formData);
-    log(`data=${JSON.stringify(data, null, 2)}`);
-    // log(`existingFields=${JSON.stringify(existingFields, null, 2)}`);
+    // const data = Object.fromEntries(formData);
+    // log(`data=${JSON.stringify(data, null, 2)}`);
+    log(`fields=${JSON.stringify(fields, null, 2)}`);
+    console.log(`message=${JSON.stringify(state, null, 2)}`);
 
     return new Promise<void>((resolve) => {
       formAction(formData);
@@ -104,8 +102,6 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
   if (errors?.services && errors.services.length) {
     console.log(`errors=${JSON.stringify(errors, null, 2)}`);
   }
-  // console.log(`fields=${JSON.stringify(fields, null, 2)}`);
-  // console.log(`message=${JSON.stringify(state, null, 2)}`);
 
   return (
     <Card>
@@ -121,7 +117,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
               fields.map((field, index) => (
                 <ServiceFormItem
                   availableServices={availableServices}
-                  key={field.id}
+                  key={field._id}
                   form={form}
                   index={index}
                   field={field}
@@ -139,17 +135,11 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
                   onClick={() =>
                     append({
                       description: "",
+                      discounts: [],
+                      durationOptions: [],
+                      isTiered: false,
                       metadata: {},
                       name: availableServices[0].value,
-                      pricingModel: {
-                        additionalPrice: 0,
-                        additionalTime: 0,
-                        addons: {},
-                        basePrice: 0,
-                        baseTime: 0,
-                        timeUnit: "hours",
-                        type: "baseRate",
-                      },
                     })
                   }
                 >

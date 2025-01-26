@@ -8,19 +8,16 @@ import {
   PROJECT_URL,
 } from "@/lib/utils";
 import { log } from "@repo/logger";
-import { cookies } from "next/headers";
 import {
-  NewService,
-  InsertServiceSchema,
-  Service,
   AllServices,
-  SelectServiceSchema,
-  mapDbToServiceConfig,
+  NewService,
+  Service,
 } from "@repo/shared/src/db/schemas/services";
+import { ServicePricingService } from "@repo/shared/src/types/servicePricing";
+import { cookies } from "next/headers";
 import { z } from "zod";
-import { PersistedServiceConfig } from "@repo/shared/src/server";
 
-export async function getAllServices(): Promise<PersistedServiceConfig[]> {
+export async function getAllServices(): Promise<Service[]> {
   // get the user from supabase
   // attach auth cookie headers
   // call API
@@ -58,12 +55,12 @@ export async function getAllServices(): Promise<PersistedServiceConfig[]> {
     throw new Error(r.error.message);
   }
 
-  return r.data.map(mapDbToServiceConfig);
+  return r.data;
 }
 
 export async function createServiceAction(_prevState: any, formData: FormData) {
   const parsedServices: z.infer<
-    typeof InsertServiceSchema | typeof SelectServiceSchema
+    typeof ServicePricingService.NewServicePricingSchema
   >[] = [];
   const formFields: Record<string, string> = {};
   const dirtyData = Object.fromEntries(formData);
@@ -71,7 +68,7 @@ export async function createServiceAction(_prevState: any, formData: FormData) {
   log(`transformedData=${JSON.stringify(data, null, 2)}`);
 
   data.forEach((s) => {
-    const parsed = InsertServiceSchema.safeParse(s);
+    const parsed = ServicePricingService.NewServicePricingSchema.safeParse(s);
     if (parsed.success) {
       parsedServices.push(parsed.data);
     } else {
@@ -90,16 +87,16 @@ export async function createServiceAction(_prevState: any, formData: FormData) {
   }
 
   const res = await bulkServiceUpdate(parsedServices);
-  if (!res.success) {
-    log(`Create Service failure. Error=${res.error}`);
+  if (!res.success || res?.data?.error) {
+    log(`Create Service failure. Error=${JSON.stringify(res, null, 2)}`);
     const fields: Record<string, string> = {};
     for (const key of Object.keys(dirtyData)) {
       fields[key] = dirtyData[key].toString();
     }
 
     return {
+      error: res,
       formFields,
-      message: res.error,
     };
   } else {
     // be better typescript....
@@ -150,11 +147,12 @@ export async function createService(
 
 export async function bulkServiceUpdate(
   services: AllServices[],
-): Promise<CreateResponse<{ ids: string[] }>> {
+): Promise<CreateResponse<any>> {
   const authHeaders = new Headers();
   const authCookies = cookies().get(`sb-${PROJECT_URL}-auth-token`);
   authHeaders.append("Authorization", `Bearer ${authCookies?.value}`);
   authHeaders.append("Content-Type", "application/json");
+  console.log(`services=${JSON.stringify(services, null, 2)}`);
 
   const res = await fetch(`${API_HOST}/admin/services/bulk`, {
     body: JSON.stringify(services),

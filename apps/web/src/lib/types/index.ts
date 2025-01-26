@@ -10,7 +10,11 @@ import {
   SelectServiceSchema,
   Service,
 } from "@repo/shared/src/db/schemas/services";
-import { serviceFrequencies, ServicePricing } from "@repo/shared/src/server";
+import { serviceFrequencies } from "@repo/shared/src/server";
+import {
+  NewServicePricingT,
+  ServicePricingService,
+} from "@repo/shared/src/types/servicePricing";
 import { z } from "zod";
 
 export type Pet = {
@@ -96,9 +100,7 @@ export type ServiceT = {
  * DIRECT FROM SERVER
  */
 export const frequencies = serviceFrequencies;
-// export const services = BASE_SERVICES;
 
-// Example of Zod schema matching the `petServicesTable` structure
 export const InsertServiceSchemaClient = InsertServiceSchema;
 export const ServiceSchemaClient = SelectServiceSchema;
 export type InsertServiceClient = NewService;
@@ -106,7 +108,7 @@ export type SelectServiceClient = Service;
 export type ServiceClient = InsertServiceClient | SelectServiceClient;
 
 export const serviceListSchema = z.object({
-  services: z.array(InsertServiceSchema),
+  services: z.array(ServicePricingService.NewServicePricingSchema),
 });
 
 export type ServiceFormData = z.infer<typeof serviceListSchema>;
@@ -132,7 +134,13 @@ export type CreateResponse<T> =
 
 export function transformServiceFormToSchema(formData: {
   [k: string]: FormDataEntryValue;
-}): z.infer<typeof InsertServiceSchema | typeof SelectServiceSchema>[] {
+}): z.infer<typeof ServicePricingService.NewServicePricingSchema>[] {
+  console.log(
+    `transformServiceFormToSchema`,
+    JSON.stringify(formData, null, 2),
+  );
+
+  // First, group all form fields by service index
   const serviceKeys = Object.keys(formData)
     .filter((key) => key.startsWith("services."))
     .reduce(
@@ -141,7 +149,24 @@ export function transformServiceFormToSchema(formData: {
         if (match) {
           const [, index, attribute] = match;
           if (!acc[index]) acc[index] = {};
-          acc[index][attribute] = formData[key];
+
+          // Handle nested durationOptions
+          if (attribute.startsWith("durationOptions.")) {
+            const durationMatch = attribute.match(
+              /durationOptions\.(\d+)\.(.*)/,
+            );
+            if (durationMatch) {
+              const [, durationIndex, durationAttribute] = durationMatch;
+              if (!acc[index].durationOptions) acc[index].durationOptions = {};
+              if (!acc[index].durationOptions[durationIndex]) {
+                acc[index].durationOptions[durationIndex] = {};
+              }
+              acc[index].durationOptions[durationIndex][durationAttribute] =
+                formData[key];
+            }
+          } else {
+            acc[index][attribute] = formData[key];
+          }
         }
         return acc;
       },
@@ -150,14 +175,13 @@ export function transformServiceFormToSchema(formData: {
 
   // Convert the object to an array and transform
   return Object.values(serviceKeys).map((service) => {
-    // Dynamically handle metadata
+    // Handle metadata
     const metadata: Record<string, unknown> = {};
     const metadataPrefix = "metadata.";
     Object.keys(service)
       .filter((key) => key.startsWith(metadataPrefix))
       .forEach((key) => {
         const metadataKey = key.slice(metadataPrefix.length);
-        // Try to parse numbers, booleans, or keep as string
         let value: unknown = service[key];
         if (value === "true") value = true;
         else if (value === "false") value = false;
@@ -165,73 +189,64 @@ export function transformServiceFormToSchema(formData: {
         metadata[metadataKey] = value;
       });
 
-    // Dynamically handle addons
-    const addons: Record<string, number> = {};
-    const addonsPrefix = "pricingModel.addons.";
-    Object.keys(service)
-      .filter((key) => key.startsWith(addonsPrefix))
-      .forEach((key) => {
-        const addonKey = key.slice(addonsPrefix.length);
-        addons[addonKey] = parseFloat(service[key] || "0");
-      });
+    // Transform duration options from object to array
+    const durationOptions: NewServicePricingT["durationOptions"] =
+      service.durationOptions
+        ? Object.values(service.durationOptions).map((option: any) => ({
+            createdAt:
+              new Date(option.createdAt).toString() !== "Invalid Date"
+                ? new Date(option.createdAt)
+                : undefined,
+            durationUnit: option.durationUnit,
+            durationValue: Number(option.durationValue),
+            serviceId: option.serviceId || "",
+            tierLevel: Number(option.tierLevel),
+            tieredRate: option.tieredRate ? String(option.tieredRate) : "0.00",
+          }))
+        : [];
 
-    const pricingModel: ServicePricing = parsePricingModel(service, addons);
+    // Transform discounts if present
+    const discounts = service.discounts
+      ? (Array.isArray(service.discounts)
+          ? service.discounts
+          : [service.discounts]
+        ).map((discount: any) => ({
+          isApplied:
+            discount.isApplied === "true" || discount.isApplied === true,
+          type: discount.type as "percentage" | "fixed",
+          value: Number(discount.value),
+        }))
+      : [];
 
-    const transformedService: ServiceClient = {
+    const transformedService: z.infer<
+      typeof ServicePricingService.NewServicePricingSchema
+    > = {
+      baseRate: service.baseRate ? Number(service.baseRate) : undefined,
       description: service.description,
+      discounts,
+      durationOptions,
+      isTiered: service.isTiered === "true" || service.isTiered === true,
       metadata,
       name: service.name,
-      pricingModel,
+      userSpecificRate: service.userSpecificRate
+        ? Number(service.userSpecificRate)
+        : undefined,
     };
 
-    log(`service=${JSON.stringify(service, null, 2)}`);
-
-    if ("id" in service) {
-      transformedService.id = service.id;
+    // Add optional fields if they exist
+    for (const k of ["id", "createdAt", "updatedAt"] as const) {
+      if (k in service) {
+        if (k === "createdAt" || k === "updatedAt") {
+          transformedService[k] = new Date(service[k]);
+        } else {
+          transformedService[k] = service[k];
+        }
+      }
     }
 
-    if ("createdAt" in service) {
-      transformedService.createdAt = service.createdAt;
-    }
-
-    if ("updatedAt" in service) {
-      transformedService.updatedAt = service.updatedAt;
-    }
-
+    log(`Transformed service: ${JSON.stringify(transformedService, null, 2)}`);
     return transformedService;
   });
-}
-
-function parsePricingModel(
-  service: any,
-  addons: Record<string, number>,
-): ServicePricing {
-  if (service["pricingModel.type"] === "baseRate") {
-    return {
-      additionalPrice: parseFloat(service["pricingModel.additionalPrice"]),
-      additionalTime: parseFloat(service["pricingModel.additionalTime"]),
-      addons,
-      basePrice: parseFloat(service["pricingModel.basePrice"]),
-      baseTime: parseFloat(service["pricingModel.baseTime"]),
-      timeUnit: service["pricingModel.timeUnit"],
-      type: service["pricingModel.type"],
-    };
-  } else {
-    const tiers: Record<string, number> = {};
-
-    Object.keys(service)
-      .filter((key) => key.startsWith("pricingModel.tiers."))
-      .forEach((key) => {
-        const tierKey = key.slice("pricingModel.tiers.".length);
-        tiers[tierKey] = parseFloat(service[key]);
-      });
-
-    return {
-      tierMapping: JSON.parse(service["pricingModel.tierMapping"] ?? "[]"),
-      tiers: tiers,
-      type: service["pricingModel.type"],
-    };
-  }
 }
 
 /** start && end are specifically datetime formatted strings */

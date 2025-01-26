@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import {
   FormControl,
   FormField,
@@ -8,9 +9,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { durationUnit } from "@repo/shared/src/server";
-import { ServiceFormData } from "@/lib/types";
-import { UseFormReturn } from "react-hook-form";
 import {
   Select,
   SelectContent,
@@ -18,9 +16,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PlusCircle, Trash2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { ServiceFormData } from "@/lib/types";
+import { durationUnit } from "@repo/shared/src/server";
+import { UseFormReturn } from "react-hook-form";
 
 function BasePricingFormFields({
   form,
@@ -31,39 +29,6 @@ function BasePricingFormFields({
   index: number;
   isEditMode: boolean;
 }) {
-  const [newAddonKey, setNewAddonKey] = useState("");
-  const [newAddonValue, setNewAddonValue] = useState("");
-
-  const addAddonField = () => {
-    if (!newAddonKey.trim()) return;
-
-    const currentAddons =
-      form.getValues(`services.${index}.pricingModel.addons`) || {};
-
-    form.setValue(`services.${index}.pricingModel.addons`, {
-      ...currentAddons,
-      [newAddonKey]: Number(newAddonValue) || 0,
-    });
-
-    // Reset inputs
-    setNewAddonKey("");
-    setNewAddonValue("");
-  };
-
-  const removeAddonField = (fieldName: string) => {
-    const currentValues = form.getValues(
-      `services.${index}.pricingModel.addons`,
-    );
-    const newValues = { ...currentValues };
-    delete newValues[fieldName];
-    form.setValue(`services.${index}.pricingModel.addons`, newValues);
-  };
-
-  const addons = form.watch(`services.${index}.pricingModel.addons`) as Record<
-    string,
-    number
-  >;
-
   {
     /* FormField representing the BaseRatePricing interface
      * will be refactored to solo component handling BaseRatePricing
@@ -72,10 +37,10 @@ function BasePricingFormFields({
   }
   return (
     <>
-      <div className="grid grid-rows-1 grid-cols-2 gap-2">
+      <div className="grid grid-rows-1 grid-cols-1 md:grid-cols-3 gap-2">
         <FormField
           control={form.control}
-          name={`services.${index}.pricingModel.basePrice`}
+          name={`services.${index}.baseRate`}
           render={({ field }) => (
             <FormItem>
               <FormLabel>Base Price</FormLabel>
@@ -88,25 +53,22 @@ function BasePricingFormFields({
         />
         <FormField
           control={form.control}
-          name={`services.${index}.pricingModel.additionalPrice`}
+          name={`services.${index}.durationOptions.0.durationValue`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Additional Price</FormLabel>
+              <FormLabel>Duration Value</FormLabel>
               <FormControl>
-                <Input {...field} disabled={!isEditMode} type="number" />
+                <Input {...field} type="number" disabled={!isEditMode} />
               </FormControl>
-              <FormMessage />
             </FormItem>
           )}
         />
-      </div>
-      <div className="grid grid-rows-1 grid-cols-2 gap-2">
         <FormField
           control={form.control}
-          name={`services.${index}.pricingModel.baseTime`}
+          name={`services.${index}.durationOptions.0.durationUnit`}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Base Time</FormLabel>
+              <FormLabel>Duration Unit</FormLabel>
               <FormControl>
                 <Input {...field} disabled={!isEditMode} type="number" />
               </FormControl>
@@ -144,101 +106,64 @@ function BasePricingFormFields({
             </FormItem>
           )}
         />
-      </div>
-      <FormField
-        control={form.control}
-        name={`services.${index}.pricingModel.additionalTime`}
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Additional Time</FormLabel>
-            <FormControl>
-              <Input {...field} disabled={!isEditMode} type="number" />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+        <FormField
+          control={form.control}
+          name={`services.${index}.pricingModel.additionalTime`}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Additional Time</FormLabel>
+              <FormControl>
+                <Input {...field} disabled={!isEditMode} type="number" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
 
-      <br />
+        <br />
 
-      <div className="border rounded-lg p-4">
-        <h3 className="text-lg font-medium mb-4">Add-ons</h3>
+        <div className="border rounded-lg p-4">
+          <h3 className="text-lg font-medium mb-4">Add-ons</h3>
 
-        {/* Existing Addons */}
-        <div className="space-y-3">
-          {Object.entries(addons || {}).map(([key]) => (
-            <div key={key} className="flex gap-3">
-              <div className="grid grid-cols-2 gap-3 flex-1">
-                <FormItem>
-                  <FormLabel>Add-on Name</FormLabel>
-                  <Input value={key} disabled className="bg-gray-50" />
-                </FormItem>
-                <FormField
-                  control={form.control}
-                  name={`services.${index}.pricingModel.addons.${key}`}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Price</FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          type="number"
-                          disabled={!isEditMode}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-              {isEditMode && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  size="icon"
-                  className="mt-8"
-                  onClick={() => removeAddonField(key)}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Add New Addon */}
-        {isEditMode && (
-          <div className="mt-4 space-y-3">
-            <div className="flex gap-3">
-              <div className="grid grid-cols-2 gap-3 flex-1">
-                <FormItem>
-                  <FormLabel>New Add-on Name</FormLabel>
-                  <Input
-                    value={newAddonKey}
-                    onChange={(e) => setNewAddonKey(e.target.value)}
-                    placeholder="Enter add-on name"
+          {/* Existing Addons */}
+          <div className="space-y-3">
+            {Object.entries(addons || {}).map(([key]) => (
+              <div key={key} className="flex gap-3">
+                <div className="grid grid-cols-2 gap-3 flex-1">
+                  <FormItem>
+                    <FormLabel>Add-on Name</FormLabel>
+                    <Input value={key} disabled className="bg-gray-50" />
+                  </FormItem>
+                  <FormField
+                    control={form.control}
+                    name={`services.${index}.pricingModel.addons.${key}`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Price</FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            type="number"
+                            disabled={!isEditMode}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
                   />
-                </FormItem>
-                <FormItem>
-                  <FormLabel>Price</FormLabel>
-                  <Input
-                    value={newAddonValue}
-                    onChange={(e) => setNewAddonValue(e.target.value)}
-                    type="number"
-                    placeholder="Enter price"
+                </div>
+                {isEditMode && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    size="icon"
+                    className="mt-8"
+                    onClick={() => removeAddonField(key)}
                   />
-                </FormItem>
+                )}
               </div>
-              <Button
-                type="button"
-                size="icon"
-                className="mt-8"
-                onClick={addAddonField}
-              >
-                <PlusCircle className="h-4 w-4" />
-              </Button>
-            </div>
+            ))}
           </div>
-        )}
+        </div>
       </div>
     </>
   );

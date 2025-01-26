@@ -15,17 +15,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ServiceFormData } from "@/lib/types";
-import { log } from "@repo/logger";
-import {
-  baseServiceFormValues,
-  isBaseRatePricing,
-  isTieredPricing,
-  ServicePricing,
-} from "@repo/shared/src/server";
 import { UseFormReturn } from "react-hook-form";
 import BasePricingFormFields from "./BasePricingFormFields";
+import DurationOptionsFormFields from "./DurationOptions";
 import DynamicServiceFields from "./ServiceFields";
-import TieredPricingFormFields from "./TieredPricingFormFields";
+import { baseServiceFormValues } from "@repo/shared/src/server";
 
 interface ServiceFormItemProps {
   availableServices: any[];
@@ -37,29 +31,6 @@ interface ServiceFormItemProps {
   // eslint-disable-next-line no-unused-vars
   remove: (index: number) => void;
 }
-
-const parseMe = (model: ServicePricing) => {
-  if (isBaseRatePricing(model)) {
-    return {
-      additionalPrice: model.additionalPrice,
-      additionalTime: model.additionalTime ?? 0,
-      addons: model.addons,
-      basePrice: model.basePrice,
-      baseTime: model.baseTime ?? 0,
-      timeUnit: model.timeUnit,
-      type: model.type,
-    };
-  } else if (isTieredPricing(model)) {
-    log(`isTiered!==${JSON.stringify(model, null, 2)}`);
-    return {
-      tierMapping: model.tierMapping ?? [],
-      tiers: model.tiers ?? {},
-      type: model.type,
-    };
-  }
-
-  return model;
-};
 
 export default function ServiceFormItem({
   availableServices,
@@ -78,14 +49,12 @@ export default function ServiceFormItem({
   ];
   if (instanceOption) currentOptions.push(instanceOption);
 
-  const pricingModelType = form.watch(`services.${index}.pricingModel.type`);
-  let pricingModel = form.watch(`services.${index}.pricingModel`);
-
-  // pricingModel = parseMe(pricingModel);
-  // log(`pricingModel=${JSON.stringify(pricingModel, null, 2)}`);
+  const pricingModelType = form.watch(`services.${index}.isTiered`);
+  let pricingModel = form.watch(`services.${index}.durationOptions`),
+    baseRate = form.watch(`services.${index}.baseRate`);
 
   return (
-    <div key={field.id} className="min-h-[350px] mb-4 p-4 border rounded">
+    <div className="min-h-[350px] mb-4 p-4 border rounded">
       <FormField
         control={form.control}
         name={`services.${index}.name`}
@@ -93,10 +62,11 @@ export default function ServiceFormItem({
           <FormItem>
             <FormLabel>Name</FormLabel>
             <Select
-              {...field}
               defaultValue={field.value}
               disabled={!isEditMode}
+              name={field.name}
               onValueChange={field.onChange}
+              value={field.value}
             >
               <FormControl>
                 <SelectTrigger>
@@ -131,20 +101,27 @@ export default function ServiceFormItem({
 
       <FormField
         control={form.control}
-        name={`services.${index}.pricingModel.type`}
+        name={`services.${index}.isTiered`}
         render={({ field }) => (
           <FormItem>
             <FormLabel>Pricing Model</FormLabel>
             <Select
-              {...field}
-              defaultValue={field.value}
               disabled={!isEditMode}
               onValueChange={(e) => {
-                field.onChange(e);
-                form.setValue(`services.${index}.pricingModel`, {
-                  ...parseMe(pricingModel),
-                });
+                const boolVal = e === "true";
+                field.onChange(boolVal);
+
+                if (boolVal) {
+                  form.setValue(
+                    `services.${index}.durationOptions`,
+                    pricingModel,
+                  );
+                } else {
+                  form.setValue(`services.${index}.baseRate`, baseRate ?? 0);
+                }
               }}
+              {...field}
+              value={field.value?.toString()}
             >
               <FormControl>
                 <SelectTrigger>
@@ -152,8 +129,8 @@ export default function ServiceFormItem({
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value="baseRate">Base Rate</SelectItem>
-                <SelectItem value="tiered">Tiered</SelectItem>
+                <SelectItem value="false">Base Rate</SelectItem>
+                <SelectItem value="true">Tiered</SelectItem>
               </SelectContent>
             </Select>
             <FormMessage />
@@ -161,7 +138,7 @@ export default function ServiceFormItem({
         )}
       />
 
-      {pricingModelType === "baseRate" && (
+      {!pricingModelType && (
         <BasePricingFormFields
           form={form}
           index={index}
@@ -169,8 +146,8 @@ export default function ServiceFormItem({
         />
       )}
 
-      {pricingModelType === "tiered" && (
-        <TieredPricingFormFields
+      {pricingModelType && (
+        <DurationOptionsFormFields
           form={form}
           index={index}
           isEditMode={isEditMode}

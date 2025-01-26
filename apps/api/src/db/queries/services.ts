@@ -8,17 +8,14 @@ import {
   Service,
   servicesTable,
 } from '@repo/shared/src/db/schemas/services';
-import { ServicePricing } from '@repo/shared/src/server';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 
-// Database operations with type safety
 export class ServiceRepository {
   constructor(private db: PostgresJsDatabase<Record<string, never>>) {
     this.db = db;
   }
 
   async create(service: NewService): Promise<Service> {
-    // Validate the service data
     const validated = InsertServiceSchema.parse(service);
 
     const [created] = await this.db
@@ -30,7 +27,6 @@ export class ServiceRepository {
   }
 
   async update(id: string, service: Partial<NewService>): Promise<Service> {
-    // Validate the update data
     const validated = InsertServiceSchema.partial().parse(service);
 
     const [updated] = await this.db
@@ -49,7 +45,6 @@ export class ServiceRepository {
     log(`services=${JSON.stringify(services, null, 2)}`);
     const validated = InsertServiceSchema.array().parse(services);
     log(`validated=${JSON.stringify(validated, null, 2)}`);
-    const newServices = validated.filter((s) => s.id === undefined);
     const ids = validated.map((s) => s.id).filter((s) => s !== undefined);
     log(`ids=${JSON.stringify(ids, null, 2)}`);
 
@@ -94,12 +89,9 @@ export class ServiceRepository {
         .values(updatedServices)
         .onConflictDoUpdate({
           set: {
-            // Manually spread known fields to satisfy type checking
             description: sql`excluded.description`,
             metadata: sql`excluded.metadata`,
             name: sql`excluded.name`,
-            pricingModel: sql`excluded.pricing_model`,
-            // Add any other specific fields from your services table
             updatedAt: new Date(),
           },
           target: servicesTable.id,
@@ -116,14 +108,6 @@ export class ServiceRepository {
       .limit(1);
 
     return service[0] ?? null;
-  }
-
-  // Example of type-safe query with pricing model filter
-  async findByPricingType(type: ServicePricing['type']): Promise<Service[]> {
-    return this.db
-      .select()
-      .from(servicesTable)
-      .where(sql`${servicesTable.pricingModel}->>'type' = ${type}`);
   }
 
   async getAll(): Promise<Service[]> {
