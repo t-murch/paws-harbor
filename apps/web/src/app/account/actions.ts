@@ -1,17 +1,17 @@
 "use server";
 
-import { UserProfile } from "@/components/ux/atoms";
-import { UserJSONResponse } from "@/components/ux/Profile/ProfileForm";
+import { log } from "@repo/logger";
+import { revalidatePath } from "next/cache";
+import { cookies } from "next/headers";
+import { UserProfile } from "../../components/ux/atoms";
+import { UserJSONResponse } from "../../components/ux/Profile/ProfileForm";
 import {
   CreateReadyPet,
   existingPetSchema,
   newPetSchema,
   Pet,
-} from "@/lib/types";
-import { API_HOST, PROJECT_URL } from "@/lib/utils";
-import { log } from "@repo/logger";
-import { revalidatePath } from "next/cache";
-import { cookies } from "next/headers";
+} from "../../lib/types";
+import { API_HOST, PROJECT_URL } from "../../lib/utils";
 import { FormStateUno } from "../login/actions";
 
 export const getUserProfile = async (): Promise<{

@@ -3,21 +3,21 @@
 import { CaretSortIcon, CheckIcon } from "@radix-ui/react-icons";
 import * as React from "react";
 
-import { Button } from "@/components/ui/button";
+import { Label } from "@radix-ui/react-label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@radix-ui/react-popover";
+import { mergeClassNames as cn } from "../../../lib/utils";
+import { Button } from "../../ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
   CommandItem,
   CommandList,
-} from "@/components/ui/command";
-import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { mergeClassNames as cn } from "@/lib/utils";
+} from "../../ui/command";
 import { petSizeDropDownRecords } from "./Pet";
 export type PetComboBoxProps = {
   // eslint-disable-next-line no-unused-vars

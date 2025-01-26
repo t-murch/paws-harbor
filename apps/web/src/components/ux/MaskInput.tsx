@@ -1,7 +1,7 @@
-import { mergeClassNames } from "@/lib/utils";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { HTMLInputTypeAttribute, HTMLProps, useState } from "react";
 import { ControllerRenderProps } from "react-hook-form";
+import { mergeClassNames } from "../../lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 

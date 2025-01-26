@@ -1,4 +1,4 @@
-import ServiceList from "@/components/ux/Services/ServiceList";
+import ServiceList from "../../components/ux/Services/ServiceList";
 import { getAllServices } from "./actions";
 
 export default async function Admin() {

@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { mergeClassNames as cn } from "@/lib/utils";
+import { mergeClassNames as cn } from "../../lib/utils";
 
 const Card = React.forwardRef<
   HTMLDivElement,

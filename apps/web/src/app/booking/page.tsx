@@ -1,13 +1,13 @@
-import { Scheduler } from "@/components/ux/Scheduler";
+import { Scheduler } from "../../components/ux/Scheduler";
 import {
   SchedulerType,
   transformAvailabilityToScheduleType,
   transformRecurringToScheduleType,
-} from "@/lib/types";
+} from "../../lib/types";
 import {
   isNonRecurringServiceAvailability,
   isRecurringServiceAvailability,
-} from "@/lib/utils";
+} from "../../lib/utils";
 import { getAllAvailability } from "./actions";
 
 export default async function Page() {

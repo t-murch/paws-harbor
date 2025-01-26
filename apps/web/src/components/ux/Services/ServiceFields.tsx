@@ -1,15 +1,10 @@
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { ServiceFormData } from "@/lib/types";
 import { PlusCircle, Trash2 } from "lucide-react";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
+import { ServiceFormData } from "../../../lib/types";
+import { Button } from "../../ui/button";
+import { FormControl, FormField, FormItem, FormLabel } from "../../ui/form";
+import { Input } from "../../ui/input";
 
 interface DynamicFieldsProps {
   form: UseFormReturn<ServiceFormData>;

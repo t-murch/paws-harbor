@@ -1,6 +1,11 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Login } from "@/components/ux/Login";
-import { Signup } from "@/components/ux/Signup";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../../components/ui/tabs";
+import { Login } from "../../components/ux/Login";
+import { Signup } from "../../components/ux/Signup";
 import { loginActionOld, signupAction } from "./actions";
 
 export default async function LoginPage() {

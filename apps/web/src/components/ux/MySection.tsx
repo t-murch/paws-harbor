@@ -1,4 +1,4 @@
-import { mergeClassNames } from "@/lib/utils";
+import { mergeClassNames } from "../../lib/utils";
 import { Card } from "../ui/card";
 
 export function MySection({

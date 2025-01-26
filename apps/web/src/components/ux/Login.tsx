@@ -1,25 +1,19 @@
 "use client";
 
-import { LoginAction } from "@/app/login/actions";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { loginFormSchema } from "@/components/ux/formSchema";
-import { mergeClassNames } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ReloadIcon } from "@radix-ui/react-icons";
 import { useSearchParams } from "next/navigation";
 import { HTMLInputTypeAttribute, HTMLProps, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import { z } from "zod";
+import { LoginAction } from "../../app/login/actions";
+import { mergeClassNames } from "../../lib/utils";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { Input } from "../ui/input";
+import { loginFormSchema } from "./formSchema";
 import { MaskInputLogin } from "./MaskInput";
 
 interface LoginProps extends HTMLProps<HTMLInputTypeAttribute> {

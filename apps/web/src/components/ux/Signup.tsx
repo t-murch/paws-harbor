@@ -1,15 +1,15 @@
 "use client";
 
-import { SignupAction } from "@/app/login/actions";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { HTMLInputTypeAttribute, HTMLProps, useRef } from "react";
 import { useFormState } from "react-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { SignupAction } from "../../app/login/actions";
+import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
+import { Input } from "../ui/input";
 import { signupFormSchema } from "./formSchema";
 import { MaskInputSignup } from "./MaskSignupInput";
 

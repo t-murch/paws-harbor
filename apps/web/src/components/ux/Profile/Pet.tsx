@@ -3,37 +3,34 @@ import { ReloadIcon } from "@radix-ui/react-icons";
 import { useAtom } from "jotai";
 import React, { useEffect, useRef, useState } from "react";
 import { useFormState } from "react-dom";
-import { useForm } from "react-hook-form";
+import { Form, useForm } from "react-hook-form";
 import { z } from "zod";
-
-import { Button } from "@/components/ui/button";
 import {
-  Form,
+  createPetFormAction,
+  deletePet,
+  updatePetInfoAction,
+} from "../../../app/account/actions";
+import cats from "../../../lib/cats.json";
+import dogs from "../../../lib/dogs.json";
+import { Pet, PetSizeNames, PetSizeScales, PetSizes } from "../../../lib/types";
+import { Button } from "../../ui/button";
+import {
   FormControl,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "../../ui/form";
+import { Input } from "../../ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
-
-import {
-  createPetFormAction,
-  deletePet,
-  updatePetInfoAction,
-} from "@/app/account/actions";
-import { petEditAtomFamily } from "@/components/ux/providers/store";
-import cats from "@/lib/cats.json";
-import dogs from "@/lib/dogs.json";
-import { Pet, PetSizeNames, PetSizes, PetSizeScales } from "@/lib/types";
+} from "../../ui/select";
+import { Textarea } from "../../ui/textarea";
+import { petEditAtomFamily } from "../providers/store";
 
 const dogBreeds = dogs.map((val) => val.Breed);
 const catBreeds = cats.map((val) => val.breed);

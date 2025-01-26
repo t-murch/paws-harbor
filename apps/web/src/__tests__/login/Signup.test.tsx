@@ -1,6 +1,6 @@
-import { Signup } from "@/components/ux/Signup";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
+import { Signup } from "../../components/ux/Signup";
 
 const mockSignupAction = vi.fn();
 

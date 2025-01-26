@@ -3,10 +3,12 @@
 import { log } from "@repo/logger";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-
-import { loginFormSchema, signupFormSchema } from "@/components/ux/formSchema";
-import { supabaseServerClient } from "@/lib/supabase/server";
-import { API_HOST } from "@/lib/utils";
+import {
+  loginFormSchema,
+  signupFormSchema,
+} from "../../components/ux/formSchema";
+import { supabaseServerClient } from "../../lib/supabase/server";
+import { API_HOST } from "../../lib/utils";
 
 export type FormStateUno = {
   message: string;

@@ -1,9 +1,9 @@
-import { UserJSONResponse } from "@/components/ux/Profile/ProfileForm";
-import { userAtom } from "@/components/ux/atoms";
-import { sessionAtom } from "@/components/ux/providers/store";
 import { useQuery } from "@tanstack/react-query";
 import { useAtom, useAtomValue } from "jotai";
+import { UserJSONResponse } from "../../components/ux/Profile/ProfileForm";
+import { sessionAtom } from "../../components/ux/providers/store";
 import { API_HOST } from "../utils";
+import { userAtom } from "../../components/ux/atoms";
 
 // Fetch user profile based on the session
 export const useUserProfile = () => {

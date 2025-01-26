@@ -1,8 +1,13 @@
 "use server";
 
-import pawsIcon from "@/../public/paws-round.svg";
-import { logoutAction } from "@/app/login/actions";
-import { Button } from "@/components/ui/button";
+// import pawsIcon from "@/../public/paws-round.svg";
+import Image from "next/image";
+import Link from "next/link";
+import pawsIcon from "../../../public/paws-round.svg";
+import { getUserProfile } from "../../app/account/actions";
+import { logoutAction } from "../../app/login/actions";
+import { supabaseServerClient } from "../../lib/supabase/server";
+import { Button } from "../ui/button";
 import {
   Sheet,
   SheetClose,
@@ -10,13 +15,9 @@ import {
   SheetDescription,
   SheetTitle,
   SheetTrigger,
-} from "@/components/ui/sheet";
-import Icon from "@/components/ux/Icon";
-import Image from "next/image";
-import Link from "next/link";
+} from "../ui/sheet";
 import ClientBtn from "./ClientBtn";
-import { supabaseServerClient } from "@/lib/supabase/server";
-import { getUserProfile } from "@/app/account/actions";
+import Icon from "./Icon";
 
 export async function Header() {
   //TODO: THIS USER CHECK NEEDS TO BE UPDATED TO RBAC,

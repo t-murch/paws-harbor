@@ -1,8 +1,8 @@
-import { supabaseClient } from "@/lib/supabase/client";
-import { Pet } from "@/lib/types";
 import { atom, Provider, useAtomValue, useSetAtom } from "jotai";
 import { atomFamily, atomWithStorage, unwrap } from "jotai/utils";
 import React from "react";
+import { supabaseClient } from "../../../lib/supabase/client";
+import { Pet } from "../../../lib/types";
 
 // **** USER ****
 export const sessionAtom = atom(async () => {

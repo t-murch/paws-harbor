@@ -1,8 +1,7 @@
-import ProfileForm from "@/components/ux/Profile/ProfileForm";
-import React from "react";
+import ProfileForm from "../../components/ux/Profile/ProfileForm";
+import { isFulfilled } from "../../lib/utils";
 import { getUserPets, getUserProfile } from "./actions";
 import { getUserServices } from "./actions/services";
-import { isFulfilled } from "@/lib/utils";
 
 export default async function AccountPage() {
   const [profile, pets, services] = await Promise.allSettled([

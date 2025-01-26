@@ -1,4 +1,4 @@
-import { supabaseServerClient } from "@/lib/supabase/server";
+import { supabaseServerClient } from "../../lib/supabase/server";
 
 export default async function PrivatePage() {
   const { data } = await supabaseServerClient.auth.getUser();

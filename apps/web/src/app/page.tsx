@@ -1,7 +1,6 @@
-import placeholderImage from "@/../public/paws-placeholder.jpg";
-// import placeholderImage from "@/../public/paws-placeholder.png";
-import Icon from "@/components/ux/Icon";
+import placeholderImage from "../../public/paws-placeholder.jpg";
 import Image from "next/image";
+import Icon from "../components/ux/Icon";
 
 export default function Web() {
   return (

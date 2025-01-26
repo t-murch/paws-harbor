@@ -9,7 +9,7 @@ import {
 } from "@radix-ui/react-icons";
 import * as SelectPrimitive from "@radix-ui/react-select";
 
-import { mergeClassNames as cn } from "@/lib/utils";
+import { mergeClassNames as cn } from "../../lib/utils";
 
 const Select = SelectPrimitive.Root;
 

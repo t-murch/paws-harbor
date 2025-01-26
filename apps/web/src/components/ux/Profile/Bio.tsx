@@ -1,18 +1,13 @@
 "use client";
 
-import { updateUserProfile } from "@/app/account/actions";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@radix-ui/react-label";
 import { log } from "@repo/logger";
 import { useSetAtom } from "jotai";
 import { useEffect, useState } from "react";
+import { updateUserProfile } from "../../../app/account/actions";
+import { Button } from "../../ui/button";
+import { Card, CardContent, CardFooter, CardHeader } from "../../ui/card";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
 import { userAtom, UserProfile } from "../atoms";
 
 type BioProps = { userProfile: UserProfile };

@@ -1,10 +1,10 @@
-import { ThemeProvider } from "@/components/ux/providers/theme-provider";
-import { mergeClassNames } from "@/lib/utils";
 import type { Metadata } from "next";
+import { ThemeProvider } from "next-themes";
 import { Inter } from "next/font/google";
+import { Header } from "../components/ux/Header";
+import { ContextStore } from "../components/ux/providers/store";
+import { mergeClassNames } from "../lib/utils";
 import "./globals.css";
-import { Header } from "@/components/ux/Header";
-import { ContextStore } from "@/components/ux/providers/store";
 
 const inter = Inter({ subsets: ["latin"] });
 
