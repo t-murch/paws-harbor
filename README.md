@@ -1,23 +1,21 @@
-# Project Name
+# Paws Harbor
 
-A professional white-label [brief description of your software type] solution designed for [Entrepreneurs in the Pet-Services Industry]. Built with [key technologies] to provide scalable, customizable implementations for diverse business needs.
+A professional white-label Client Management & Scheduling solution designed for Entrepreneurs in the Pet-Services Industry. Built with Nodejs, React/Nextjs, and Postgres to provide scalable, customizable implementations for their specific business needs.
 
 ## Overview
 
-[Project Name] is a comprehensive solution that helps businesses [solve specific problems/achieve specific goals]. Our platform offers:
+Paws Harbor is a comprehensive solution that helps businesses manage the scheduling and billing needs. Our platform offers:
 
 - **Core Feature One**: Client management and scheduling
 - **Core Feature Two**: Billing and payment processing
 - **Core Feature Three**: Customer support and communication
 
-[Project Name] is designed to be user-friendly, secure, and scalable, ensuring that businesses can [achieve their goals] with ease and efficiency.
-
 ## Technology Stack
 
 - Backend: [[Node.js](https://nodejs.org/en/), [Hono](https://hono.dev/) in TypeScript]
 - Frontend: [[React](https://reactjs.org/) w/ [Next.js](https://nextjs.org/)]
-- Database: [PostgreSQL, [Supabase Auth](https://supabase.com/auth)]
-- Infrastructure: [[Docker](https://www.docker.com/)]
+- Database: [PostgreSQL, [Supabase Auth](https://supabase.com/auth), [Stripe](https://stripe.com/)]
+- Infrastructure: [[Docker](https://www.docker.com/), [SST](https://sst.dev/)]
 - Testing: [[Vitest](https://vitest.dev/)]
 
 ## Project Structure
@@ -102,7 +100,7 @@ pnpm test -- --suite=core
 
 ## Contributing
 
-While this is a proprietary project, I welcome feedback and discussions through issues. Please read our [Contributing Guidelines](CONTRIBUTING.md) before submitting any issues.
+While this is a proprietary project, I welcome feedback and discussions through issues.
 
 ## License
 
@@ -111,38 +109,18 @@ This project is licensed under a BSD-3-Clause license - see the [LICENSE](LICENS
 ## Contact & Support
 
 - **Email**: [t.murchjr@gmail.com]
-- **Issues**: [GitHub Issues Link]
-- **Documentation**: [Documentation Link]
 
 ## Roadmap
 
-- [x] Booking Services implementation
-- [x] Service Notifications implementation
+- [ ] Open-Source Implementation
+  - I recently decided to build this in public so my immediate work is to
+    update the codebase to be open-source compliant and run in a container.
+    All prior development was not done in a containerized environment.
+- [ ] Booking Services implementation
+- [ ] Service Notifications implementation
 - [ ] Client Management implementation
 - [ ] Realtime mapping of walking services.
 
 ---
 
 © [2025] [Todd Murchison Jr.]. All rights reserved.
-
-<!-- ## Configuration -->
-<!---->
-<!-- The system can be configured through: -->
-<!---->
-<!-- - Environment variables -->
-<!-- - Configuration files -->
-<!-- - API endpoints -->
-<!---->
-<!-- Key configuration options: -->
-<!---->
-<!-- - `OPTION_ONE`: Description of what this configures -->
-<!-- - `OPTION_TWO`: Description of what this configures -->
-<!---->
-<!-- ## Documentation -->
-<!---->
-<!-- - [API Documentation](docs/api.md) -->
-<!-- - [Configuration Guide](docs/configuration.md) -->
-<!-- - [Deployment Guide](docs/deployment.md) -->
-<!-- - [Client Implementation Guide](docs/client-implementation.md) -->
-<!---->
-<!---->
