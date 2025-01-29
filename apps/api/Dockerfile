@@ -13,7 +13,7 @@ RUN apk add --no-cache libc6-compat
 # Set working directory
 WORKDIR /app
 # RUN corepack enable
-RUN pnpm --global add turbo
+RUN pnpm --global add turbo@2
 COPY . .
 RUN turbo prune api --docker
 
@@ -27,7 +27,7 @@ WORKDIR /app
 COPY .gitignore .gitignore
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/pnpm-lock.yaml ./pnpm-lock.yaml
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 # Build the project and its dependencies
 COPY --from=builder /app/out/full/ .
@@ -40,7 +40,7 @@ COPY turbo.json turbo.json
 # ARG TURBO_TOKEN
 # ENV TURBO_TOKEN=$TURBO_TOKEN
 
-RUN pnpm turbo build --filter=api...
+RUN pnpm turbo build --filter=api
 
 FROM base AS runner
 WORKDIR /app
@@ -48,7 +48,12 @@ WORKDIR /app
 # Don't run production as root
 RUN addgroup --system --gid 1001 honojs
 RUN adduser --system --uid 1001 honojs
+
+# COPY --from=builder --chown=hono:nodejs /app/node_modules /app/node_modules
+# COPY --from=builder --chown=hono:nodejs /app/dist /app/dist
+# COPY --from=builder --chown=hono:nodejs /app/package.json /app/package.json
+
 USER honojs
 COPY --from=installer /app .
 
-CMD node apps/api/dist/index.js
+CMD ["node", "apps/api/dist/index.js"]
