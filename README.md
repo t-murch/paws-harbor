@@ -116,6 +116,10 @@ This project is licensed under a BSD-3-Clause license - see the [LICENSE](LICENS
   - I recently decided to build this in public so my immediate work is to
     update the codebase to be open-source compliant and run in a container.
     All prior development was not done in a containerized environment.
+  - Current work: Containerize application
+    - [x] Containerize server
+    - [ ] Containerize client
+      - Active issue is access to environment variables in container for Supabase Auth.
 - [ ] Booking Services implementation
 - [ ] Service Notifications implementation
 - [ ] Client Management implementation
