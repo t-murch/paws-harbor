@@ -1,4 +1,3 @@
-import { AvailabilityRepository } from '@/db/queries/availability';
 import {
   InsertProfile,
   InsertRecurringAvailability,
@@ -18,6 +17,7 @@ import { drizzle, PostgresJsDatabase } from 'drizzle-orm/postgres-js';
 import { Context, Next } from 'hono';
 import postgres from 'postgres';
 import { assert, describe, expect, it, vi } from 'vitest';
+import { AvailabilityRepository } from '../db/queries/availability';
 
 const testUser: InsertProfile = {
   admin: true,

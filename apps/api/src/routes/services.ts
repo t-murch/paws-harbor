@@ -1,6 +1,3 @@
-import { db, GeneralError, GeneralResponse } from '@/db';
-import { ServicePricingRepository } from '@/db/queries/servicePricing';
-import { ServiceRepository } from '@/db/queries/services';
 import { log } from '@repo/logger';
 import { SelectServiceSchema, Service } from '@repo/shared/db/schemas/schema';
 import {
@@ -10,6 +7,9 @@ import {
 import { User } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
+import { db, GeneralError, GeneralResponse } from '../db';
+import { ServicePricingRepository } from '../db/queries/servicePricing';
+import { ServiceRepository } from '../db/queries/services';
 
 type Variables = {
   user: User;

@@ -1,4 +1,3 @@
-import { GeneralResponse } from '@/db/index';
 import { log } from '@repo/logger';
 import {
   InsertRecurringAvailability,
@@ -20,6 +19,7 @@ import {
 import { daysofWeek } from '@repo/shared/server';
 import { and, between, eq, gte, isNull, lte, or } from 'drizzle-orm';
 import { PostgresJsDatabase } from 'drizzle-orm/postgres-js';
+import { GeneralResponse } from '..';
 
 export class AvailabilityRepository {
   private db: PostgresJsDatabase;

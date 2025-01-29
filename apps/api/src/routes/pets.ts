@@ -1,4 +1,3 @@
-import PetService from '@/db/queries/pets';
 import { log } from '@repo/logger';
 import {
   existingPetSchema,
@@ -7,6 +6,7 @@ import {
 import { User } from '@supabase/supabase-js';
 import { Hono } from 'hono';
 import { validator } from 'hono/validator';
+import PetService from '../db/queries/pets';
 
 type Variables = {
   user: User;

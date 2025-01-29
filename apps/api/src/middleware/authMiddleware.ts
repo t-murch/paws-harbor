@@ -1,7 +1,7 @@
-import { authClient } from '@/db/auth';
 import { log } from '@repo/logger';
 import { Context, Next } from 'hono';
 import { getCookie } from 'hono/cookie';
+import { authClient } from '../db/auth';
 
 export const authMiddleware = async (context: Context, next: Next) => {
   const projectId = process.env.SB_AUTH_URL!;
