@@ -3,7 +3,6 @@ import { config } from 'dotenv';
 import { getTableColumns, SQL, sql } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { seed } from 'drizzle-seed';
 import postgres from 'postgres';
 
 config({ path: '.env' });
@@ -20,19 +19,6 @@ export type GeneralResponse<T, E> =
   | { data: T; success: true }
   | { error: E; success: false };
 export type GeneralError = { details?: any; message: string };
-
-// eslint-disable-next-line no-unused-vars
-async function main() {
-  // eslint-disable-next-line no-unused-vars
-  await seed(db, mySchema).refine((_f) => ({
-    services: {
-      count: 12,
-      with: {
-        service_pricing: 3,
-      },
-    },
-  }));
-}
 
 export const buildConflictUpdateColumns = <
   T extends PgTable,
