@@ -1,3 +1,10 @@
 node_modules
 **/node_modules
 **/scripts/seed/recurring/*
+**/build
+**/out
+.env.local
+.envrc
+.env
+.env.development
+.env.production

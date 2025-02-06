@@ -1,11 +1,11 @@
-version: "3"
-
 services:
   web:
     container_name: web
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
+    env_file:
+      - ./apps/web/.env
     restart: always
     ports:
       - 3000:3000
@@ -16,6 +16,7 @@ services:
     build:
       context: .
       dockerfile: ./apps/api/Dockerfile
+    env_file: "./apps/api/.env"
     restart: always
     ports:
       - 3001:3001
