@@ -56,11 +56,11 @@ export const updateUserProfile = async (profile: UserProfile) => {
     );
   }
 
-  const respnseJSON: { data: UserProfile | null; error: string | null } =
+  const responseJSON: { data: UserProfile | null; error: string | null } =
     await res.json();
-  if (respnseJSON.error)
-    log(`Update Profile Failure. Error=${respnseJSON.error}`);
-  return respnseJSON.data;
+  if (responseJSON.error)
+    log(`Update Profile Failure. Error=${responseJSON.error}`);
+  return responseJSON.data;
 };
 
 export const getUserPets = async () => {

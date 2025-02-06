@@ -140,7 +140,7 @@ const ServiceList: React.FC<ServiceListProps> = ({ initialServices }) => {
                       description: "",
                       discounts: [],
                       durationOptions: [],
-                      isTiered: false,
+                      isTiered: true,
                       metadata: {},
                       name: availableServices[0].value,
                     })

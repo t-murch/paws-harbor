@@ -1,13 +1,7 @@
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@radix-ui/react-select";
 import { baseServiceFormValues } from "@repo/shared/server";
 import { UseFormReturn } from "react-hook-form";
 import { ServiceFormData } from "../../../lib/types";
+import { Button } from "../../ui/button";
 import {
   FormControl,
   FormField,
@@ -16,10 +10,16 @@ import {
   FormMessage,
 } from "../../ui/form";
 import { Input } from "../../ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../ui/select";
 import BasePricingFormFields from "./BasePricingFormFields";
 import DurationOptionsFormFields from "./DurationOptions";
 import DynamicServiceFields from "./ServiceFields";
-import { Button } from "../../ui/button";
 
 interface ServiceFormItemProps {
   availableServices: any[];
@@ -50,6 +50,7 @@ export default function ServiceFormItem({
   if (instanceOption) currentOptions.push(instanceOption);
 
   const pricingModelType = form.watch(`services.${index}.isTiered`);
+  console.log(`pricingModelType: ${pricingModelType}`);
   let pricingModel = form.watch(`services.${index}.durationOptions`);
   // baseRate = form.watch(`services.${index}.baseRate`);
 

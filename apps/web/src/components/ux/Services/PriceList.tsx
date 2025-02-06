@@ -1,7 +1,5 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@radix-ui/react-tabs";
 import { baseServiceFormValues, Pricing } from "@repo/shared/server";
 import { ServicePricingDetails } from "@repo/shared/types/servicePricing";
-import { Table } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -10,12 +8,14 @@ import {
   CardTitle,
 } from "../../ui/card";
 import {
+  Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "../../ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../ui/tabs";
 
 export default function Pricelist({
   pricing: { subscription: subscriptionPrices },

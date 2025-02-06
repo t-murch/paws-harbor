@@ -8,15 +8,22 @@ import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
 const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
-export const SUPABASE_URL = isProd()
+
+const SUPABASE_URL = isProd()
   ? process.env.NEXT_PUBLIC_SUPABASE_URL!
   : process.env.NEXT_PUBLIC_LOCAL_SUPABASE_URL!;
-export const SUPABASE_ANON_KEY = isProd()
+const SUPABASE_ANON_KEY = isProd()
   ? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
   : process.env.NEXT_PUBLIC_LOCAL_SUPABASE_ANON_KEY!;
 const PROJECT_URL = isProd()
   ? process.env.SB_AUTH_URL!
   : process.env.LOCAL_SB_AUTH_URL!;
+
+type Environment = "development" | "staging" | "production";
+
+const getEnvironment = (): Environment => {
+  return process.env.NODE_ENV === "production" ? "production" : "development";
+};
 
 function mergeClassNames(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -172,6 +179,7 @@ function prettyPrint(str: string) {
 export {
   API_HOST,
   fetcher,
+  getEnvironment,
   getErrorMessage,
   // getAuthHeaders,
   handleError,
@@ -182,4 +190,7 @@ export {
   mergeClassNames,
   prettyPrint,
   PROJECT_URL,
+  SUPABASE_ANON_KEY,
+  SUPABASE_URL,
+  type Environment,
 };
