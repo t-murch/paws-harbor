@@ -65,9 +65,8 @@ export default function ServiceFormItem({
             <Select
               defaultValue={field.value}
               disabled={!isEditMode}
-              name={field.name}
               onValueChange={field.onChange}
-              value={field.value}
+              {...field}
             >
               <FormControl>
                 <SelectTrigger>
