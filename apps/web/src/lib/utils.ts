@@ -7,7 +7,9 @@ import { daysofWeek } from "@repo/shared/server";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 
-const API_HOST = process.env.NEXT_PUBLIC_API_HOST || "http://localhost:3001";
+const API_HOST = isProd()
+  ? process.env.NEXT_PUBLIC_API_HOST
+  : "http://localhost:3001";
 
 const SUPABASE_URL = isProd()
   ? process.env.NEXT_PUBLIC_SUPABASE_URL!
