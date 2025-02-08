@@ -65,6 +65,19 @@ cp apps/web/.env.local.example .env.local
 
 4. Run the application
 
+**In Development**
+
+```
+# Start up Supabase dependency locally
+cd packages/shared
+supabase init # Only on initial run
+supabase start
+
+# Start the app
+pnpm run dev
+```
+
+**In Production**
 This repo is configured to be built with Docker, and Docker compose. To build all apps in this repo:
 
 ```
@@ -118,9 +131,9 @@ This project is licensed under a BSD-3-Clause license - see the [LICENSE](LICENS
     All prior development was not done in a containerized environment.
   - Current work: Containerize application
     - [x] Containerize server
-    - [ ] Containerize client
-      - Active issue is access to environment variables in container for Supabase Auth.
+    - [x] Containerize client
 - [ ] Booking Services implementation
+- [ ] Use SST for infrastructure management and deployment.
 - [ ] Service Notifications implementation
 - [ ] Client Management implementation
 - [ ] Realtime mapping of walking services.
