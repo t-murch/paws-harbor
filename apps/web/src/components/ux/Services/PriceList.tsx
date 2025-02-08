@@ -157,7 +157,7 @@ export default function Pricelist({
                                 ([, value], idx) => (
                                   <TableRow key={idx}>
                                     <TableCell className="whitespace-nowrap">
-                                      {value.durationUnit}
+                                      {`${value.durationValue} ${value.durationUnit}`}
                                     </TableCell>
                                     <TableCell className="whitespace-nowrap">
                                       ${value.tieredRate}
