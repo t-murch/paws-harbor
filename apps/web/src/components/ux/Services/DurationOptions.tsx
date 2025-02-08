@@ -74,7 +74,7 @@ function DurationOptionsFormFields({
                   <FormItem>
                     <FormLabel>Duration Value</FormLabel>
                     <FormControl>
-                      <Input {...field} type="number" disabled={!isEditMode} />
+                      <Input type="number" disabled={!isEditMode} {...field} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -87,9 +87,9 @@ function DurationOptionsFormFields({
                     <FormLabel>Duration Unit</FormLabel>
                     <FormControl>
                       <Select
+                        defaultValue={field.value}
                         disabled={!isEditMode}
                         onValueChange={field.onChange}
-                        {...field}
                       >
                         <SelectTrigger>
                           <SelectValue placeholder="Select unit" />
@@ -112,7 +112,7 @@ function DurationOptionsFormFields({
                   <FormItem>
                     <FormLabel>Rate</FormLabel>
                     <FormControl>
-                      <Input {...field} type="text" disabled={!isEditMode} />
+                      <Input type="text" disabled={!isEditMode} {...field} />
                     </FormControl>
                   </FormItem>
                 )}
@@ -124,12 +124,7 @@ function DurationOptionsFormFields({
                   <FormItem>
                     <FormLabel>Tier Level</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        type="number"
-                        disabled={!isEditMode}
-                        value={field.value}
-                      />
+                      <Input type="number" disabled={!isEditMode} {...field} />
                     </FormControl>
                   </FormItem>
                 )}

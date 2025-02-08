@@ -66,7 +66,6 @@ export default function ServiceFormItem({
               defaultValue={field.value}
               disabled={!isEditMode}
               onValueChange={field.onChange}
-              {...field}
             >
               <FormControl>
                 <SelectTrigger>
@@ -121,7 +120,6 @@ export default function ServiceFormItem({
                 //   form.setValue(`services.${index}.baseRate`, baseRate ?? 0);
                 // }
               }}
-              {...field}
               value={field.value?.toString()}
             >
               <FormControl>
@@ -139,13 +137,13 @@ export default function ServiceFormItem({
         )}
       />
 
-      {!pricingModelType && (
-        <BasePricingFormFields
-          form={form}
-          index={index}
-          isEditMode={isEditMode}
-        />
-      )}
+      {/* {!pricingModelType && ( */}
+      {/*   <BasePricingFormFields */}
+      {/*     form={form} */}
+      {/*     index={index} */}
+      {/*     isEditMode={isEditMode} */}
+      {/*   /> */}
+      {/* )} */}
 
       {pricingModelType && (
         <DurationOptionsFormFields
