@@ -39,7 +39,7 @@ function DurationOptionsFormFields({
       {
         durationUnit: newDurationUnit,
         durationValue: Number(newDurationValue),
-        serviceId: form.getValues(`services.${index}.id`) || "",
+        serviceId: form.getValues(`services.${index}.id`) || undefined,
         tierLevel: Number(newTierLevel),
         tieredRate: String(newTieredRate),
       },

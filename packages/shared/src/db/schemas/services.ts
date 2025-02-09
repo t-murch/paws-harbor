@@ -76,7 +76,10 @@ export const pricingTable = pgTable('service_pricing', {
   tieredRate: numeric('tiered_rate').notNull(),
 });
 
-export const insertPricingSchema = createInsertSchema(pricingTable);
+export const insertPricingSchema = createInsertSchema(pricingTable, {
+  createdAt: z.union([z.string(), z.date()]).pipe(z.coerce.date()),
+  serviceId: z.string().uuid().optional(),
+});
 export const insertPricingSchemaClient = createInsertSchema(pricingTable, {
   serviceId: z.string().uuid().optional(),
 });
